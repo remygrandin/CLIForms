@@ -9,14 +9,6 @@ using CLIForms.Widgets.Interfaces;
 
 namespace CLIForms
 {
-    public enum BorderStyle
-    {
-        Block,
-        Thick,
-        Thin,
-        None
-    }
-
     public abstract class Widget
     {
         [XmlAttribute]

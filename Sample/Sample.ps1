@@ -1,4 +1,4 @@
-Import-Module "./CLIForms.dll"
+﻿Import-Module "./CLIForms.dll"
 
 $Root = [CLIForms.Widgets.RootWindow]::new()
 
@@ -10,12 +10,22 @@ $Dialog.Top = 2
 $Dialog.Left = 2
 $Dialog.Border = [CLIForms.BorderStyle]::Thick
 
-$Dialog = [CLIForms.Widgets.StatusBar]::new($Root)
-$Dialog.TextLeft = "Left Status"
-$Dialog.TextCenter = "Center Status"
-$Dialog.TextRight = "Right Status"
+$StatusBar = [CLIForms.Widgets.StatusBar]::new($Root)
+$StatusBar.TextLeft = "Left Status"
+$StatusBar.TextCenter = "Center Status"
+$StatusBar.TextRight = "Right Status"
 
+$Table = [CLIForms.Widgets.Table]::new($Dialog)
+$Table.Top = 4
+$Table.Left = 2
+$Table[0,0] = "1"
+$Table[1,0] = "22"
+$Table[0,1] = "3333"
+$Table[1,1] = "44444444"
+$Table.Border = [CLIForms.BorderStyle]::Thick
 
 $Root.Run()
+
+$StackTrace
 
 read-host

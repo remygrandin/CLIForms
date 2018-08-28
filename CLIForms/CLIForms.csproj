@@ -39,6 +39,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BorderStyle.cs" />
     <Compile Include="ConsoleHelper.cs" />
     <Compile Include="Widget.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -49,6 +50,7 @@
     <Compile Include="Widgets\Interfaces\IAcceptInput.cs" />
     <Compile Include="Widgets\Interfaces\IFocusable.cs" />
     <Compile Include="Widgets\Interfaces\IUseCommand.cs" />
+    <Compile Include="Widgets\Table.cs" />
     <Compile Include="Widgets\StatusBar.cs" />
     <Compile Include="Widgets\ListBox.cs" />
     <Compile Include="Widgets\RadioButton.cs" />
