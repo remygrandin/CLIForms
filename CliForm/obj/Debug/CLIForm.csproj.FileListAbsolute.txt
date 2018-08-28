@@ -1,6 +1,0 @@
-C:\Users\12480_000\Documents\GitHub\CLIForm\CLIForm\bin\Debug\CLRCLI.dll
-C:\Users\12480_000\Documents\GitHub\CLIForm\CLIForm\bin\Debug\CLRCLI.pdb
-C:\Users\12480_000\Documents\GitHub\CLIForm\CLIForm\obj\Debug\CLIForm.csprojResolveAssemblyReference.cache
-C:\Users\12480_000\Documents\GitHub\CLIForm\CLIForm\obj\Debug\CLIForm.csproj.CoreCompileInputs.cache
-C:\Users\12480_000\Documents\GitHub\CLIForm\CLIForm\obj\Debug\CLRCLI.dll
-C:\Users\12480_000\Documents\GitHub\CLIForm\CLIForm\obj\Debug\CLRCLI.pdb
