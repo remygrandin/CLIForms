@@ -45,7 +45,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CLRCLI\CLRCLI.csproj">
+    <ProjectReference Include="..\CLIForm\CLIForm.csproj">
       <Project>{928ee27e-046e-4dce-9d04-1c065b51dc67}</Project>
       <Name>CLRCLI</Name>
     </ProjectReference>
