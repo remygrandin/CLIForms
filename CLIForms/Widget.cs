@@ -75,11 +75,11 @@ namespace CLIForms
                     _HasFocus = value;
                     if (value)
                     {
-                        if (GotFocus != null) { GotFocus(this, EventArgs.Empty); }
+                        GotFocus?.Invoke(this, EventArgs.Empty);
                     }
                     else
                     {
-                        if (LostFocus != null) { LostFocus(this, EventArgs.Empty); }
+                        LostFocus?.Invoke(this, EventArgs.Empty);
                     }
                 }
             }
@@ -87,7 +87,7 @@ namespace CLIForms
 
         internal void FireTextChanged()
         {
-            if (TextChanged != null) { TextChanged(this, EventArgs.Empty); }
+            TextChanged?.Invoke(this, EventArgs.Empty);
         }
 
         internal string _Text = "";
@@ -100,14 +100,10 @@ namespace CLIForms
             {
                 if (value != _Text)
                 {
-                    bool parentRedraw = false;
-                    if (value.Length < _Text.Length)
-                    {
-                        parentRedraw = true;
-                    }
+                    bool parentRedraw = value.Length < _Text.Length;
                     _Text = value;
-                    
-                    if (TextChanged != null) { TextChanged(this, EventArgs.Empty); }
+
+                    TextChanged?.Invoke(this, EventArgs.Empty);
 
                     if (Parent != null) 
                     {

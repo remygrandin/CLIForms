@@ -55,7 +55,7 @@
     <Compile Include="Widgets\Dialog.cs" />
     <Compile Include="Widgets\HorizontalProgressBar.cs" />
     <Compile Include="Widgets\Label.cs" />
-    <Compile Include="RootWindow.cs" />
+    <Compile Include="Widgets\RootWindow.cs" />
     <Compile Include="Widgets\Border.cs" />
     <Compile Include="Widgets\SingleLineTextbox.cs" />
     <Compile Include="Widgets\SlideToggle.cs" />

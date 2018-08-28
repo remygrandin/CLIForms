@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Xml.Serialization;
 using CLIForms.Widgets.Interfaces;
 
-namespace CLIForms
+namespace CLIForms.Widgets
 {
     public class RootWindow : Widget
     {
