@@ -130,6 +130,8 @@ namespace CLIForms.Widgets
 
             Draw();
 
+            Started?.Invoke(this, EventArgs.Empty);
+
             while (Running)
             {
                 var k = Console.ReadKey(true);
@@ -180,6 +182,8 @@ namespace CLIForms.Widgets
                 }
             }
         }
+
+        public event EventHandler Started;
 
         private bool HandleWidgetInput(ConsoleKeyInfo k)
         {
