@@ -62,6 +62,7 @@
     <Compile Include="Widgets\SingleLineTextbox.cs" />
     <Compile Include="Widgets\SlideToggle.cs" />
     <Compile Include="Widgets\Spinner.cs" />
+    <Compile Include="Widgets\HorizontalWaiter.cs" />
     <Compile Include="Widgets\TinySpinner.cs" />
     <Compile Include="Widgets\VerticalLine.cs" />
   </ItemGroup>

@@ -18,9 +18,9 @@ namespace CLIForms
         [XmlAttribute]
         public int Left { get; set; }
         [XmlAttribute]
-        public int Width { get; set; }
+        public virtual int Width { get; set; }
         [XmlAttribute]
-        public int Height { get; set; }
+        public virtual int Height { get; set; }
         [XmlAttribute]
         [DefaultValue(ConsoleColor.Gray)]
         public ConsoleColor Background { get; set; }
