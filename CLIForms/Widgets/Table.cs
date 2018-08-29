@@ -9,6 +9,7 @@ namespace CLIForms.Widgets
         Full,
         Compact,
         CompactWithHeader,
+
         FullNoExtBorder,
         CompactNoExtBorder,
         CompactWithHeaderNoExtBorder,
@@ -165,7 +166,7 @@ namespace CLIForms.Widgets
             set
             {
                 data[column, line] = value;
-                Draw();
+                Parent.Draw();
             }
         }
 
@@ -188,6 +189,15 @@ namespace CLIForms.Widgets
                 case TableStyle.CompactWithHeader:
                     RenderCompactWithHeader();
                     break;
+                case TableStyle.FullNoExtBorder:
+                    RenderFullNoExtBorder();
+                    break;
+                case TableStyle.CompactNoExtBorder:
+                    RenderCompactNoExtBorder();
+                    break;
+                case TableStyle.CompactWithHeaderNoExtBorder:
+                    RenderCompactWithHeaderNoExtBorder();
+                    break;
             }
         }
 
@@ -202,11 +212,11 @@ namespace CLIForms.Widgets
                     cellData = cellData.PadRight(cellSize, ' ');
                     break;
                 case ColumnAlignment.Center:
-                    int centerOffset = cellSize - cellData.Length / 2;
-                    cellData = new string(' ', centerOffset) + cellData + new string(' ', cellSize - centerOffset - cellData.Length);
+                    int centerOffset = (cellSize - cellData.Length) / 2;
+                    cellData = new string(' ', centerOffset) + cellData + new string(' ', cellSize - (cellData.Length + centerOffset));
                     break;
                 case ColumnAlignment.Right:
-                    cellData = cellData.PadRight(cellSize, ' ');
+                    cellData = cellData.PadLeft(cellSize, ' ');
                     break;
             }
 
@@ -238,10 +248,6 @@ namespace CLIForms.Widgets
                 Console.Write(ConsoleHelper.GetVerticalBorder(Border));
                 for (int col = 0; col < _columnCount; col++)
                 {
-                    var a = data[col, line];
-                    var b = _columnsWidth[col];
-                    var c = _columnsAlignments[col];
-
                     Console.Write(RenderCell(data[col, line], _columnsWidth[col], _columnsAlignments[col]));
                     Console.Write(ConsoleHelper.GetVerticalBorder(Border));
                 }
@@ -399,6 +405,122 @@ namespace CLIForms.Widgets
                 _columnsWidth.Select(
                     colWidth => new string(ConsoleHelper.GetHorizontalBorder(Border)[0], colWidth))));
             Console.Write(ConsoleHelper.GetBottomRightCornerBorder(Border));
+
+        }
+
+        private void RenderFullNoExtBorder()
+        {
+            int fullWidth = _columnsWidth.Sum() + (_columnCount - 1);
+
+            int offsetX = -1;
+
+
+            for (int line = 0; line < _lineCount - 1; line++)
+            {
+                offsetX++;
+
+                Console.SetCursorPosition(DisplayLeft, DisplayTop + offsetX);
+
+                for (int col = 0; col < _columnCount - 1; col++)
+                {
+                    Console.Write(RenderCell(data[col, line], _columnsWidth[col], _columnsAlignments[col]));
+                    Console.Write(ConsoleHelper.GetVerticalBorder(Border));
+                }
+
+                Console.Write(RenderCell(data[_columnCount - 1, line], _columnsWidth[_columnCount - 1], _columnsAlignments[_columnCount - 1]));
+
+
+                // separator
+
+                offsetX++;
+
+                Console.SetCursorPosition(DisplayLeft, DisplayTop + offsetX);
+
+                Console.Write(String.Join(ConsoleHelper.GetCrossJunctionBorder(Border),
+                    _columnsWidth.Select(
+                        colWidth => new string(ConsoleHelper.GetHorizontalBorder(Border)[0], colWidth))));
+
+            }
+
+            // last line
+
+            offsetX++;
+
+            Console.SetCursorPosition(DisplayLeft, DisplayTop + offsetX);
+
+            for (int col = 0; col < _columnCount - 1; col++)
+            {
+                Console.Write(RenderCell(data[col, _lineCount - 1], _columnsWidth[col], _columnsAlignments[col]));
+                Console.Write(ConsoleHelper.GetVerticalBorder(Border));
+            }
+
+            Console.Write(RenderCell(data[_columnCount - 1, _lineCount - 1], _columnsWidth[_columnCount - 1], _columnsAlignments[_columnCount - 1]));
+        }
+
+        private void RenderCompactNoExtBorder()
+        {
+            int offsetX = 0;
+
+            for (int line = 0; line < _lineCount; line++)
+            {
+                offsetX++;
+
+                Console.SetCursorPosition(DisplayLeft, DisplayTop + offsetX);
+
+                for (int col = 0; col < _columnCount - 1; col++)
+                {
+                    Console.Write(RenderCell(data[col, line], _columnsWidth[col], _columnsAlignments[col]));
+
+                    Console.Write(ConsoleHelper.GetVerticalBorder(Border));
+                }
+
+                Console.Write(RenderCell(data[_columnCount - 1, line], _columnsWidth[_columnCount - 1], _columnsAlignments[_columnCount - 1]));
+
+            }
+        }
+
+        private void RenderCompactWithHeaderNoExtBorder()
+        {
+            int offsetX = 0;
+
+            // Header
+            
+            Console.SetCursorPosition(DisplayLeft, DisplayTop + offsetX);
+
+            for (int col = 0; col < _columnCount - 1; col++)
+            {
+                Console.Write(RenderCell(data[col, 0], _columnsWidth[col], _columnsAlignments[col]));
+                Console.Write(ConsoleHelper.GetVerticalBorder(Border));
+            }
+
+            Console.Write(RenderCell(data[_columnCount - 1, 0], _columnsWidth[_columnCount - 1], _columnsAlignments[_columnCount - 1]));
+
+            // separator
+
+            offsetX++;
+
+            Console.SetCursorPosition(DisplayLeft, DisplayTop + offsetX);
+
+            Console.Write(String.Join(ConsoleHelper.GetCrossJunctionBorder(Border),
+                _columnsWidth.Select(
+                    colWidth => new string(ConsoleHelper.GetHorizontalBorder(Border)[0], colWidth))));
+
+
+            for (int line = 1; line < _lineCount; line++)
+            {
+                offsetX++;
+
+                Console.SetCursorPosition(DisplayLeft, DisplayTop + offsetX);
+
+                for (int col = 0; col < _columnCount - 1; col++)
+                {
+                    Console.Write(RenderCell(data[col, line], _columnsWidth[col], _columnsAlignments[col]));
+                    Console.Write(ConsoleHelper.GetVerticalBorder(Border));
+                }
+
+                Console.Write(RenderCell(data[_columnCount - 1, line], _columnsWidth[_columnCount - 1], _columnsAlignments[_columnCount - 1]));
+
+            }
 
         }
     }
