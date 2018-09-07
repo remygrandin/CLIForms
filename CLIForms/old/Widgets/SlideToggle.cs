@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Xml.Serialization;
-using CLIForms.Widgets.Interfaces;
+using CLIForms.Interfaces;
 
 namespace CLIForms.Widgets
 {
-    public class SlideToggle : Widget, IFocusable
+    public class SlideToggle : Widget
     {
         internal SlideToggle() {
             this.Clicked += SlideToggle_Clicked;

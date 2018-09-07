@@ -12,6 +12,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample", "Sample\Sample.csp
 		{928EE27E-046E-4DCE-9D04-1C065B51DC67} = {928EE27E-046E-4DCE-9D04-1C065B51DC67}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleCSharp", "SampleCSharp\SampleCSharp.csproj", "{EF900F6B-299F-431A-AA7B-3FA021E76F57}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +60,18 @@ Global
 		{C0C3D6D3-E58C-4A8E-9B64-B725352EF8C7}.Release|x64.Build.0 = Release|Any CPU
 		{C0C3D6D3-E58C-4A8E-9B64-B725352EF8C7}.Release|x86.ActiveCfg = Release|Any CPU
 		{C0C3D6D3-E58C-4A8E-9B64-B725352EF8C7}.Release|x86.Build.0 = Release|Any CPU
+		{EF900F6B-299F-431A-AA7B-3FA021E76F57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF900F6B-299F-431A-AA7B-3FA021E76F57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF900F6B-299F-431A-AA7B-3FA021E76F57}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{EF900F6B-299F-431A-AA7B-3FA021E76F57}.Debug|x64.Build.0 = Debug|Any CPU
+		{EF900F6B-299F-431A-AA7B-3FA021E76F57}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{EF900F6B-299F-431A-AA7B-3FA021E76F57}.Debug|x86.Build.0 = Debug|Any CPU
+		{EF900F6B-299F-431A-AA7B-3FA021E76F57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF900F6B-299F-431A-AA7B-3FA021E76F57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF900F6B-299F-431A-AA7B-3FA021E76F57}.Release|x64.ActiveCfg = Release|Any CPU
+		{EF900F6B-299F-431A-AA7B-3FA021E76F57}.Release|x64.Build.0 = Release|Any CPU
+		{EF900F6B-299F-431A-AA7B-3FA021E76F57}.Release|x86.ActiveCfg = Release|Any CPU
+		{EF900F6B-299F-431A-AA7B-3FA021E76F57}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

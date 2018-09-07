@@ -128,36 +128,6 @@ namespace CLIForms
             Console.Write("╝");
         }
 
-        private static int borderStyleToPos(BorderStyle style)
-        {
-            switch (style)
-            {
-                case BorderStyle.Block:
-                    return 0;
-                case BorderStyle.Thick:
-                    return 1;
-                case BorderStyle.Thin:
-                    return 2;
-                case BorderStyle.None:
-                    return 3;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(style), style, null);
-            }
-        }
-
-        internal static string GetTopLeftCornerBorder(BorderStyle style) => "▄╔┌ "[borderStyleToPos(style)].ToString();
-        internal static string GetTopRightCornerBorder(BorderStyle style) => "▄╗┐ "[borderStyleToPos(style)].ToString();
-        internal static string GetBottomLeftCornerBorder(BorderStyle style) => "▀╚└ "[borderStyleToPos(style)].ToString();
-        internal static string GetBottomRightCornerBorder(BorderStyle style) => "▀╝┘ "[borderStyleToPos(style)].ToString();
-
-
-        internal static string GetHorizontalBorder(BorderStyle style) => "█═─ "[borderStyleToPos(style)].ToString();
-        internal static string GetVerticalBorder(BorderStyle style) => "█║│ "[borderStyleToPos(style)].ToString();
-
-        internal static string GetTopTJunctionBorder(BorderStyle style) => "█╩┴ "[borderStyleToPos(style)].ToString();
-        internal static string GetBotomTJunctionBorder(BorderStyle style) => "█╦┬ "[borderStyleToPos(style)].ToString();
-        internal static string GetLeftTJunctionBorder(BorderStyle style) => "█╣┤ "[borderStyleToPos(style)].ToString();
-        internal static string GetRightTJunctionBorder(BorderStyle style) => "█╠├ "[borderStyleToPos(style)].ToString();
-        internal static string GetCrossJunctionBorder(BorderStyle style) => "█╬┼ "[borderStyleToPos(style)].ToString();
+        
     }
 }

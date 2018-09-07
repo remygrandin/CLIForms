@@ -1,4 +1,4 @@
-﻿namespace CLIForms
+﻿namespace CLIForms.Styles
 {
     public enum BorderStyle
     {

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using System.Text;
 
 namespace CLIForms.Widgets
 {
@@ -233,11 +232,11 @@ namespace CLIForms.Widgets
 
             Console.SetCursorPosition(DisplayLeft, DisplayTop);
 
-            Console.Write(ConsoleHelper.GetTopLeftCornerBorder(Border));
-            Console.Write(String.Join(ConsoleHelper.GetBotomTJunctionBorder(Border),
+            Console.Write(DrawingHelper.GetTopLeftCornerBorder(Border));
+            Console.Write(String.Join(DrawingHelper.GetBottomTJunctionBorder(Border),
                 _columnsWidth.Select(
-                    colWidth => new string(ConsoleHelper.GetHorizontalBorder(Border)[0], colWidth))));
-            Console.Write(ConsoleHelper.GetTopRightCornerBorder(Border));
+                    colWidth => new string(DrawingHelper.GetHorizontalBorder(Border)[0], colWidth))));
+            Console.Write(DrawingHelper.GetTopRightCornerBorder(Border));
 
             for (int line = 0; line < _lineCount - 1; line++)
             {
@@ -245,11 +244,11 @@ namespace CLIForms.Widgets
 
                 Console.SetCursorPosition(DisplayLeft, DisplayTop + offsetX);
 
-                Console.Write(ConsoleHelper.GetVerticalBorder(Border));
+                Console.Write(DrawingHelper.GetVerticalBorder(Border));
                 for (int col = 0; col < _columnCount; col++)
                 {
                     Console.Write(RenderCell(data[col, line], _columnsWidth[col], _columnsAlignments[col]));
-                    Console.Write(ConsoleHelper.GetVerticalBorder(Border));
+                    Console.Write(DrawingHelper.GetVerticalBorder(Border));
                 }
 
                 // separator
@@ -258,11 +257,11 @@ namespace CLIForms.Widgets
 
                 Console.SetCursorPosition(DisplayLeft, DisplayTop + offsetX);
 
-                Console.Write(ConsoleHelper.GetRightTJunctionBorder(Border));
-                Console.Write(String.Join(ConsoleHelper.GetCrossJunctionBorder(Border),
+                Console.Write(DrawingHelper.GetRightTJunctionBorder(Border));
+                Console.Write(String.Join(DrawingHelper.GetCrossJunctionBorder(Border),
                     _columnsWidth.Select(
-                        colWidth => new string(ConsoleHelper.GetHorizontalBorder(Border)[0], colWidth))));
-                Console.Write(ConsoleHelper.GetLeftTJunctionBorder(Border));
+                        colWidth => new string(DrawingHelper.GetHorizontalBorder(Border)[0], colWidth))));
+                Console.Write(DrawingHelper.GetLeftTJunctionBorder(Border));
 
             }
 
@@ -272,11 +271,11 @@ namespace CLIForms.Widgets
 
             Console.SetCursorPosition(DisplayLeft, DisplayTop + offsetX);
 
-            Console.Write(ConsoleHelper.GetVerticalBorder(Border));
+            Console.Write(DrawingHelper.GetVerticalBorder(Border));
             for (int col = 0; col < _columnCount; col++)
             {
                 Console.Write(RenderCell(data[col, _lineCount - 1], _columnsWidth[col], _columnsAlignments[col]));
-                Console.Write(ConsoleHelper.GetVerticalBorder(Border));
+                Console.Write(DrawingHelper.GetVerticalBorder(Border));
             }
 
             // bottom border
@@ -285,11 +284,11 @@ namespace CLIForms.Widgets
 
             Console.SetCursorPosition(DisplayLeft, DisplayTop + offsetX);
 
-            Console.Write(ConsoleHelper.GetBottomLeftCornerBorder(Border));
-            Console.Write(String.Join(ConsoleHelper.GetTopTJunctionBorder(Border),
+            Console.Write(DrawingHelper.GetBottomLeftCornerBorder(Border));
+            Console.Write(String.Join(DrawingHelper.GetTopTJunctionBorder(Border),
                 _columnsWidth.Select(
-                    colWidth => new string(ConsoleHelper.GetHorizontalBorder(Border)[0], colWidth))));
-            Console.Write(ConsoleHelper.GetBottomRightCornerBorder(Border));
+                    colWidth => new string(DrawingHelper.GetHorizontalBorder(Border)[0], colWidth))));
+            Console.Write(DrawingHelper.GetBottomRightCornerBorder(Border));
 
         }
 
@@ -303,11 +302,11 @@ namespace CLIForms.Widgets
 
             Console.SetCursorPosition(DisplayLeft, DisplayTop);
 
-            Console.Write(ConsoleHelper.GetTopLeftCornerBorder(Border));
-            Console.Write(String.Join(ConsoleHelper.GetBotomTJunctionBorder(Border),
+            Console.Write(DrawingHelper.GetTopLeftCornerBorder(Border));
+            Console.Write(String.Join(DrawingHelper.GetBottomTJunctionBorder(Border),
                 _columnsWidth.Select(
-                    colWidth => new string(ConsoleHelper.GetHorizontalBorder(Border)[0], colWidth))));
-            Console.Write(ConsoleHelper.GetTopRightCornerBorder(Border));
+                    colWidth => new string(DrawingHelper.GetHorizontalBorder(Border)[0], colWidth))));
+            Console.Write(DrawingHelper.GetTopRightCornerBorder(Border));
 
             for (int line = 0; line < _lineCount; line++)
             {
@@ -315,11 +314,11 @@ namespace CLIForms.Widgets
 
                 Console.SetCursorPosition(DisplayLeft, DisplayTop + offsetX);
 
-                Console.Write(ConsoleHelper.GetVerticalBorder(Border));
+                Console.Write(DrawingHelper.GetVerticalBorder(Border));
                 for (int col = 0; col < _columnCount; col++)
                 {
                     Console.Write(RenderCell(data[col, line], _columnsWidth[col], _columnsAlignments[col]));
-                    Console.Write(ConsoleHelper.GetVerticalBorder(Border));
+                    Console.Write(DrawingHelper.GetVerticalBorder(Border));
                 }
 
             }
@@ -330,11 +329,11 @@ namespace CLIForms.Widgets
 
             Console.SetCursorPosition(DisplayLeft, DisplayTop + offsetX);
 
-            Console.Write(ConsoleHelper.GetBottomLeftCornerBorder(Border));
-            Console.Write(String.Join(ConsoleHelper.GetTopTJunctionBorder(Border),
+            Console.Write(DrawingHelper.GetBottomLeftCornerBorder(Border));
+            Console.Write(String.Join(DrawingHelper.GetTopTJunctionBorder(Border),
                 _columnsWidth.Select(
-                    colWidth => new string(ConsoleHelper.GetHorizontalBorder(Border)[0], colWidth))));
-            Console.Write(ConsoleHelper.GetBottomRightCornerBorder(Border));
+                    colWidth => new string(DrawingHelper.GetHorizontalBorder(Border)[0], colWidth))));
+            Console.Write(DrawingHelper.GetBottomRightCornerBorder(Border));
 
         }
 
@@ -348,22 +347,22 @@ namespace CLIForms.Widgets
 
             Console.SetCursorPosition(DisplayLeft, DisplayTop);
 
-            Console.Write(ConsoleHelper.GetTopLeftCornerBorder(Border));
-            Console.Write(String.Join(ConsoleHelper.GetBotomTJunctionBorder(Border),
+            Console.Write(DrawingHelper.GetTopLeftCornerBorder(Border));
+            Console.Write(String.Join(DrawingHelper.GetBottomTJunctionBorder(Border),
                 _columnsWidth.Select(
-                    colWidth => new string(ConsoleHelper.GetHorizontalBorder(Border)[0], colWidth))));
-            Console.Write(ConsoleHelper.GetTopRightCornerBorder(Border));
+                    colWidth => new string(DrawingHelper.GetHorizontalBorder(Border)[0], colWidth))));
+            Console.Write(DrawingHelper.GetTopRightCornerBorder(Border));
 
             // Header
             offsetX++;
 
             Console.SetCursorPosition(DisplayLeft, DisplayTop + offsetX);
 
-            Console.Write(ConsoleHelper.GetVerticalBorder(Border));
+            Console.Write(DrawingHelper.GetVerticalBorder(Border));
             for (int col = 0; col < _columnCount; col++)
             {
                 Console.Write(RenderCell(data[col, 0], _columnsWidth[col], _columnsAlignments[col]));
-                Console.Write(ConsoleHelper.GetVerticalBorder(Border));
+                Console.Write(DrawingHelper.GetVerticalBorder(Border));
             }
 
             // separator
@@ -372,11 +371,11 @@ namespace CLIForms.Widgets
 
             Console.SetCursorPosition(DisplayLeft, DisplayTop + offsetX);
 
-            Console.Write(ConsoleHelper.GetRightTJunctionBorder(Border));
-            Console.Write(String.Join(ConsoleHelper.GetCrossJunctionBorder(Border),
+            Console.Write(DrawingHelper.GetRightTJunctionBorder(Border));
+            Console.Write(String.Join(DrawingHelper.GetCrossJunctionBorder(Border),
                 _columnsWidth.Select(
-                    colWidth => new string(ConsoleHelper.GetHorizontalBorder(Border)[0], colWidth))));
-            Console.Write(ConsoleHelper.GetLeftTJunctionBorder(Border));
+                    colWidth => new string(DrawingHelper.GetHorizontalBorder(Border)[0], colWidth))));
+            Console.Write(DrawingHelper.GetLeftTJunctionBorder(Border));
 
 
             for (int line = 1; line < _lineCount; line++)
@@ -385,11 +384,11 @@ namespace CLIForms.Widgets
 
                 Console.SetCursorPosition(DisplayLeft, DisplayTop + offsetX);
 
-                Console.Write(ConsoleHelper.GetVerticalBorder(Border));
+                Console.Write(DrawingHelper.GetVerticalBorder(Border));
                 for (int col = 0; col < _columnCount; col++)
                 {
                     Console.Write(RenderCell(data[col, line], _columnsWidth[col], _columnsAlignments[col]));
-                    Console.Write(ConsoleHelper.GetVerticalBorder(Border));
+                    Console.Write(DrawingHelper.GetVerticalBorder(Border));
                 }
 
             }
@@ -400,11 +399,11 @@ namespace CLIForms.Widgets
 
             Console.SetCursorPosition(DisplayLeft, DisplayTop + offsetX);
 
-            Console.Write(ConsoleHelper.GetBottomLeftCornerBorder(Border));
-            Console.Write(String.Join(ConsoleHelper.GetTopTJunctionBorder(Border),
+            Console.Write(DrawingHelper.GetBottomLeftCornerBorder(Border));
+            Console.Write(String.Join(DrawingHelper.GetTopTJunctionBorder(Border),
                 _columnsWidth.Select(
-                    colWidth => new string(ConsoleHelper.GetHorizontalBorder(Border)[0], colWidth))));
-            Console.Write(ConsoleHelper.GetBottomRightCornerBorder(Border));
+                    colWidth => new string(DrawingHelper.GetHorizontalBorder(Border)[0], colWidth))));
+            Console.Write(DrawingHelper.GetBottomRightCornerBorder(Border));
 
         }
 
@@ -424,7 +423,7 @@ namespace CLIForms.Widgets
                 for (int col = 0; col < _columnCount - 1; col++)
                 {
                     Console.Write(RenderCell(data[col, line], _columnsWidth[col], _columnsAlignments[col]));
-                    Console.Write(ConsoleHelper.GetVerticalBorder(Border));
+                    Console.Write(DrawingHelper.GetVerticalBorder(Border));
                 }
 
                 Console.Write(RenderCell(data[_columnCount - 1, line], _columnsWidth[_columnCount - 1], _columnsAlignments[_columnCount - 1]));
@@ -436,9 +435,9 @@ namespace CLIForms.Widgets
 
                 Console.SetCursorPosition(DisplayLeft, DisplayTop + offsetX);
 
-                Console.Write(String.Join(ConsoleHelper.GetCrossJunctionBorder(Border),
+                Console.Write(String.Join(DrawingHelper.GetCrossJunctionBorder(Border),
                     _columnsWidth.Select(
-                        colWidth => new string(ConsoleHelper.GetHorizontalBorder(Border)[0], colWidth))));
+                        colWidth => new string(DrawingHelper.GetHorizontalBorder(Border)[0], colWidth))));
 
             }
 
@@ -451,7 +450,7 @@ namespace CLIForms.Widgets
             for (int col = 0; col < _columnCount - 1; col++)
             {
                 Console.Write(RenderCell(data[col, _lineCount - 1], _columnsWidth[col], _columnsAlignments[col]));
-                Console.Write(ConsoleHelper.GetVerticalBorder(Border));
+                Console.Write(DrawingHelper.GetVerticalBorder(Border));
             }
 
             Console.Write(RenderCell(data[_columnCount - 1, _lineCount - 1], _columnsWidth[_columnCount - 1], _columnsAlignments[_columnCount - 1]));
@@ -471,7 +470,7 @@ namespace CLIForms.Widgets
                 {
                     Console.Write(RenderCell(data[col, line], _columnsWidth[col], _columnsAlignments[col]));
 
-                    Console.Write(ConsoleHelper.GetVerticalBorder(Border));
+                    Console.Write(DrawingHelper.GetVerticalBorder(Border));
                 }
 
                 Console.Write(RenderCell(data[_columnCount - 1, line], _columnsWidth[_columnCount - 1], _columnsAlignments[_columnCount - 1]));
@@ -490,7 +489,7 @@ namespace CLIForms.Widgets
             for (int col = 0; col < _columnCount - 1; col++)
             {
                 Console.Write(RenderCell(data[col, 0], _columnsWidth[col], _columnsAlignments[col]));
-                Console.Write(ConsoleHelper.GetVerticalBorder(Border));
+                Console.Write(DrawingHelper.GetVerticalBorder(Border));
             }
 
             Console.Write(RenderCell(data[_columnCount - 1, 0], _columnsWidth[_columnCount - 1], _columnsAlignments[_columnCount - 1]));
@@ -501,9 +500,9 @@ namespace CLIForms.Widgets
 
             Console.SetCursorPosition(DisplayLeft, DisplayTop + offsetX);
 
-            Console.Write(String.Join(ConsoleHelper.GetCrossJunctionBorder(Border),
+            Console.Write(String.Join(DrawingHelper.GetCrossJunctionBorder(Border),
                 _columnsWidth.Select(
-                    colWidth => new string(ConsoleHelper.GetHorizontalBorder(Border)[0], colWidth))));
+                    colWidth => new string(DrawingHelper.GetHorizontalBorder(Border)[0], colWidth))));
 
 
             for (int line = 1; line < _lineCount; line++)
@@ -515,7 +514,7 @@ namespace CLIForms.Widgets
                 for (int col = 0; col < _columnCount - 1; col++)
                 {
                     Console.Write(RenderCell(data[col, line], _columnsWidth[col], _columnsAlignments[col]));
-                    Console.Write(ConsoleHelper.GetVerticalBorder(Border));
+                    Console.Write(DrawingHelper.GetVerticalBorder(Border));
                 }
 
                 Console.Write(RenderCell(data[_columnCount - 1, line], _columnsWidth[_columnCount - 1], _columnsAlignments[_columnCount - 1]));

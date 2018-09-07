@@ -1,28 +1,29 @@
 ﻿using System;
+using System.Linq;
 using System.Xml.Serialization;
-using CLIForms.Widgets.Interfaces;
+using CLIForms.Interfaces;
 
 namespace CLIForms.Widgets
 {
-    public class Checkbox : Widget, IFocusable
+    public class RadioButton : Widget
     {
-        internal Checkbox() {
-            this.Clicked += Checkbox_Clicked;
+        internal RadioButton() {
+            this.Clicked += OptionBox_Clicked;
         }
-        public Checkbox(Widget parent)
+        public RadioButton(Widget parent)
             : base(parent)
         {
             Foreground = ConsoleColor.White;
             Background = Parent.Background;
             SelectedBackground = ConsoleColor.Magenta;
             ActiveBackground = ConsoleColor.DarkMagenta;
-            Text = "Checkbox";
-            this.Clicked += Checkbox_Clicked;
+            Text = "OptionBox";
+            this.Clicked += OptionBox_Clicked;
         }
 
-        void Checkbox_Clicked(object sender, EventArgs e)
+        void OptionBox_Clicked(object sender, EventArgs e)
         {
-            Checked = !Checked;
+            Checked = true;
         }
 
         public event EventHandler ValueChanged;
@@ -39,6 +40,13 @@ namespace CLIForms.Widgets
             {
                 if (value != _checked)
                 {
+                    if (value)
+                    {
+                        foreach (var r in Siblings.OfType<RadioButton>())
+                        {
+                            r.Checked = false;
+                        }
+                    }
                     _checked = value;
                     Draw();
                     if (ValueChanged != null) { ValueChanged(this, EventArgs.Empty); }
@@ -48,16 +56,16 @@ namespace CLIForms.Widgets
 
         internal override void Render()
         {
-            char c = (Checked) ? 'X' : ' ';
+            char c = (Checked) ? 'O' : ' ';
 
             if (HasFocus)
             {
-                ConsoleHelper.DrawText(DisplayLeft, DisplayTop, Foreground, ActiveBackground, "[{0}]", c);
-                ConsoleHelper.DrawText(DisplayLeft + 4, DisplayTop, Foreground, Background,  Text);
+                ConsoleHelper.DrawText(DisplayLeft, DisplayTop, Foreground, ActiveBackground, "({0})", c);
+                ConsoleHelper.DrawText(DisplayLeft + 4, DisplayTop, Foreground, Background, Text);
             }
             else
             {
-                ConsoleHelper.DrawText(DisplayLeft, DisplayTop, Foreground, Background, "[{0}] {1}", c, Text);
+                ConsoleHelper.DrawText(DisplayLeft, DisplayTop, Foreground, Background, "({0}) {1}", c, Text);
             }
         }
     }

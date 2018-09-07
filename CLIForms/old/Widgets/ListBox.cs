@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.Xml.Serialization;
-using CLIForms.Widgets.Interfaces;
+using CLIForms.Interfaces;
 
 namespace CLIForms.Widgets
 {
-    public class ListBox : Widget, IFocusable, IAcceptInput
+    public class ListBox : Widget
     {
         internal ListBox() {
             Items.CollectionChanged += Items_CollectionChanged;

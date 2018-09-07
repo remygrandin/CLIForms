@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using CLIForms.Styles;
 
 namespace CLIForms.Widgets
 {

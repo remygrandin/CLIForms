@@ -1,7 +1,14 @@
 ﻿Import-Module "./CLIForms.dll"
 
-$Root = [CLIForms.Widgets.RootWindow]::new()
+$Engine = [CLIForms.Engine]::instance
 
+$screen = (New-Object -TypeName "CLIForms.Components.Screen")
+
+$Engine.ActiveScreen = $screen
+
+
+
+<#
 $Dialog = [CLIForms.Widgets.Dialog]::new($Root)
 $Dialog.Text = "Dialog Title"
 $Dialog.Width = 75
@@ -23,8 +30,12 @@ $Table[1,0] = "22"
 $Table[0,1] = "3333"
 $Table[1,1] = "44444444"
 $Table.Border = [CLIForms.BorderStyle]::Thick
+#>
 
-$Root.Run()
+
+
+
+
 
 $StackTrace
 

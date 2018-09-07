@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Xml.Serialization;
-using CLIForms.Widgets.Interfaces;
+using CLIForms.Interfaces;
 
 namespace CLIForms.Widgets
 {
@@ -147,7 +147,6 @@ namespace CLIForms.Widgets
                             CycleFocus();
                             break;
                         default:
-                            ProcessKey = HandleWidgetInput(k);
                             break;
                     }
                 }
@@ -184,11 +183,6 @@ namespace CLIForms.Widgets
         }
 
         public event EventHandler Started;
-
-        private bool HandleWidgetInput(ConsoleKeyInfo k)
-        {
-            return (ActiveWidget as IAcceptInput).Keypress(k);
-        }
 
         private void MoveDown()
         {

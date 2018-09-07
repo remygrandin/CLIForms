@@ -4,8 +4,9 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Xml.Serialization;
+using CLIForms.Interfaces;
+using CLIForms.Styles;
 using CLIForms.Widgets;
-using CLIForms.Widgets.Interfaces;
 
 namespace CLIForms
 {
@@ -135,11 +136,7 @@ namespace CLIForms
             ConsoleHelper.DrawRectSolid(DisplayLeft, DisplayTop, Width, Height, Background);
         }
 
-        [XmlElement(typeof(Border)), XmlElement(typeof(Button)), XmlElement(typeof(Checkbox)),
-        XmlElement(typeof(Dialog)), XmlElement(typeof(HorizontalBarGraph)), XmlElement(typeof(HorizontalLine)), XmlElement(typeof(VerticalLine)),
-        XmlElement(typeof(HorizontalProgressBar)), XmlElement(typeof(Label)), XmlElement(typeof(ListBox)),
-        XmlElement(typeof(RadioButton)), XmlElement(typeof(SingleLineTextbox)), XmlElement(typeof(SlideToggle)),
-        XmlElement(typeof(Spinner)), XmlElement(typeof(TinySpinner))]
+
         public List<Widget> Children { get; set; }
 
         internal abstract void Render();

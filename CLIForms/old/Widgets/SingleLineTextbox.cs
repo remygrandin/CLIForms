@@ -3,11 +3,11 @@ using System.ComponentModel;
 using System.Text;
 using System.Timers;
 using System.Xml.Serialization;
-using CLIForms.Widgets.Interfaces;
+using CLIForms.Interfaces;
 
 namespace CLIForms.Widgets
 {
-    public class SingleLineTextbox : Widget, IFocusable, IAcceptInput
+    public class SingleLineTextbox : Widget
     {
         [XmlAttribute]
         [DefaultValue("")]
