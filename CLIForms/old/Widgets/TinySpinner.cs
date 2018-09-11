@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Timers;
 using System.Xml.Serialization;
+using CLIForms.Buffer;
 
 namespace CLIForms.Widgets
 {

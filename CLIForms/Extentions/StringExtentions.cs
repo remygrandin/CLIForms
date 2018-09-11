@@ -1,4 +1,6 @@
 ﻿
+using System;
+
 namespace CLIForms.Extentions
 {
     public static class StringExtentions
@@ -22,6 +24,24 @@ namespace CLIForms.Extentions
             }
 
             return str.Substring(0, length);
+        }
+
+        public static bool IsPrintable(this char chr)
+        {
+            string printableChar = "abcdefghijklmnopqrstuvwxyz" +
+                                   "ABCDEFGHIJKLMNOPQRSTUVWXYZ" +
+                                   "1234567890" +
+                                   "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~" +
+                                   "ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜø£Ø×ƒáíóúñÑªº¿®¬½¼¡«»" +
+                                   "░▒▓│┤ÁÂÀ©╣║╗╝¢¥┐└┴┬├─┼ãÃ╚╔╩╦╠═╬¤" +
+                                   "ðÐÊËÈıÍÎÏ┘┌█▄¦Ì▀ÓßÔÒõÕµþÞÚÛÙýÝ¯´";
+
+            return printableChar.Contains(chr.ToString());
+        }
+
+        public static bool IsPrintable(this ConsoleKeyInfo key)
+        {
+            return key.KeyChar.IsPrintable();
         }
     }
 }

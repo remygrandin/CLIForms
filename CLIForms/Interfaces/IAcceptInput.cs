@@ -6,6 +6,6 @@ namespace CLIForms.Interfaces
     {
         bool FireKeypress(ConsoleKeyInfo key);
 
-        event FocusEventHandler Keypress;
+        event KeyPressEventHandler Keypress;
     }
 }

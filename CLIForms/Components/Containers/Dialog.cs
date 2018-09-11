@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Linq;
+using CLIForms.Buffer;
 using CLIForms.Extentions;
 using CLIForms.Styles;
 
-namespace CLIForms.Components
+namespace CLIForms.Components.Containers
 {
     public class Dialog : Container
     {
@@ -34,15 +36,38 @@ namespace CLIForms.Components
             parent.AddChild(this);
         }
 
-        
+        public override ConsoleCharBuffer Render()
+        {
+            if (!_dirty && displayBuffer != null)
+                return displayBuffer;
+
+            ConsoleCharBuffer baseBuffer = RenderContainer();
+
+            ConsoleCharBuffer componentsBuffer = new ConsoleCharBuffer(Width - 2, Height - 2);
+
+            foreach (DisplayObject child in Children.Where(item => item.Visible))
+            {
+                componentsBuffer = componentsBuffer.Merge(child.Render(), child.X, child.Y);
+
+
+            }
+
+            baseBuffer.Merge(componentsBuffer, 1, 1);
+
+            displayBuffer = baseBuffer;
+
+            _dirty = false;
+
+            return baseBuffer;
+        }
 
         protected override ConsoleCharBuffer RenderContainer()
         {
             ConsoleCharBuffer buffer = new ConsoleCharBuffer(Width + 1, Height + 1);
 
-            DrawingHelper.DrawBlockFull(buffer,this, 0, 0, Width, Height, BackgroudColor, ForegroundColor, Border, Shadow);
+            DrawingHelper.DrawBlockFull(buffer, this, false, 0, 0, Width, Height, BackgroudColor, ForegroundColor, Border, Shadow);
 
-            buffer.DrawString(this, _title.Truncate(Width - 2), 1, 0, ConsoleColor.Black, ConsoleColor.White);
+            buffer.DrawString(this, _title.Truncate(Width - 2), false, 1, 0, ConsoleColor.Black, ConsoleColor.White);
 
             return buffer;
         }

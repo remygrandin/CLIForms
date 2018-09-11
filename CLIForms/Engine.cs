@@ -1,13 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
+using System.Timers;
+using CLIForms.Buffer;
 using CLIForms.Components;
+using CLIForms.Components.Containers;
 using CLIForms.Extentions;
 using CLIForms.Interfaces;
-using Container = CLIForms.Components.Container;
 
 namespace CLIForms
 {
@@ -33,7 +32,11 @@ namespace CLIForms
             Console.WindowHeight = height;
 
             engineBuffer = new ConsoleCharBuffer(width, height);
+
+            DebounceDirty.AutoReset = false;
+            DebounceDirty.Elapsed += DebounceDirty_Elapsed;
         }
+
 
         public int Width
         {
@@ -78,37 +81,59 @@ namespace CLIForms
 
         public bool Draw = true;
 
+        private Timer DebounceDirty = new Timer(100);
+
         public void SignalDirty(Screen screen)
         {
-            if (ActiveScreen == screen && Draw)
+            if (ActiveScreen == screen)
+            {
+                DebounceDirty.Stop();
+                DebounceDirty.Start();
+            }
+        }
+
+
+        private void DebounceDirty_Elapsed(object sender, ElapsedEventArgs e)
+        {
+            if (Draw)
             {
                 ForceDraw();
             }
         }
 
+        private object _drawLock = new object();
+
         public void ForceDraw()
         {
-            ConsoleCharBuffer screenbuffer = ActiveScreen.Render();
-
-            List<PositionedConsoleChar> diff = engineBuffer.Diff(screenbuffer);
-
-            ConsoleCharBuffer.Display(diff);
-
-            engineBuffer = screenbuffer;
-
-            VisibleFocussableObjects = engineBuffer.data.Flatten().Where(item => item.Owner != null).Select(item => item.Owner).Distinct()
-                .Where(item => item is IFocusable && item.Parents(itm => itm.Parent).All(itm => item.Disabled == false)).Select(item => (IFocusable)item).ToList();
-
-            AllObjects = new List<DisplayObject>(ActiveScreen.GetAllChildren());
-            AllObjects.Add(ActiveScreen);
-
-            if (FocusedObject != null && !VisibleFocussableObjects.Contains(FocusedObject))
+            lock (_drawLock)
             {
-                TransferFocus(FocusedObject, (IFocusable)VisibleFocussableObjects.Select(item => (DisplayObject)item).OrderBy(item => item.DisplayY).ThenBy(item => item.DisplayX).First(), null);
-            }
+                ConsoleCharBuffer screenbuffer = ActiveScreen.Render();
 
-            
-            Console.SetCursorPosition(0,0);
+                List<PositionedConsoleChar> diff = engineBuffer.Diff(screenbuffer);
+
+                ConsoleCharBuffer.Display(diff);
+
+                engineBuffer = screenbuffer;
+
+                VisibleFocussableObjects = engineBuffer.data.Flatten().Where(item => item.Owner != null)
+                    .Select(item => item.Owner).Distinct()
+                    .Where(item =>
+                        item is IFocusable && item.Parents(itm => itm.Parent).All(itm => item.Disabled == false))
+                    .Select(item => (IFocusable) item).ToList();
+
+                AllObjects = new List<DisplayObject>(ActiveScreen.GetAllChildren());
+                AllObjects.Add(ActiveScreen);
+
+                if (FocusedObject != null && !VisibleFocussableObjects.Contains(FocusedObject))
+                {
+                    TransferFocus(FocusedObject,
+                        (IFocusable) VisibleFocussableObjects.Select(item => (DisplayObject) item)
+                            .OrderBy(item => item.DisplayY).ThenBy(item => item.DisplayX).First(), null);
+                }
+
+
+                Console.SetCursorPosition(0, 0);
+            }
         }
 
         public IFocusable FocusedObject;
@@ -121,7 +146,7 @@ namespace CLIForms
             {
                 ForceDraw();
 
-                TransferFocus(FocusedObject, (IFocusable)VisibleFocussableObjects.Select(item => (DisplayObject)item).OrderBy(item => item.DisplayY).ThenBy(item => item.DisplayX).First(), null);
+                TransferFocus(FocusedObject, (IFocusable)VisibleFocussableObjects.Select(item => (DisplayObject)item).OrderBy(item => item.DisplayY).ThenBy(item => item.DisplayX).FirstOrDefault(), null);
 
             }
 

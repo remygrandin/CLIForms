@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Xml.Serialization;
-using CLIForms.Interfaces;
+using CLIForms.Buffer;
 
 namespace CLIForms.Widgets
 {

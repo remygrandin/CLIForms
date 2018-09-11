@@ -1,4 +1,7 @@
-﻿namespace CLIForms.Components
+﻿using CLIForms.Buffer;
+using CLIForms.Components.Containers;
+
+namespace CLIForms.Components
 {
     public abstract class DisplayObject
     {
@@ -118,6 +121,16 @@
                     Dirty = true;
                 }
             }
+        }
+
+        public void Show()
+        {
+            Visible = true;
+        }
+
+        public void Hide()
+        {
+            Visible = false;
         }
 
         public abstract ConsoleCharBuffer Render();

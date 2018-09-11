@@ -43,22 +43,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Components\Button.cs" />
-    <Compile Include="Components\Text\SingleLineTextbox.cs" />
-    <Compile Include="Components\Text\Label.cs" />
-    <Compile Include="Event\EventPhase.cs" />
+    <Compile Include="Components\Containers\Tabs.cs" />
+    <Compile Include="Components\Texts\SingleLineTextbox.cs" />
+    <Compile Include="Components\Texts\Label.cs" />
     <Compile Include="Interfaces\IAcceptGlobalInput.cs" />
     <Compile Include="Interfaces\Events.cs" />
     <Compile Include="Styles\ShadowStyle.cs" />
     <Compile Include="Styles\BorderStyle.cs" />
-    <Compile Include="Components\Dialog.cs" />
-    <Compile Include="Components\Screen.cs" />
-    <Compile Include="DrawingHelper.cs" />
+    <Compile Include="Components\Containers\Dialog.cs" />
+    <Compile Include="Components\Containers\Screen.cs" />
+    <Compile Include="Buffer\DrawingHelper.cs" />
     <Compile Include="Extentions\LinqExtentions.cs" />
-    <Compile Include="PositionedConsoleChar.cs" />
-    <Compile Include="ConsoleChar.cs" />
-    <Compile Include="ConsoleCharBuffer.cs" />
-    <Compile Include="ConsoleHelper.cs" />
-    <Compile Include="Components\Container.cs" />
+    <Compile Include="Buffer\PositionedConsoleChar.cs" />
+    <Compile Include="Buffer\ConsoleChar.cs" />
+    <Compile Include="Buffer\ConsoleCharBuffer.cs" />
+    <Compile Include="Buffer\ConsoleHelper.cs" />
+    <Compile Include="Components\Containers\Container.cs" />
     <Compile Include="Components\DisplayObject.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="old\Widget.cs" />
@@ -72,11 +72,9 @@
     <Compile Include="old\Widgets\StatusBar.cs" />
     <Compile Include="old\Widgets\ListBox.cs" />
     <Compile Include="old\Widgets\RadioButton.cs" />
-    <Compile Include="old\Widgets\Dialog.cs" />
     <Compile Include="old\Widgets\HorizontalProgressBar.cs" />
     <Compile Include="old\Widgets\RootWindow.cs" />
-    <Compile Include="old\Widgets\Border.cs" />
-    <Compile Include="old\Widgets\SingleLineTextbox.cs" />
+    <Compile Include="Components\Drawing\Border - TODO.cs" />
     <Compile Include="old\Widgets\SlideToggle.cs" />
     <Compile Include="old\Widgets\Spinner.cs" />
     <Compile Include="old\Widgets\HorizontalWaiter.cs" />
@@ -86,6 +84,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Components\Graphs\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

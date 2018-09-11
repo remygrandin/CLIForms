@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CLIForms
+namespace CLIForms.Buffer
 {
     internal static class ConsoleHelper
     {

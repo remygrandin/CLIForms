@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using CLIForms.Buffer;
 
-namespace CLIForms.Components
+namespace CLIForms.Components.Containers
 {
     public class Container : DisplayObject
     {
@@ -35,7 +36,7 @@ namespace CLIForms.Components
             }
         }
 
-        public IEnumerable<DisplayObject> GetAllChildren()
+        public virtual IEnumerable<DisplayObject> GetAllChildren()
         {
             List<DisplayObject> dpList = new List<DisplayObject>();
 

@@ -1,7 +1,7 @@
 ﻿using System;
 using CLIForms.Components;
 
-namespace CLIForms
+namespace CLIForms.Buffer
 {
     public class ConsoleChar
     {
@@ -9,18 +9,22 @@ namespace CLIForms
         public ConsoleColor Foreground;
         public char Char;
         public DisplayObject Owner;
+        public bool Focussable;
 
         public ConsoleChar(ConsoleChar consoleChar)
         {
             Char = consoleChar.Char;
             Background = consoleChar.Background;
             Foreground = consoleChar.Foreground;
+            Owner = consoleChar.Owner;
+            Focussable = consoleChar.Focussable;
         }
 
-        public ConsoleChar(DisplayObject owner, char ch, ConsoleColor? background = null, ConsoleColor foreground = ConsoleColor.White)
+        public ConsoleChar(DisplayObject owner, char ch, bool focussable, ConsoleColor? background = null, ConsoleColor foreground = ConsoleColor.White)
         {
             Owner = owner;
             Char = ch;
+            Focussable = focussable;
             Background = background;
             Foreground = foreground;
         }

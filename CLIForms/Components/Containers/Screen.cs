@@ -1,6 +1,7 @@
 ﻿using System;
+using CLIForms.Buffer;
 
-namespace CLIForms.Components
+namespace CLIForms.Components.Containers
 {
     public class Screen : Container
     {
@@ -32,7 +33,7 @@ namespace CLIForms.Components
 
         protected override ConsoleCharBuffer RenderContainer()
         {
-            return new ConsoleCharBuffer(Width, Height).Clear(new ConsoleChar(owner:this,ch:' ',background: BackgroudColor));
+            return new ConsoleCharBuffer(Width, Height).Clear(new ConsoleChar(owner: this, focussable: false, ch: ' ', background: BackgroudColor));
         }
 
 

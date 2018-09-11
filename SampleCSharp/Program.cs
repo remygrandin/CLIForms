@@ -1,7 +1,8 @@
 ﻿using System;
 using CLIForms;
 using CLIForms.Components;
-using CLIForms.Components.Text;
+using CLIForms.Components.Containers;
+using CLIForms.Components.Texts;
 
 namespace SampleCSharp
 {
@@ -14,7 +15,7 @@ namespace SampleCSharp
             Screen screen = new Screen();
 
             engine.ActiveScreen = screen;
-
+            /*
             Dialog dialog = new Dialog(screen, 70, 25)
             {
                 Title = "Sample Dialog N°1",
@@ -36,40 +37,23 @@ namespace SampleCSharp
 
             Button buttonup = new Button(dialog, "Up")
             {
-                X = 15,
-                Y = 10,
+                X = 2,
+                Y = 8,
                 Width = 10
             };
 
-            Button buttoncenter = new Button(dialog, "Center")
+            SingleLineTextbox simpleTextbox = new SingleLineTextbox(dialog, "","PlaceHolder", width: 20)
             {
-                X = 15,
-                Y = 14,
-                Width = 10
+                X = 2,
+                Y = 12
             };
+            */
 
-            Button buttonDown = new Button(dialog, "Down")
+            Tabs tabs = new Tabs(screen,new []{"Texts", "Button", "Texts", "Button", "Texts", "Button", "Texts", "Texts", "Button" , "Texts", "Button" , "Texts", "Button" }, 70, 25)
             {
-                X = 15,
-                Y = 18,
-                Width = 10
+                X = 1,
+                Y = 1
             };
-
-            Button buttonLeft = new Button(dialog, "Left")
-            {
-                X = 4,
-                Y = 14,
-                Width = 10
-            };
-
-
-            Button buttonRight = new Button(dialog, "Right")
-            {
-                X = 26,
-                Y = 14,
-                Width = 10
-            };
-
 
             engine.Start();
 

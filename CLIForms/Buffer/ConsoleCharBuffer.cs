@@ -4,7 +4,7 @@ using System.Linq;
 using CLIForms.Components;
 using CLIForms.Extentions;
 
-namespace CLIForms
+namespace CLIForms.Buffer
 {
     public class ConsoleCharBuffer
     {
@@ -57,7 +57,7 @@ namespace CLIForms
             return this;
         }
 
-        public ConsoleCharBuffer DrawString(DisplayObject owner, string str, int x, int y, ConsoleColor? backgroundColor, ConsoleColor foregroundColor)
+        public ConsoleCharBuffer DrawString(DisplayObject owner, string str, bool focussable, int x, int y, ConsoleColor? backgroundColor, ConsoleColor foregroundColor)
         {
             if (str == null)
                 return this;
@@ -73,9 +73,9 @@ namespace CLIForms
                     if (xPos >= 0 && xPos < xDim)
                     {
                         if(data[xPos, y] == null)
-                            data[xPos, y] = new ConsoleChar(owner, str[i], backgroundColor, foregroundColor);
+                            data[xPos, y] = new ConsoleChar(owner, str[i], focussable, backgroundColor, foregroundColor);
                         else
-                            data[xPos, y] = data[xPos, y].Merge(new ConsoleChar(owner, str[i], backgroundColor, foregroundColor));
+                            data[xPos, y] = data[xPos, y].Merge(new ConsoleChar(owner, str[i], focussable, backgroundColor, foregroundColor));
                     }
                 }
 
@@ -107,7 +107,10 @@ namespace CLIForms
                         int transposedY = y + slaveBuffer.yOffset + yOffset;
                         if (transposedY >= 0 && transposedY < yDimMaster - 1)
                         {
-                            this.data[transposedX, transposedY] = this.data[transposedX, transposedY].Merge(slaveBuffer.data[x, y]);
+                            if(this.data[transposedX, transposedY] == null)
+                                this.data[transposedX, transposedY] = slaveBuffer.data[x, y];
+                            else
+                                this.data[transposedX, transposedY] = this.data[transposedX, transposedY].Merge(slaveBuffer.data[x, y]);
                         }
                     }
                 }

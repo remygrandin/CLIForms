@@ -1,4 +1,5 @@
 ﻿using System;
+using CLIForms.Buffer;
 using CLIForms.Styles;
 
 namespace CLIForms.Widgets

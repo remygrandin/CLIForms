@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Linq;
+using CLIForms.Buffer;
+using CLIForms.Components.Containers;
 using CLIForms.Extentions;
-using CLIForms.Interfaces;
 
-namespace CLIForms.Components.Text
+namespace CLIForms.Components.Texts
 {
-    public class SingleLineTextbox : DisplayObject, IAcceptInput
+    public class Label : DisplayObject
     {
 
         public ConsoleColor? BackgroudColor = null;
@@ -25,19 +26,6 @@ namespace CLIForms.Components.Text
             }
         }
 
-        private string _placeHolderText;
-        public string PlaceHolderText
-        {
-            get { return _text; }
-            set
-            {
-                if (_placeHolderText != value)
-                {
-                    _placeHolderText = value;
-                    Dirty = true;
-                }
-            }
-        }
 
         private int? _maxLength;
         public int? MaxLength
@@ -53,11 +41,10 @@ namespace CLIForms.Components.Text
             }
         }
 
-        public SingleLineTextbox(Container parent, string text = "", string placeHolderText = "", int? maxLength = null)
+        public Label(Container parent, string text = "", int? maxLength = null)
         {
-            _text = text;
-            _maxLength = maxLength;
-            _placeHolderText = PlaceHolderText;
+            Text = text;
+            MaxLength = maxLength;
 
             Parent = parent;
 
@@ -80,7 +67,7 @@ namespace CLIForms.Components.Text
 
                 for (int i = 0; i < lines.Length; i++)
                 {
-                    buffer.DrawString(this, lines[i], 0, i, BackgroudColor, ForegroundColor);
+                    buffer.DrawString(this, lines[i], false, 0, i, BackgroudColor, ForegroundColor);
                 }
             }
             else
@@ -89,7 +76,7 @@ namespace CLIForms.Components.Text
 
                 for (int i = 0; i < lines.Length; i++)
                 {
-                    buffer.DrawString(this, lines[i].Truncate(MaxLength.Value), 0, i, BackgroudColor, ForegroundColor);
+                    buffer.DrawString(this, lines[i].Truncate(MaxLength.Value), false, 0, i, BackgroudColor, ForegroundColor);
                 }
 
             }
@@ -98,12 +85,5 @@ namespace CLIForms.Components.Text
 
             return buffer;
         }
-
-        public bool FireKeypress(ConsoleKeyInfo key)
-        {
-            throw new NotImplementedException();
-        }
-
-        public event FocusEventHandler Keypress;
     }
 }

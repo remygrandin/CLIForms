@@ -1,4 +1,6 @@
 ﻿using System;
+using CLIForms.Buffer;
+using CLIForms.Components.Containers;
 using CLIForms.Interfaces;
 using CLIForms.Styles;
 
@@ -97,7 +99,7 @@ namespace CLIForms.Components
 
             ConsoleCharBuffer buffer = new ConsoleCharBuffer(_width + 1, _height + 1);
 
-            DrawingHelper.DrawBlockFull(buffer, this, 0, 0, _width, _height,
+            DrawingHelper.DrawBlockFull(buffer, this, true, 0, 0, _width, _height,
                 _focused ? BackgroudColorFocused : BackgroudColor, _focused ? ForegroundColorFocused : ForegroundColor,
                 BorderStyle.None, _focused ? ShadowFocused : Shadow);
             
@@ -105,7 +107,7 @@ namespace CLIForms.Components
 
             int xOffset = (int)Math.Floor(((double)Width - _text.Length) / 2);
 
-            buffer.DrawString(this, _text, xOffset, yOffset, _focused ? BackgroudColorFocused : BackgroudColor,
+            buffer.DrawString(this, _text, true, xOffset, yOffset, _focused ? BackgroudColorFocused : BackgroudColor,
                 _focused ? ForegroundColorFocused : ForegroundColor);
 
             _dirty = false;
@@ -139,6 +141,6 @@ namespace CLIForms.Components
             return false;
         }
 
-        public event FocusEventHandler Keypress;
+        public event KeyPressEventHandler Keypress;
     }
 }

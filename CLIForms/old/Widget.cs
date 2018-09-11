@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Xml.Serialization;
+using CLIForms.Buffer;
 using CLIForms.Interfaces;
 using CLIForms.Styles;
 using CLIForms.Widgets;
