@@ -20,8 +20,11 @@ namespace CLIForms.Components.Containers
             get => _width;
             set
             {
-                _width = value;
-                Dirty = true;
+                if (_width != value)
+                {
+                    _width = value;
+                    Dirty = true;
+                }
             }
         }
 
@@ -31,8 +34,11 @@ namespace CLIForms.Components.Containers
             get => _height;
             set
             {
-                _height = value;
-                Dirty = true;
+                if (_height != value)
+                {
+                    _height = value;
+                    Dirty = true;
+                }
             }
         }
 
@@ -53,7 +59,7 @@ namespace CLIForms.Components.Containers
         }
 
 
-        public void AddChild(DisplayObject child)
+        public virtual void AddChild(DisplayObject child)
         {
             if (!Children.Contains(child))
                 Children.Add(child);
@@ -61,7 +67,7 @@ namespace CLIForms.Components.Containers
             Dirty = true;
         }
 
-        public void RemoveChild(DisplayObject child)
+        public virtual void RemoveChild(DisplayObject child)
         {
             if (Children.Contains(child))
                 Children.Remove(child);
