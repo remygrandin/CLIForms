@@ -9,7 +9,7 @@ namespace CLIForms.Components.Containers
     public class Dialog : Container
     {
 
-        public ConsoleColor? BackgrounColor = ConsoleColor.Gray;
+        public ConsoleColor? BackgroundColor = ConsoleColor.Gray;
         public ConsoleColor ForegroundColor = ConsoleColor.Black;
 
         public BorderStyle Border = BorderStyle.Thick;
@@ -63,7 +63,7 @@ namespace CLIForms.Components.Containers
         {
             ConsoleCharBuffer buffer = new ConsoleCharBuffer(Width + 1, Height + 1);
 
-            DrawingHelper.DrawBlockFull(buffer, this, false, 0, 0, Width, Height, BackgrounColor, ForegroundColor, Border, Shadow);
+            DrawingHelper.DrawBlockFull(buffer, this, false, 0, 0, Width, Height, BackgroundColor, ForegroundColor, Border, Shadow);
 
             buffer.DrawString(this, _title.Truncate(Width - 2), false, 1, 0, ConsoleColor.Black, ConsoleColor.White);
 

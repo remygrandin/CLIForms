@@ -7,7 +7,7 @@ namespace CLIForms.Components.Drawing
 {
     public class Box : DisplayObject
     {
-        public ConsoleColor? BackgrounColor = ConsoleColor.Gray;
+        public ConsoleColor? BackgroundColor = null;
         public ConsoleColor ForegroundColor = ConsoleColor.Black;
 
         public BorderStyle Border = BorderStyle.Thick;
@@ -55,7 +55,7 @@ namespace CLIForms.Components.Drawing
 
             ConsoleCharBuffer baseBuffer = new ConsoleCharBuffer(Width + 1, Height + 1);
 
-            DrawingHelper.DrawBlockFull(baseBuffer, this, false, 0, 0, Width, Height, BackgrounColor, ForegroundColor, Border, Shadow);
+            DrawingHelper.DrawBlockFull(baseBuffer, this, false, 0, 0, Width, Height, BackgroundColor, ForegroundColor, Border, Shadow);
 
             _dirty = false;
 

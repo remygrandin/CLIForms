@@ -4,7 +4,7 @@ using CLIForms.Components;
 using CLIForms.Components.Containers;
 using CLIForms.Components.Drawing;
 using CLIForms.Components.Texts;
-using CLIForms.Widgets;
+using CLIForms.Styles;
 
 namespace SampleCSharp
 {
@@ -71,12 +71,28 @@ namespace SampleCSharp
             tabs.AddChild(simpleTextbox, "Forms");
 
             // ==== Drawings Tab ====
-            Box box = new Box(null,10,20)
+            Box box = new Box(null,20,10)
             {
                 X = 1,
-                Y = 5
+                Y = 1
             };
             tabs.AddChild(box, "Drawings");
+
+            VericalLine vline = new VericalLine(null, 15)
+            {
+                X = 25,
+                Y = 1
+            };
+            tabs.AddChild(vline, "Drawings");
+
+            HorizontalLine hline = new HorizontalLine(null, 15)
+            {
+                X = 27,
+                Y = 1,
+                End1 = LineEndingStyle.T,
+                End2 = LineEndingStyle.Plus
+            };
+            tabs.AddChild(hline, "Drawings");
 
             engine.Start();
 
