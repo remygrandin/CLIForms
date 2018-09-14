@@ -30,10 +30,8 @@ namespace CLIForms.Components.Containers
             }
         }
 
-        public Dialog(Container parent, int width = 30, int height = 12) : base(width, height)
+        public Dialog(Container parent, int width = 30, int height = 12) : base(parent, width, height)
         {
-            Parent = parent;
-            parent.AddChild(this);
         }
 
         public override ConsoleCharBuffer Render()

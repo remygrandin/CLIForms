@@ -77,16 +77,12 @@ namespace CLIForms.Components.Texts
             }
         }
 
-        public SingleLineTextbox(Container parent, string text = "", string placeHolderText = "", int? maxLength = null, int width = 10)
+        public SingleLineTextbox(Container parent, string text = "", string placeHolderText = "", int? maxLength = null, int width = 10) : base(parent)
         {
             _text = text;
             _maxLength = maxLength;
             _placeHolderText = placeHolderText;
             _width = width;
-
-            Parent = parent;
-
-            parent.AddChild(this);
         }
 
         private int _displayOffset = 0;
@@ -99,11 +95,11 @@ namespace CLIForms.Components.Texts
 
             ConsoleCharBuffer buffer = new ConsoleCharBuffer(Width, 1);
 
-            
+
 
             if (string.IsNullOrEmpty(_text))
             {
-                buffer.Clear(new ConsoleChar(this, ' ',true, Focused ? FocusedBackgroudColor : BackgroudColor, PlaceHolderForegroundColor));
+                buffer.Clear(new ConsoleChar(this, ' ', true, Focused ? FocusedBackgroudColor : BackgroudColor, PlaceHolderForegroundColor));
 
                 buffer.DrawString(this, _placeHolderText.Truncate(Width), true, 0, 0, Focused ? FocusedBackgroudColor : BackgroudColor, PlaceHolderForegroundColor);
             }
@@ -111,7 +107,7 @@ namespace CLIForms.Components.Texts
             {
                 buffer.Clear(new ConsoleChar(this, ' ', true, Focused ? FocusedBackgroudColor : BackgroudColor, Focused ? FocusedForegroundColor : ForegroundColor));
 
-                string displayStr = (_text + new string(' ', _width)).Substring(_displayOffset,_width);
+                string displayStr = (_text + new string(' ', _width)).Substring(_displayOffset, _width);
 
                 buffer.DrawString(this, displayStr, true, 0, 0, Focused ? FocusedBackgroudColor : BackgroudColor,
                     Focused ? FocusedForegroundColor : ForegroundColor);
@@ -184,7 +180,6 @@ namespace CLIForms.Components.Texts
                     Dirty = true;
 
                     return true;
-                    break;
                 case ConsoleKey.End:
                     _cursorOffset = _text.Length;
                     _displayOffset = 0;
@@ -193,9 +188,32 @@ namespace CLIForms.Components.Texts
                         _displayOffset = _text.Length - Width + 1;
 
                     Dirty = true;
+                    return true;
+                case ConsoleKey.Backspace:
+                    if (_cursorOffset > 0)
+                    {
+                        _text = _text.Remove(_cursorOffset - 1, 1);
+
+                        _cursorOffset--;
+
+                        if (_cursorOffset < _displayOffset)
+                            _displayOffset = _cursorOffset;
+
+                        Dirty = true;
+                    }
 
                     return true;
-                    break;
+                case ConsoleKey.Delete:
+                    if (_cursorOffset < _text.Length)
+                    {
+                        _text = _text.Remove(_cursorOffset, 1);
+
+                        if (_cursorOffset < _displayOffset)
+                            _displayOffset = _cursorOffset;
+
+                        Dirty = true;
+                    }
+                    return true;
             }
 
             return false;
@@ -221,12 +239,12 @@ namespace CLIForms.Components.Texts
         public event FocusEventHandler FocusOut;
         public void FireFocusIn(ConsoleKeyInfo? key)
         {
-            
+
         }
 
         public void FireFocusOut(ConsoleKeyInfo? key)
         {
-            
+
         }
     }
 }

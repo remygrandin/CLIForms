@@ -31,13 +31,9 @@ namespace CLIForms.Components
             }
         }
 
-        public Button(Container parent, string text)
+        public Button(Container parent, string text) : base(parent)
         {
             _text = text;
-            Parent = parent;
-            parent.AddChild(this);
-
-
         }
 
         private int _width = 0;

@@ -206,43 +206,11 @@ namespace CLIForms
 
 
 
-
-                /*
-                if (ActiveWidget is IAcceptInput)
-                {
-                    ProcessKey = false;
-                    switch (k.Key)
-                    {
-                        case ConsoleKey.Tab:
-                            CycleFocus();
-                            break;
-                        default:
-                            ProcessKey = HandleWidgetInput(k);
-                            break;
-                    }
-                }
-                */
-
                 /*
                 if (ProcessKey)
                 {
                     switch (k.Key)
                     {
-                        case ConsoleKey.Tab:
-                            CycleFocus((k.Modifiers == ConsoleModifiers.Shift) ? -1 : 1);
-                            break;
-                        case ConsoleKey.RightArrow:
-                            MoveRight();
-                            break;
-                        case ConsoleKey.LeftArrow:
-                            MoveLeft();
-                            break;
-                        case ConsoleKey.UpArrow:
-                            MoveUp();
-                            break;
-                        case ConsoleKey.DownArrow:
-                            MoveDown();
-                            break;
                         case ConsoleKey.Spacebar:
                         case ConsoleKey.Enter:
                             EnterPressed();
@@ -258,7 +226,7 @@ namespace CLIForms
 
         private void MoveUp(ConsoleKeyInfo responsibleKey)
         {
-            IEnumerable<PositionedConsoleChar> positionnedChars = engineBuffer.dataPositioned.Where(item => item.Owner != null && item.Owner is IFocusable);
+            IEnumerable<PositionedConsoleChar> positionnedChars = engineBuffer.dataPositioned.Where(item => item.Focussable);
 
             int minYActive = positionnedChars.Where(item => item.Owner == FocusedObject).Min(item => item.Y);
 
@@ -322,7 +290,7 @@ namespace CLIForms
 
         private void MoveDown(ConsoleKeyInfo responsibleKey)
         {
-            IEnumerable<PositionedConsoleChar> positionnedChars = engineBuffer.dataPositioned.Where(item => item.Owner != null && item.Owner is IFocusable);
+            IEnumerable<PositionedConsoleChar> positionnedChars = engineBuffer.dataPositioned.Where(item => item.Focussable);
 
             int maxYActive = positionnedChars.Where(item => item.Owner == FocusedObject).Max(item => item.Y);
 
@@ -386,7 +354,7 @@ namespace CLIForms
 
         private void MoveLeft(ConsoleKeyInfo responsibleKey)
         {
-            IEnumerable<PositionedConsoleChar> positionnedChars = engineBuffer.dataPositioned.Where(item => item.Owner != null && item.Owner is IFocusable);
+            IEnumerable<PositionedConsoleChar> positionnedChars = engineBuffer.dataPositioned.Where(item => item.Focussable);
 
             int minXActive = positionnedChars.Where(item => item.Owner == FocusedObject).Min(item => item.X);
 
@@ -450,7 +418,7 @@ namespace CLIForms
 
         private void MoveRight(ConsoleKeyInfo responsibleKey)
         {
-            IEnumerable<PositionedConsoleChar> positionnedChars = engineBuffer.dataPositioned.Where(item => item.Owner != null && item.Owner is IFocusable);
+            IEnumerable<PositionedConsoleChar> positionnedChars = engineBuffer.dataPositioned.Where(item => item.Focussable);
 
             int maxXActive = positionnedChars.Where(item => item.Owner == FocusedObject).Max(item => item.X);
 

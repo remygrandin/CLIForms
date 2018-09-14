@@ -8,7 +8,7 @@ namespace CLIForms.Components.Containers
     {
         internal List<DisplayObject> Children = new List<DisplayObject>();
 
-        public Container(int width, int height)
+        public Container(Container parent, int width, int height) : base(parent)
         {
             _width = width;
             _height = height;
@@ -62,7 +62,11 @@ namespace CLIForms.Components.Containers
         public virtual void AddChild(DisplayObject child)
         {
             if (!Children.Contains(child))
+            {
                 Children.Add(child);
+                if(child.Parent != this)
+                    child.Parent = this;
+            }
 
             Dirty = true;
         }
@@ -70,7 +74,12 @@ namespace CLIForms.Components.Containers
         public virtual void RemoveChild(DisplayObject child)
         {
             if (Children.Contains(child))
+            {
                 Children.Remove(child);
+                if (child.Parent == this)
+                    child.Parent = null;
+            }
+
 
             Dirty = true;
         }

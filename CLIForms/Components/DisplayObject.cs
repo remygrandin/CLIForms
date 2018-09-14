@@ -5,6 +5,10 @@ namespace CLIForms.Components
 {
     public abstract class DisplayObject
     {
+        public DisplayObject(Container parent) {
+            Parent = parent;
+        }
+
         protected int _x;
 
         public int X
@@ -69,7 +73,7 @@ namespace CLIForms.Components
                     _parent?.RemoveChild(this);
 
                     _parent = value;
-                    _parent.AddChild(this);
+                    _parent?.AddChild(this);
                     Dirty = true;
                 }
             }

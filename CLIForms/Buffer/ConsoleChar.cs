@@ -29,6 +29,11 @@ namespace CLIForms.Buffer
             Foreground = foreground;
         }
 
+        public override string ToString()
+        {
+            return "C=" + Char.ToString() + ", F=" + Focussable.ToString() + ", O=" + Owner.ToString();
+        }
+
         public override bool Equals(Object obj)
         {
             return obj is ConsoleChar && this == (ConsoleChar)obj;

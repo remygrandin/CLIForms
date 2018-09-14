@@ -41,14 +41,10 @@ namespace CLIForms.Components.Texts
             }
         }
 
-        public Label(Container parent, string text = "", int? maxLength = null)
+        public Label(Container parent, string text = "", int? maxLength = null) : base(parent)
         {
             Text = text;
             MaxLength = maxLength;
-
-            Parent = parent;
-
-            parent.AddChild(this);
         }
 
 
