@@ -2,7 +2,9 @@
 using CLIForms;
 using CLIForms.Components;
 using CLIForms.Components.Containers;
+using CLIForms.Components.Drawing;
 using CLIForms.Components.Texts;
+using CLIForms.Widgets;
 
 namespace SampleCSharp
 {
@@ -67,6 +69,14 @@ namespace SampleCSharp
                 Y = 5
             };
             tabs.AddChild(simpleTextbox, "Forms");
+
+            // ==== Drawings Tab ====
+            Box box = new Box(null,10,20)
+            {
+                X = 1,
+                Y = 5
+            };
+            tabs.AddChild(box, "Drawings");
 
             engine.Start();
 

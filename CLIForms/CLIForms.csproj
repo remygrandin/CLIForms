@@ -74,7 +74,7 @@
     <Compile Include="old\Widgets\RadioButton.cs" />
     <Compile Include="old\Widgets\HorizontalProgressBar.cs" />
     <Compile Include="old\Widgets\RootWindow.cs" />
-    <Compile Include="Components\Drawing\Border - TODO.cs" />
+    <Compile Include="Components\Drawing\Box.cs" />
     <Compile Include="old\Widgets\SlideToggle.cs" />
     <Compile Include="old\Widgets\Spinner.cs" />
     <Compile Include="old\Widgets\HorizontalWaiter.cs" />
