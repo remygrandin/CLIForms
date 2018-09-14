@@ -2,7 +2,8 @@
 using CLIForms;
 using CLIForms.Components;
 using CLIForms.Components.Containers;
-using CLIForms.Components.Drawing;
+using CLIForms.Components.Drawings;
+using CLIForms.Components.Tables;
 using CLIForms.Components.Texts;
 using CLIForms.Styles;
 
@@ -31,7 +32,7 @@ namespace SampleCSharp
             
             */
 
-            Tabs tabs = new Tabs(screen,new []{"Texts", "Forms", "Drawings", "Spinners" }, 77, 28)
+            Tabs tabs = new Tabs(screen,new []{"Texts", "Forms", "Drawings", "Spinners", "Tables"}, 77, 28)
             {
                 X = 1,
                 Y = 1
@@ -88,6 +89,16 @@ namespace SampleCSharp
             HorizontalLine hline = new HorizontalLine(null, 15)
             {
                 X = 27,
+                Y = 1,
+                End1 = LineEndingStyle.T,
+                End2 = LineEndingStyle.Plus
+            };
+            tabs.AddChild(hline, "Drawings");
+
+            // ==== Tables Tab ====
+            SimpleTable table = new SimpleTable(null)
+            {
+                X = 1,
                 Y = 1,
                 End1 = LineEndingStyle.T,
                 End2 = LineEndingStyle.Plus

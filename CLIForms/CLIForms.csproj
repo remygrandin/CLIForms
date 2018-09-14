@@ -44,8 +44,11 @@
   <ItemGroup>
     <Compile Include="Components\Button.cs" />
     <Compile Include="Components\Containers\Tabs.cs" />
-    <Compile Include="Components\Drawing\HorizontalLine.cs" />
-    <Compile Include="Components\Drawing\VericalLine.cs" />
+    <Compile Include="Components\Drawings\HorizontalLine.cs" />
+    <Compile Include="Components\Drawings\VericalLine.cs" />
+    <Compile Include="Styles\AlignmentStyle.cs" />
+    <Compile Include="Components\Tables\SimpleTable.cs" />
+    <Compile Include="Styles\TableStyle.cs" />
     <Compile Include="Components\Texts\SingleLineTextbox.cs" />
     <Compile Include="Components\Texts\Label.cs" />
     <Compile Include="Interfaces\IAcceptGlobalInput.cs" />
@@ -67,7 +70,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Interfaces\IAcceptInput.cs" />
     <Compile Include="Interfaces\IFocusable.cs" />
-    <Compile Include="Components\Drawing\Box.cs" />
+    <Compile Include="Components\Drawings\Box.cs" />
     <Compile Include="Extentions\StringExtentions.cs" />
   </ItemGroup>
   <ItemGroup>

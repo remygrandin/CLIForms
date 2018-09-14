@@ -3,7 +3,7 @@ using CLIForms.Buffer;
 using CLIForms.Components.Containers;
 using CLIForms.Styles;
 
-namespace CLIForms.Components.Drawing
+namespace CLIForms.Components.Drawings
 {
     public class Box : DisplayObject
     {
