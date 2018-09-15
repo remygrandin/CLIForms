@@ -71,6 +71,14 @@ namespace SampleCSharp
             };
             tabs.AddChild(simpleTextbox, "Forms");
 
+            SingleLineTextbox simpleTextboxPwd = new SingleLineTextbox(null, "", "Password", width: 20)
+            {
+                X = 1,
+                Y = 7,
+                IsPassword = true
+            };
+            tabs.AddChild(simpleTextboxPwd, "Forms");
+
             // ==== Drawings Tab ====
             Box box = new Box(null,20,10)
             {

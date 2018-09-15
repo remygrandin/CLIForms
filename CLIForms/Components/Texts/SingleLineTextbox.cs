@@ -77,6 +77,34 @@ namespace CLIForms.Components.Texts
             }
         }
 
+        private bool _isPassword;
+        public bool IsPassword
+        {
+            get => _isPassword;
+            set
+            {
+                if (_isPassword != value)
+                {
+                    _isPassword = value;
+                    Dirty = true;
+                }
+            }
+        }
+
+        private char _passwordChar = '*';
+        public char PasswordChar
+        {
+            get => _passwordChar;
+            set
+            {
+                if (_passwordChar != value)
+                {
+                    _passwordChar = value;
+                    Dirty = true;
+                }
+            }
+        }
+
         public SingleLineTextbox(Container parent, string text = "", string placeHolderText = "", int? maxLength = null, int width = 10) : base(parent)
         {
             _text = text;
@@ -107,7 +135,16 @@ namespace CLIForms.Components.Texts
             {
                 buffer.Clear(new ConsoleChar(this, ' ', true, Focused ? FocusedBackgroudColor : BackgroudColor, Focused ? FocusedForegroundColor : ForegroundColor));
 
-                string displayStr = (_text + new string(' ', _width)).Substring(_displayOffset, _width);
+                string displayStr = "";
+
+                if (_isPassword)
+                {
+                    displayStr = (new string(PasswordChar, _text.Length) + new string(' ', _width)).Substring(_displayOffset, _width);
+                }
+                else
+                {
+                    displayStr = (_text + new string(' ', _width)).Substring(_displayOffset, _width);
+                }
 
                 buffer.DrawString(this, displayStr, true, 0, 0, Focused ? FocusedBackgroudColor : BackgroudColor,
                     Focused ? FocusedForegroundColor : ForegroundColor);
