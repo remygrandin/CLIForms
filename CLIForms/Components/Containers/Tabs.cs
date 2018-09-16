@@ -97,7 +97,7 @@ namespace CLIForms.Components.Containers
         public int FocusedTab
         {
             get => _focusedTab;
-            internal set
+            set
             {
                 if (_focusedTab != value)
                 {
@@ -164,7 +164,9 @@ namespace CLIForms.Components.Containers
 
             ConsoleCharBuffer baseBuffer = RenderContainer();
 
-            ConsoleCharBuffer componentsBuffer = new ConsoleCharBuffer(Width - 2, Height - 2);
+            List<List<Tuple<int, string>>> subPools = OrderTabForDisplay();
+
+            ConsoleCharBuffer componentsBuffer = new ConsoleCharBuffer(Width - 2, Height - subPools.Count * 2 - 2);
 
             if (_activeTab != null)
             {
@@ -175,7 +177,7 @@ namespace CLIForms.Components.Containers
 
             }
 
-            List<List<Tuple<int, string>>> subPools = OrderTabForDisplay();
+            
 
             baseBuffer.Merge(componentsBuffer, 1, subPools.Count * 2 + 1);
 
@@ -276,8 +278,7 @@ namespace CLIForms.Components.Containers
 
             // Edge case : tabs make full length
             if (subPools.Last().Sum(item => item.Item2.Length) + subPools.Last().Count + 2 == Width)
-                buffer.data[subPools.Last().Sum(item => item.Item2.Length) + subPools.Last().Count + 2, subPools.Count * 2]
-                    .Char = DrawingHelper.GetLeftTJunctionBorder(Border)[0];
+                buffer.data[subPools.Last().Sum(item => item.Item2.Length) + subPools.Last().Count + 2, subPools.Count * 2].Char = DrawingHelper.GetLeftTJunctionBorder(Border)[0];
 
             return buffer;
         }

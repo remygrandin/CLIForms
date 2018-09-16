@@ -126,12 +126,12 @@ namespace CLIForms.Buffer
             for (int x = 0; x < xDimSlave; x++)
             {
                 int transposedX = x + slaveBuffer.xOffset + xOffset;
-                if (transposedX >= 0 && transposedX < xDimMaster - 1)
+                if (transposedX >= 0 && transposedX < xDimMaster)
                 {
                     for (int y = 0; y < yDimSlave; y++)
                     {
                         int transposedY = y + slaveBuffer.yOffset + yOffset;
-                        if (transposedY >= 0 && transposedY < yDimMaster - 1)
+                        if (transposedY >= 0 && transposedY < yDimMaster)
                         {
                             if (this.data[transposedX, transposedY] == null)
                                 this.data[transposedX, transposedY] = slaveBuffer.data[x, y];

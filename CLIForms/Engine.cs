@@ -5,6 +5,7 @@ using System.Timers;
 using CLIForms.Buffer;
 using CLIForms.Components;
 using CLIForms.Components.Containers;
+using CLIForms.Components.Globals;
 using CLIForms.Extentions;
 using CLIForms.Interfaces;
 
@@ -81,7 +82,7 @@ namespace CLIForms
 
         public bool Draw = true;
 
-        private Timer DebounceDirty = new Timer(100);
+        private Timer DebounceDirty = new Timer(10);
 
         public void SignalDirty(Screen screen)
         {
@@ -131,7 +132,7 @@ namespace CLIForms
                             .OrderBy(item => item.DisplayY).ThenBy(item => item.DisplayX).First(), null);
                 }
 
-
+                Console.SetWindowPosition(0, 0);
                 Console.SetCursorPosition(0, 0);
             }
         }

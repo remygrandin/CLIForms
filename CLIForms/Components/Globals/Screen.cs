@@ -1,7 +1,8 @@
 ﻿using System;
 using CLIForms.Buffer;
+using CLIForms.Components.Containers;
 
-namespace CLIForms.Components.Containers
+namespace CLIForms.Components.Globals
 {
     public class Screen : Container
     {
@@ -25,8 +26,9 @@ namespace CLIForms.Components.Containers
             get => base.Dirty;
             set
             {
-                Engine.Instance.SignalDirty(this);
                 base.Dirty = value;
+                Engine.Instance.SignalDirty(this);
+                
 
             }
         }

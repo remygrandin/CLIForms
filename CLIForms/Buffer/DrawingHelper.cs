@@ -91,30 +91,30 @@ namespace CLIForms.Buffer
             return buffer;
         }
 
-        internal static ConsoleCharBuffer DrawBlockFull(ConsoleCharBuffer buffer, DisplayObject owner, bool focussable, int x, int y, int w, int h, ConsoleColor? backgroundColor, ConsoleColor foregroundColor, BorderStyle style, ShadowStyle shadow)
+        internal static ConsoleCharBuffer DrawBlockFull(ConsoleCharBuffer buffer, DisplayObject owner, bool focusable, int x, int y, int w, int h, ConsoleColor? backgroundColor, ConsoleColor foregroundColor, BorderStyle style, ShadowStyle shadow)
         {
             // Border
             buffer.DrawString(owner, GetTopLeftCornerBorder(style) +
                               new string(GetHorizontalBorder(style)[0], w - 2) +
-                              GetTopRightCornerBorder(style), focussable, x, y, backgroundColor, foregroundColor);
+                              GetTopRightCornerBorder(style), focusable, x, y, backgroundColor, foregroundColor);
 
             for (int i = y + 1; i < y + h - 1; i++)
             {
-                buffer.DrawString(owner, GetVerticalBorder(style) + new string(' ', w - 2) + GetVerticalBorder(style), focussable, x, i, backgroundColor, foregroundColor);
+                buffer.DrawString(owner, GetVerticalBorder(style) + new string(' ', w - 2) + GetVerticalBorder(style), focusable, x, i, backgroundColor, foregroundColor);
             }
 
             buffer.DrawString(owner, GetBottomLeftCornerBorder(style) +
                               new string(GetHorizontalBorder(style)[0], w - 2) +
-                              GetBottomRightCornerBorder(style), focussable, x, y + h - 1, backgroundColor, foregroundColor);
+                              GetBottomRightCornerBorder(style), focusable, x, y + h - 1, backgroundColor, foregroundColor);
 
             if (shadow != ShadowStyle.None)
             {
                 for (int i = y + 1; i < y + h ; i++)
                 {
-                    buffer.DrawString(owner, GetShadow(shadow), focussable, x + w, i, null, foregroundColor);
+                    buffer.DrawString(owner, GetShadow(shadow), focusable, x + w, i, null, foregroundColor);
                 }
 
-                buffer.DrawString(owner, new string(GetShadow(shadow)[0], w), focussable, x + 1, y + h, null, foregroundColor);
+                buffer.DrawString(owner, new string(GetShadow(shadow)[0], w), focusable, x + 1, y + h, null, foregroundColor);
 
             }
 

@@ -46,6 +46,8 @@
     <Compile Include="Components\Containers\Tabs.cs" />
     <Compile Include="Components\Drawings\HorizontalLine.cs" />
     <Compile Include="Components\Drawings\VericalLine.cs" />
+    <Compile Include="Components\Globals\StatusBar.cs" />
+    <Compile Include="Components\Spinners\TinySpinner.cs" />
     <Compile Include="Styles\AlignmentStyle.cs" />
     <Compile Include="Components\Tables\SimpleTable.cs" />
     <Compile Include="Styles\TableStyle.cs" />
@@ -57,13 +59,12 @@
     <Compile Include="Styles\ShadowStyle.cs" />
     <Compile Include="Styles\BorderStyle.cs" />
     <Compile Include="Components\Containers\Dialog.cs" />
-    <Compile Include="Components\Containers\Screen.cs" />
+    <Compile Include="Components\Globals\Screen.cs" />
     <Compile Include="Buffer\DrawingHelper.cs" />
     <Compile Include="Extentions\LinqExtentions.cs" />
     <Compile Include="Buffer\PositionedConsoleChar.cs" />
     <Compile Include="Buffer\ConsoleChar.cs" />
     <Compile Include="Buffer\ConsoleCharBuffer.cs" />
-    <Compile Include="Buffer\ConsoleHelper.cs" />
     <Compile Include="Components\Containers\Container.cs" />
     <Compile Include="Components\DisplayObject.cs" />
     <Compile Include="Engine.cs" />

@@ -3,6 +3,8 @@ using CLIForms;
 using CLIForms.Components;
 using CLIForms.Components.Containers;
 using CLIForms.Components.Drawings;
+using CLIForms.Components.Globals;
+using CLIForms.Components.Spinners;
 using CLIForms.Components.Tables;
 using CLIForms.Components.Texts;
 using CLIForms.Styles;
@@ -32,10 +34,17 @@ namespace SampleCSharp
             
             */
 
-            Tabs tabs = new Tabs(screen,new []{"Texts", "Forms", "Drawings", "Spinners", "Tables"}, 77, 28)
+            Tabs tabs = new Tabs(screen,new []{"Texts", "Forms", "Drawings", "Spinners", "Tables"}, 77, 27)
             {
                 X = 1,
                 Y = 1
+            };
+
+            StatusBar statusBar = new StatusBar(screen)
+            {
+                TextLeft = "Left Text",
+                TextCenter = "Status Bar",
+                TextRight = "Right Text"
             };
 
             // ==== Texts Tab ====
@@ -103,6 +112,14 @@ namespace SampleCSharp
             };
             tabs.AddChild(hline, "Drawings");
 
+            // ==== Spinner Tab ====
+            TinySpinner tinySpinner = new TinySpinner(null)
+            {
+                X = 1,
+                Y = 1
+            };
+            tabs.AddChild(tinySpinner, "Spinners");
+
             // ==== Tables Tab ====
             SimpleTable table = new SimpleTable(null)
             {
@@ -112,8 +129,9 @@ namespace SampleCSharp
                 LineCount = 4,
                 ColumnsWidth = new []{4,15,15,5,15},
                 ColumnsAlignments = new []{AlignmentStyle.Right, AlignmentStyle.Left, AlignmentStyle.Left, AlignmentStyle.Right, AlignmentStyle.Left},
-                TableStyle = TableStyle.Compact
+                TableStyle = TableStyle.CompactWithHeaderNoExtBorder
             };
+
             table[0, 0] = "ID";
             table[1, 0] = "Name";
             table[2, 0] = "Surname";
@@ -139,6 +157,8 @@ namespace SampleCSharp
             table[4, 3] = "JacksonVille";
 
             tabs.AddChild(table, "Tables");
+
+            tabs.ActiveTab = 4;
 
             engine.Start();
 
