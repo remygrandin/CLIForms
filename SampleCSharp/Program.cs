@@ -108,10 +108,37 @@ namespace SampleCSharp
             {
                 X = 1,
                 Y = 1,
-                End1 = LineEndingStyle.T,
-                End2 = LineEndingStyle.Plus
+                ColumnCount = 5,
+                LineCount = 4,
+                ColumnsWidth = new []{4,15,15,5,15},
+                ColumnsAlignments = new []{AlignmentStyle.Right, AlignmentStyle.Left, AlignmentStyle.Left, AlignmentStyle.Right, AlignmentStyle.Left},
+                TableStyle = TableStyle.Compact
             };
-            tabs.AddChild(hline, "Drawings");
+            table[0, 0] = "ID";
+            table[1, 0] = "Name";
+            table[2, 0] = "Surname";
+            table[3, 0] = "Age";
+            table[4, 0] = "Town";
+
+            table[0, 1] = "1";
+            table[1, 1] = "John";
+            table[2, 1] = "Doe";
+            table[3, 1] = "25";
+            table[4, 1] = "Paris";
+
+            table[0, 2] = "2";
+            table[1, 2] = "Mickel";
+            table[2, 2] = "Mercy";
+            table[3, 2] = "30";
+            table[4, 2] = "Luxembourg";
+
+            table[0, 3] = "3";
+            table[1, 3] = "Albert";
+            table[2, 3] = "Wood";
+            table[3, 3] = "18";
+            table[4, 3] = "JacksonVille";
+
+            tabs.AddChild(table, "Tables");
 
             engine.Start();
 

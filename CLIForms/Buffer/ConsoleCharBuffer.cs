@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using CLIForms.Components;
 using CLIForms.Extentions;
 
@@ -12,7 +13,7 @@ namespace CLIForms.Buffer
 
         public IEnumerable<PositionedConsoleChar> dataPositioned
         {
-            
+
             get
             {
                 List<PositionedConsoleChar> chars = new List<PositionedConsoleChar>();
@@ -23,11 +24,36 @@ namespace CLIForms.Buffer
                 {
                     for (int y = 0; y < yDim; y++)
                     {
-                        chars.Add(new PositionedConsoleChar(data[x,y], x, y));
+                        chars.Add(new PositionedConsoleChar(data[x, y], x, y));
                     }
                 }
 
                 return chars;
+            }
+        }
+
+        public string StringRender
+        {
+            get
+            {
+                StringBuilder sb = new StringBuilder();
+                int xDim = data.GetLength(0);
+                int yDim = data.GetLength(1);
+
+                for (int y = 0; y < yDim; y++)
+                {
+                    for (int x = 0; x < xDim; x++)
+                    {
+
+                        if (data[x, y] == null)
+                            sb.Append(" ");
+                        else
+                            sb.Append(data[x, y].Char);
+                    }
+                    sb.Append("\r\n");
+                }
+
+                return sb.ToString();
             }
         }
 
@@ -72,7 +98,7 @@ namespace CLIForms.Buffer
                     int xPos = x + i;
                     if (xPos >= 0 && xPos < xDim)
                     {
-                        if(data[xPos, y] == null)
+                        if (data[xPos, y] == null)
                             data[xPos, y] = new ConsoleChar(owner, str[i], focussable, backgroundColor, foregroundColor);
                         else
                             data[xPos, y] = data[xPos, y].Merge(new ConsoleChar(owner, str[i], focussable, backgroundColor, foregroundColor));
@@ -107,7 +133,7 @@ namespace CLIForms.Buffer
                         int transposedY = y + slaveBuffer.yOffset + yOffset;
                         if (transposedY >= 0 && transposedY < yDimMaster - 1)
                         {
-                            if(this.data[transposedX, transposedY] == null)
+                            if (this.data[transposedX, transposedY] == null)
                                 this.data[transposedX, transposedY] = slaveBuffer.data[x, y];
                             else
                                 this.data[transposedX, transposedY] = this.data[transposedX, transposedY].Merge(slaveBuffer.data[x, y]);

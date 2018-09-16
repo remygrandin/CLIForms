@@ -44,10 +44,7 @@ namespace CLIForms.Components.Tables
 
         public int ColumnCount
         {
-            get
-            {
-                return _columnCount;
-            }
+            get => _columnCount;
             set
             {
                 if (value < 0)
@@ -63,10 +60,7 @@ namespace CLIForms.Components.Tables
 
         public int LineCount
         {
-            get
-            {
-                return _lineCount;
-            }
+            get => _lineCount;
             set
             {
                 if (value < 0)
@@ -104,7 +98,7 @@ namespace CLIForms.Components.Tables
             }
             else if (_columnsAlignments.Length < _columnCount)
             {
-                ColumnAlignment[] newAlignments = Enumerable.Repeat(ColumnAlignment.Left, _columnCount).ToArray();
+                AlignmentStyle[] newAlignments = Enumerable.Repeat(AlignmentStyle.Left, _columnCount).ToArray();
 
                 Array.Copy(_columnsAlignments, newAlignments, _columnsAlignments.Length);
 
@@ -176,15 +170,17 @@ namespace CLIForms.Components.Tables
         }
 
 
-        public override void Render()
+        public override ConsoleCharBuffer Render()
         {
+            ConsoleCharBuffer buffer = null;
+
             switch (_tableStyle)
             {
                 case TableStyle.Full:
-                    RenderFull();
+                    buffer = RenderFull();
                     break;
                 case TableStyle.Compact:
-                    RenderCompact();
+                    buffer = RenderCompact();
                     break;
                 case TableStyle.CompactWithHeader:
                     RenderCompactWithHeader();
@@ -199,6 +195,8 @@ namespace CLIForms.Components.Tables
                     RenderCompactWithHeaderNoExtBorder();
                     break;
             }
+
+            return buffer;
         }
 
         private string RenderCell(string cellData, int cellSize, AlignmentStyle alignment)
@@ -234,10 +232,15 @@ namespace CLIForms.Components.Tables
 
             baseBuffer.DrawString(this, DrawingHelper.GetTopLeftCornerBorder(Border), false, 0, 0, BorderBackgroundColor, BorderForegroundColor);
 
+            int xOffset = 1;
+
             for (int i = 0; i < ColumnCount; i++)
             {
-                baseBuffer.DrawString(this, new String(DrawingHelper.GetHorizontalBorder(Border)[0],ColumnsWidth[i]), false, 0, 0, CellBackgroundColor, CellForegroundColor);
-                baseBuffer.DrawString(this, DrawingHelper.GetBottomTJunctionBorder(Border), false, 0, 0, BorderBackgroundColor, BorderForegroundColor);
+                baseBuffer.DrawString(this, new String(DrawingHelper.GetHorizontalBorder(Border)[0],ColumnsWidth[i]), false, xOffset, 0, BorderBackgroundColor, BorderForegroundColor);
+                xOffset += ColumnsWidth[i];
+
+                baseBuffer.DrawString(this, DrawingHelper.GetBottomTJunctionBorder(Border), false, xOffset, 0, BorderBackgroundColor, BorderForegroundColor);
+                xOffset += 1;
             }
 
             baseBuffer.DrawString(this, DrawingHelper.GetTopRightCornerBorder(Border), false, fullWidth - 1, 0, BorderBackgroundColor, BorderForegroundColor);
@@ -247,41 +250,112 @@ namespace CLIForms.Components.Tables
                 int yOffset = i * 2 + 1;
 
                 baseBuffer.DrawString(this, DrawingHelper.GetVerticalBorder(Border), false, 0, yOffset, BorderBackgroundColor, BorderForegroundColor);
-                baseBuffer.DrawString(this, DrawingHelper.GetHorizontalBorder(Border), false, 0, yOffset + 1, BorderBackgroundColor, BorderForegroundColor);
+                baseBuffer.DrawString(this, DrawingHelper.GetRightTJunctionBorder(Border), false, 0, yOffset + 1, BorderBackgroundColor, BorderForegroundColor);
 
-                int xOffset = 1;
+                xOffset = 1;
 
                 for (int j = 0; j < ColumnCount; j++)
                 {
-                    baseBuffer.DrawString(this, RenderCell(data[i,j], ColumnsWidth[j],ColumnsAlignments[j]), false, xOffset, yOffset, BorderBackgroundColor, BorderForegroundColor);
-                    baseBuffer.DrawString(this, new String(DrawingHelper.GetHorizontalBorder(Border)[0], ColumnsWidth[i]), false, xOffset, yOffset + 1, CellBackgroundColor, CellForegroundColor);
+                    baseBuffer.DrawString(this, RenderCell(data[j,i], ColumnsWidth[j],ColumnsAlignments[j]), false, xOffset, yOffset, CellBackgroundColor, CellForegroundColor);
+                    baseBuffer.DrawString(this, new String(DrawingHelper.GetHorizontalBorder(Border)[0], ColumnsWidth[j]), false, xOffset, yOffset + 1, BorderBackgroundColor, BorderForegroundColor);
 
+                    xOffset += ColumnsWidth[j];
 
-                    baseBuffer.DrawString(this, DrawingHelper.GetBottomTJunctionBorder(Border), false, xOffset, yOffset, BorderBackgroundColor, BorderForegroundColor);
-                    baseBuffer.DrawString(this, DrawingHelper.GetBottomTJunctionBorder(Border), false, xOffset, yOffset + 1, BorderBackgroundColor, BorderForegroundColor);
+                    baseBuffer.DrawString(this, DrawingHelper.GetVerticalBorder(Border), false, xOffset, yOffset, BorderBackgroundColor, BorderForegroundColor);
+                    baseBuffer.DrawString(this, DrawingHelper.GetCrossJunctionBorder(Border), false, xOffset, yOffset + 1, BorderBackgroundColor, BorderForegroundColor);
 
-                    xOffset += data[i, j].Length + 1;
+                    xOffset += 1;
                 }
+
+
+                baseBuffer.DrawString(this, DrawingHelper.GetLeftTJunctionBorder(Border), false, fullWidth - 1, yOffset + 1, BorderBackgroundColor, BorderForegroundColor);
             }
 
             // bottom border
 
-            baseBuffer.DrawString(this, DrawingHelper.GetTopLeftCornerBorder(Border), false, 0, LineCount * 2 + 1, BorderBackgroundColor, BorderForegroundColor);
+            baseBuffer.DrawString(this, DrawingHelper.GetBottomLeftCornerBorder(Border), false, 0, LineCount * 2, BorderBackgroundColor, BorderForegroundColor);
+
+            xOffset = 1;
 
             for (int i = 0; i < ColumnCount; i++)
             {
-                baseBuffer.DrawString(this, new String(DrawingHelper.GetHorizontalBorder(Border)[0], ColumnsWidth[i]), false, 0, LineCount * 2 + 1, CellBackgroundColor, CellForegroundColor);
-                baseBuffer.DrawString(this, DrawingHelper.GetBottomTJunctionBorder(Border), false, 0, LineCount * 2 + 1, BorderBackgroundColor, BorderForegroundColor);
+                baseBuffer.DrawString(this, new String(DrawingHelper.GetHorizontalBorder(Border)[0], ColumnsWidth[i]), false, xOffset, LineCount * 2 , BorderBackgroundColor, BorderForegroundColor);
+                xOffset += ColumnsWidth[i];
+                baseBuffer.DrawString(this, DrawingHelper.GetTopTJunctionBorder(Border), false, xOffset, LineCount * 2 , BorderBackgroundColor, BorderForegroundColor);
+                xOffset += 1;
             }
 
-            baseBuffer.DrawString(this, DrawingHelper.GetTopRightCornerBorder(Border), false, 0, LineCount * 2 + 1, BorderBackgroundColor, BorderForegroundColor);
+            baseBuffer.DrawString(this, DrawingHelper.GetBottomRightCornerBorder(Border), false, fullWidth - 1, LineCount * 2, BorderBackgroundColor, BorderForegroundColor);
 
             return baseBuffer;
         }
 
-        private void RenderCompact()
+        private ConsoleCharBuffer RenderCompact()
         {
-            
+            int fullWidth = _columnsWidth.Sum() + (_columnCount - 1) + 2;
+            int fullHeight = LineCount + 2;
+
+            ConsoleCharBuffer baseBuffer = new ConsoleCharBuffer(fullWidth, fullHeight);
+
+            // top border
+
+            baseBuffer.DrawString(this, DrawingHelper.GetTopLeftCornerBorder(Border), false, 0, 0, BorderBackgroundColor, BorderForegroundColor);
+
+            int xOffset = 1;
+
+            for (int i = 0; i < ColumnCount; i++)
+            {
+                baseBuffer.DrawString(this, new String(DrawingHelper.GetHorizontalBorder(Border)[0], ColumnsWidth[i]), false, xOffset, 0, BorderBackgroundColor, BorderForegroundColor);
+                xOffset += ColumnsWidth[i];
+
+                baseBuffer.DrawString(this, DrawingHelper.GetBottomTJunctionBorder(Border), false, xOffset, 0, BorderBackgroundColor, BorderForegroundColor);
+                xOffset += 1;
+            }
+
+            baseBuffer.DrawString(this, DrawingHelper.GetTopRightCornerBorder(Border), false, fullWidth - 1, 0, BorderBackgroundColor, BorderForegroundColor);
+
+            for (int i = 0; i < LineCount; i++)
+            {
+                int yOffset = i + 1;
+
+                baseBuffer.DrawString(this, DrawingHelper.GetVerticalBorder(Border), false, 0, yOffset, BorderBackgroundColor, BorderForegroundColor);
+
+                xOffset = 1;
+
+                for (int j = 0; j < ColumnCount; j++)
+                {
+                    baseBuffer.DrawString(this, RenderCell(data[j, i], ColumnsWidth[j], ColumnsAlignments[j]), false, xOffset, yOffset, CellBackgroundColor, CellForegroundColor);
+                    
+
+                    xOffset += ColumnsWidth[j];
+
+                    baseBuffer.DrawString(this, DrawingHelper.GetVerticalBorder(Border), false, xOffset, yOffset, BorderBackgroundColor, BorderForegroundColor);
+                    
+
+                    xOffset += 1;
+                }
+
+
+                baseBuffer.DrawString(this, DrawingHelper.GetLeftTJunctionBorder(Border), false, fullWidth - 1, yOffset + 1, BorderBackgroundColor, BorderForegroundColor);
+            }
+
+            // bottom border
+
+            baseBuffer.DrawString(this, DrawingHelper.GetBottomLeftCornerBorder(Border), false, 0, LineCount + 1, BorderBackgroundColor, BorderForegroundColor);
+
+            xOffset = 1;
+
+            for (int i = 0; i < ColumnCount; i++)
+            {
+                baseBuffer.DrawString(this, new String(DrawingHelper.GetHorizontalBorder(Border)[0], ColumnsWidth[i]), false, xOffset, LineCount + 1, BorderBackgroundColor, BorderForegroundColor);
+                xOffset += ColumnsWidth[i];
+                baseBuffer.DrawString(this, DrawingHelper.GetTopTJunctionBorder(Border), false, xOffset, LineCount + 1, BorderBackgroundColor, BorderForegroundColor);
+                xOffset += 1;
+            }
+
+            baseBuffer.DrawString(this, DrawingHelper.GetBottomRightCornerBorder(Border), false, fullWidth - 1, LineCount + 1, BorderBackgroundColor, BorderForegroundColor);
+
+            return baseBuffer;
 
         }
 
