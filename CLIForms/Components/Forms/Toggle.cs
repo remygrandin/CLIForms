@@ -1,26 +1,23 @@
 ﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.Linq;
 using CLIForms.Buffer;
 using CLIForms.Components.Containers;
 using CLIForms.Interfaces;
 
 namespace CLIForms.Components.Forms
 {
-    public class Radio : DisplayObject, IFocusable, IAcceptInput
+    public class Toggle : DisplayObject, IFocusable, IAcceptInput
     {
         public ConsoleColor? LabelBackgroudColor = null;
         public ConsoleColor LabelForegroundColor = ConsoleColor.White;
 
+        public ConsoleColor CursorForegroundColor = ConsoleColor.White;
+        public ConsoleColor ActiveAreaForegroundColor = ConsoleColor.Green;
+        public ConsoleColor InactiveAreaForegroundColor = ConsoleColor.Red;
+
+
         public ConsoleColor? BackgroudColor = null;
-        public ConsoleColor ForegroundColor = ConsoleColor.Black;
-
         public ConsoleColor? BackgroudColorFocused = ConsoleColor.White;
-        public ConsoleColor ForegroundColorFocused = ConsoleColor.Black;
-
-        public ConsoleColor? BackgroudColorChecked = ConsoleColor.Green;
-        public ConsoleColor ForegroundColorChecked = ConsoleColor.Black;
+        public ConsoleColor CursorForegroundColorFocused = ConsoleColor.Black;
 
         private string _label;
         public string Label
@@ -36,20 +33,6 @@ namespace CLIForms.Components.Forms
             }
         }
 
-        private string _radioGroup = "";
-        public string RadioGroup
-        {
-            get { return _radioGroup; }
-            set
-            {
-                if (_radioGroup != value)
-                {
-                    _radioGroup = value;
-                    Dirty = true;
-                }
-            }
-        }
-
         private bool _isChecked;
         public bool IsChecked
         {
@@ -59,26 +42,15 @@ namespace CLIForms.Components.Forms
                 if (_isChecked != value)
                 {
                     _isChecked = value;
-                    if (_isChecked)
-                    {
-                        IEnumerable<Radio> siblings = Parent?.GetSiblings(this).Where(item => item != this && item is Radio radio && radio.RadioGroup == this.RadioGroup).Cast<Radio>();
-                        if (siblings != null)
-                            foreach (Radio sibling in siblings)
-                            {
-                                sibling.IsChecked = false;
-                            }
-                    }
-
                     Dirty = true;
                 }
             }
         }
 
-        public Radio(Container parent, string label, string radioGroup = "", bool isChecked = false) : base(parent)
+        public Toggle(Container parent, string label, bool isChecked = false) : base(parent)
         {
             _label = label;
-            _radioGroup = radioGroup;
-            IsChecked = isChecked;
+            _isChecked = isChecked;
         }
 
 
@@ -91,12 +63,19 @@ namespace CLIForms.Components.Forms
             ConsoleCharBuffer buffer = new ConsoleCharBuffer(Label.Length + 4, 1);
 
             if (_isChecked)
-                buffer.DrawString(this, "(O)", true, 0, 0, _focused ? BackgroudColorFocused : BackgroudColorChecked, _focused ? ForegroundColorFocused : ForegroundColorChecked);
+            {
+                buffer.data[0, 0] = new ConsoleChar(this, '■', true, _focused ? BackgroudColorFocused : BackgroudColor, ActiveAreaForegroundColor);
+                buffer.data[1, 0] = new ConsoleChar(this, '■', true, _focused ? BackgroudColorFocused : BackgroudColor, ActiveAreaForegroundColor);
+                buffer.data[2, 0] = new ConsoleChar(this, '■', true, _focused ? BackgroudColorFocused : BackgroudColor, _focused ? CursorForegroundColorFocused : CursorForegroundColor);
+            }
             else
-                buffer.DrawString(this, "( )", true, 0, 0, _focused ? BackgroudColorFocused : BackgroudColor, _focused ? ForegroundColorFocused : ForegroundColor);
+            {
+                buffer.data[0, 0] = new ConsoleChar(this, '■', true, _focused ? BackgroudColorFocused : BackgroudColor, _focused ? CursorForegroundColorFocused : CursorForegroundColor);
+                buffer.data[1, 0] = new ConsoleChar(this, '■', true, _focused ? BackgroudColorFocused : BackgroudColor, InactiveAreaForegroundColor);
+                buffer.data[2, 0] = new ConsoleChar(this, '■', true, _focused ? BackgroudColorFocused : BackgroudColor, InactiveAreaForegroundColor);
+            }
 
-
-            buffer.DrawString(this, _label, false, 4, 0, LabelBackgroudColor, LabelForegroundColor);
+            buffer.DrawString(this, _label, true, 4, 0, LabelBackgroudColor, LabelForegroundColor);
 
             _dirty = false;
 

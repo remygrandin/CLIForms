@@ -97,6 +97,13 @@ namespace SampleCSharp
             };
             tabs.AddChild(radio2, "Forms");
 
+            Toggle toggle = new Toggle(null, "toggle")
+            {
+                X = 1,
+                Y = 16
+            };
+            tabs.AddChild(toggle, "Forms");
+
             // ==== Drawings Tab ====
             Box box = new Box(null,20,10)
             {

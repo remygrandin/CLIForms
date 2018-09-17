@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\Forms\Toggle.cs" />
     <Compile Include="Components\Forms\Radio.cs" />
     <Compile Include="Components\Forms\Checkbox.cs" />
     <Compile Include="Components\Forms\Button.cs" />

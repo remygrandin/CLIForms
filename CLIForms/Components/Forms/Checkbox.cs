@@ -69,7 +69,7 @@ namespace CLIForms.Components.Forms
                 buffer.DrawString(this, "[ ]", true, 0, 0, _focused ? BackgroudColorFocused : BackgroudColor, _focused ? ForegroundColorFocused : ForegroundColor);
 
 
-            buffer.DrawString(this, _label, true, 4, 0, LabelBackgroudColor, LabelForegroundColor);
+            buffer.DrawString(this, _label, false, 4, 0, LabelBackgroudColor, LabelForegroundColor);
 
             _dirty = false;
 
