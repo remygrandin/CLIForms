@@ -129,6 +129,13 @@ namespace SampleCSharp
             };
             tabs.AddChild(tinySpinner, "Spinners");
 
+            Spinner spinner = new Spinner(null)
+            {
+                X = 4,
+                Y = 1
+            };
+            tabs.AddChild(spinner, "Spinners");
+
             // ==== Tables Tab ====
             SimpleTable table = new SimpleTable(null)
             {

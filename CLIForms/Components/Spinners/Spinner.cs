@@ -5,12 +5,12 @@ using CLIForms.Components.Containers;
 
 namespace CLIForms.Components.Spinners
 {
-    public class TinySpinner : DisplayObject
+    public class Spinner : DisplayObject
     {
         public ConsoleColor? BackgroundColor = null;
         public ConsoleColor ForegroundColor = ConsoleColor.Black;
 
-        private string _states = @"|/-\";
+        private string _states = @"    ░▒▓█";
         public string States
         {
             get => _states;
@@ -56,7 +56,7 @@ namespace CLIForms.Components.Spinners
             }
         }
 
-        public TinySpinner(Container parent) : base(parent)
+        public Spinner(Container parent) : base(parent)
         {
             timer.Elapsed += Timer_Elapsed;
             timer.Interval = 100;
@@ -75,16 +75,23 @@ namespace CLIForms.Components.Spinners
             Dirty = true;
         }
 
-
-
         public override ConsoleCharBuffer Render()
         {
             if (!_dirty && displayBuffer != null)
                 return displayBuffer;
 
-            ConsoleCharBuffer baseBuffer = new ConsoleCharBuffer(1, 1);
+            ConsoleCharBuffer baseBuffer = new ConsoleCharBuffer(3, 3);
 
-            baseBuffer.data[0,0] = new ConsoleChar(this, _states[statePos],false,BackgroundColor, ForegroundColor);
+            string drawStr = _states.Substring(statePos) + _states.Substring(0, statePos);
+
+            baseBuffer.data[0, 0] = new ConsoleChar(this, drawStr[7], false, BackgroundColor, ForegroundColor);
+            baseBuffer.data[1, 0] = new ConsoleChar(this, drawStr[6], false, BackgroundColor, ForegroundColor);
+            baseBuffer.data[2, 0] = new ConsoleChar(this, drawStr[5], false, BackgroundColor, ForegroundColor);
+            baseBuffer.data[2, 1] = new ConsoleChar(this, drawStr[4], false, BackgroundColor, ForegroundColor);
+            baseBuffer.data[2, 2] = new ConsoleChar(this, drawStr[3], false, BackgroundColor, ForegroundColor);
+            baseBuffer.data[1, 2] = new ConsoleChar(this, drawStr[2], false, BackgroundColor, ForegroundColor);
+            baseBuffer.data[0, 2] = new ConsoleChar(this, drawStr[1], false, BackgroundColor, ForegroundColor);
+            baseBuffer.data[0, 1] = new ConsoleChar(this, drawStr[0], false, BackgroundColor, ForegroundColor);
 
             _dirty = false;
 

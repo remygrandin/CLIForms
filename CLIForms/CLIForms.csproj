@@ -49,6 +49,7 @@
     <Compile Include="Components\Drawings\HorizontalLine.cs" />
     <Compile Include="Components\Drawings\VericalLine.cs" />
     <Compile Include="Components\Globals\StatusBar.cs" />
+    <Compile Include="Components\Spinners\Spinner.cs" />
     <Compile Include="Components\Spinners\TinySpinner.cs" />
     <Compile Include="Styles\AlignmentStyle.cs" />
     <Compile Include="Components\Tables\SimpleTable.cs" />
