@@ -4,7 +4,6 @@ using System.Text;
 using CLIForms.Buffer;
 using CLIForms.Components.Containers;
 using CLIForms.Extentions;
-using CLIForms.Styles;
 
 namespace CLIForms.Components.Globals
 {

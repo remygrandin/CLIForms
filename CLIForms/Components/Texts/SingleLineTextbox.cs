@@ -160,7 +160,7 @@ namespace CLIForms.Components.Texts
             return buffer;
         }
 
-        public bool FireKeypress(ConsoleKeyInfo key)
+        public bool KeyPressed(ConsoleKeyInfo key)
         {
             if (key.IsPrintable())
             {

@@ -42,7 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Components\Button.cs" />
+    <Compile Include="Components\Forms\Radio.cs" />
+    <Compile Include="Components\Forms\Checkbox.cs" />
+    <Compile Include="Components\Forms\Button.cs" />
     <Compile Include="Components\Containers\Tabs.cs" />
     <Compile Include="Components\Drawings\HorizontalLine.cs" />
     <Compile Include="Components\Drawings\VericalLine.cs" />

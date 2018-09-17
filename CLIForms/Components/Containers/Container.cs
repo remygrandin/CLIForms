@@ -84,6 +84,15 @@ namespace CLIForms.Components.Containers
             Dirty = true;
         }
 
+        public virtual IEnumerable<DisplayObject> GetSiblings(DisplayObject child)
+        {
+            if (!Children.Contains(child))
+                return null;
+
+            return Children.ToList();
+
+        }
+
         public override ConsoleCharBuffer Render()
         {
             if (!_dirty && displayBuffer != null)

@@ -4,7 +4,6 @@ using System.Linq;
 using System.Timers;
 using CLIForms.Buffer;
 using CLIForms.Components;
-using CLIForms.Components.Containers;
 using CLIForms.Components.Globals;
 using CLIForms.Extentions;
 using CLIForms.Interfaces;
@@ -177,7 +176,7 @@ namespace CLIForms
                 // Then we give a chance to focussed object to intercept the key
                 if (FocusedObject != null && FocusedObject is IAcceptInput)
                 {
-                    if (((IAcceptInput)FocusedObject).FireKeypress(k))
+                    if (((IAcceptInput)FocusedObject).KeyPressed(k))
                     {
                         continue;
                     }

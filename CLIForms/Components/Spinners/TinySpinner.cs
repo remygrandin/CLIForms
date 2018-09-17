@@ -2,7 +2,6 @@
 using System.Timers;
 using CLIForms.Buffer;
 using CLIForms.Components.Containers;
-using CLIForms.Styles;
 
 namespace CLIForms.Components.Spinners
 {

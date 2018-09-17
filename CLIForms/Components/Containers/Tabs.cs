@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
 using CLIForms.Buffer;
 using CLIForms.Interfaces;
@@ -155,6 +154,17 @@ namespace CLIForms.Components.Containers
             }
 
             Dirty = true;
+        }
+
+        public override IEnumerable<DisplayObject> GetSiblings(DisplayObject child)
+        {
+            List<DisplayObject> siblings = TabsChildren.FirstOrDefault(item => item.Contains(child));
+
+            if (siblings == null)
+                return null;
+
+            return siblings.ToList();
+
         }
 
         public override ConsoleCharBuffer Render()
@@ -364,7 +374,7 @@ namespace CLIForms.Components.Containers
             return;
         }
 
-        public bool FireKeypress(ConsoleKeyInfo key)
+        public bool KeyPressed(ConsoleKeyInfo key)
         {
             List<List<Tuple<int, string>>> subPools = OrderTabForDisplay();
 

@@ -4,7 +4,7 @@ using CLIForms.Components.Containers;
 using CLIForms.Interfaces;
 using CLIForms.Styles;
 
-namespace CLIForms.Components
+namespace CLIForms.Components.Forms
 {
     public class Button : DisplayObject, IFocusable, IAcceptInput
     {
@@ -132,11 +132,22 @@ namespace CLIForms.Components
 
         }
 
-        public bool FireKeypress(ConsoleKeyInfo key)
+        public bool KeyPressed(ConsoleKeyInfo key)
         {
+
+            switch (key.Key)
+            {
+                case ConsoleKey.Spacebar:
+                case ConsoleKey.Enter:
+                {
+                    Clicked(this, new EventArgs());
+
+                    return true;
+                }
+            }
             return false;
         }
 
-        public event KeyPressEventHandler Keypress;
+        public event EventHandler Clicked;
     }
 }

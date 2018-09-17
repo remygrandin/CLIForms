@@ -1,8 +1,8 @@
 ﻿using System;
 using CLIForms;
-using CLIForms.Components;
 using CLIForms.Components.Containers;
 using CLIForms.Components.Drawings;
+using CLIForms.Components.Forms;
 using CLIForms.Components.Globals;
 using CLIForms.Components.Spinners;
 using CLIForms.Components.Tables;
@@ -20,19 +20,7 @@ namespace SampleCSharp
             Screen screen = new Screen();
 
             engine.ActiveScreen = screen;
-            /*
-            Dialog dialog = new Dialog(screen, 70, 25)
-            {
-                Title = "Sample Dialog N°1",
-                X = 1,
-                Y = 1
-            };
 
-            
-            
-
-            
-            */
 
             Tabs tabs = new Tabs(screen,new []{"Texts", "Forms", "Drawings", "Spinners", "Tables"}, 77, 27)
             {
@@ -87,6 +75,27 @@ namespace SampleCSharp
                 IsPassword = true
             };
             tabs.AddChild(simpleTextboxPwd, "Forms");
+
+            Checkbox checkbox = new Checkbox(null, "Checkbox")
+            {
+                X = 1,
+                Y = 9
+            };
+            tabs.AddChild(checkbox, "Forms");
+
+            Radio radio1 = new Radio(null, "Radio 1")
+            {
+                X = 1,
+                Y = 12
+            };
+            tabs.AddChild(radio1, "Forms");
+
+            Radio radio2 = new Radio(null, "Radio 2")
+            {
+                X = 1,
+                Y = 14
+            };
+            tabs.AddChild(radio2, "Forms");
 
             // ==== Drawings Tab ====
             Box box = new Box(null,20,10)
@@ -158,7 +167,7 @@ namespace SampleCSharp
 
             tabs.AddChild(table, "Tables");
 
-            tabs.ActiveTab = 4;
+            tabs.ActiveTab = 1;
 
             engine.Start();
 
