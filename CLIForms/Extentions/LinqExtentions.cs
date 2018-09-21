@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace CLIForms.Extentions
 {
@@ -41,6 +42,11 @@ namespace CLIForms.Extentions
                     yield return map[row, col];
                 }
             }
+        }
+
+        public static IEnumerable<T> Flatten<T>(this IEnumerable<T> e,  Func<T, IEnumerable<T>> f)
+        {
+            return e?.SelectMany(c => f(c).Flatten(f)).Concat(e);
         }
 
         public static IEnumerable<T> Parents<T>(this T item, Func<T, T> predicate)

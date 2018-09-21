@@ -22,10 +22,10 @@ namespace SampleCSharp
             engine.ActiveScreen = screen;
 
 
-            Tabs tabs = new Tabs(screen,new []{"Texts", "Forms", "Drawings", "Spinners", "Tables"}, 77, 27)
+            Tabs tabs = new Tabs(screen, new[] { "Texts", "Forms", "Drawings", "Spinners", "Tables" }, 77, 26)
             {
                 X = 1,
-                Y = 1
+                Y = 2
             };
 
             StatusBar statusBar = new StatusBar(screen)
@@ -34,6 +34,14 @@ namespace SampleCSharp
                 TextCenter = "Status Bar",
                 TextRight = "Right Text"
             };
+
+            MenuBar menuBar = new MenuBar(screen, new MenuItem(" ==CLIForms== ", null, true,
+                new MenuItem("Menu 1", new MenuItem("Item 1")
+                                     , new MenuItem("Item 2")
+                                     , new MenuItem("Item 3")),
+                new MenuItem("Menu 2"),
+                new MenuItem("Menu 3")));
+
 
             // ==== Texts Tab ====
 
@@ -105,7 +113,7 @@ namespace SampleCSharp
             tabs.AddChild(toggle, "Forms");
 
             // ==== Drawings Tab ====
-            Box box = new Box(null,20,10)
+            Box box = new Box(null, 20, 10)
             {
                 X = 1,
                 Y = 1
@@ -150,8 +158,8 @@ namespace SampleCSharp
                 Y = 1,
                 ColumnCount = 5,
                 LineCount = 4,
-                ColumnsWidth = new []{4,15,15,5,15},
-                ColumnsAlignments = new []{AlignmentStyle.Right, AlignmentStyle.Left, AlignmentStyle.Left, AlignmentStyle.Right, AlignmentStyle.Left},
+                ColumnsWidth = new[] { 4, 15, 15, 5, 15 },
+                ColumnsAlignments = new[] { AlignmentStyle.Right, AlignmentStyle.Left, AlignmentStyle.Left, AlignmentStyle.Right, AlignmentStyle.Left },
                 TableStyle = TableStyle.CompactWithHeaderNoExtBorder
             };
 

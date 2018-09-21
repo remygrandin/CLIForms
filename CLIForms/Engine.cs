@@ -115,10 +115,9 @@ namespace CLIForms
 
                 engineBuffer = screenbuffer;
 
-                VisibleFocussableObjects = engineBuffer.data.Flatten().Where(item => item.Owner != null)
+                VisibleFocussableObjects = engineBuffer.data.Flatten().Where(item => item.Focussable)
                     .Select(item => item.Owner).Distinct()
-                    .Where(item =>
-                        item is IFocusable && item.Parents(itm => itm.Parent).All(itm => item.Disabled == false))
+                    .Where(item => item.Parents(itm => itm.Parent).All(itm => item.Disabled == false))
                     .Select(item => (IFocusable) item).ToList();
 
                 AllObjects = new List<DisplayObject>(ActiveScreen.GetAllChildren());
@@ -146,7 +145,7 @@ namespace CLIForms
             {
                 ForceDraw();
 
-                TransferFocus(FocusedObject, (IFocusable)VisibleFocussableObjects.Select(item => (DisplayObject)item).OrderBy(item => item.DisplayY).ThenBy(item => item.DisplayX).FirstOrDefault(), null);
+                TransferFocus(FocusedObject, (IFocusable)VisibleFocussableObjects.Cast<DisplayObject>().OrderBy(item => item.DisplayY).ThenBy(item => item.DisplayX).FirstOrDefault(), null);
 
             }
 
@@ -205,22 +204,6 @@ namespace CLIForms
                 }
 
 
-
-                /*
-                if (ProcessKey)
-                {
-                    switch (k.Key)
-                    {
-                        case ConsoleKey.Spacebar:
-                        case ConsoleKey.Enter:
-                            EnterPressed();
-                            break;
-                        case ConsoleKey.Escape:
-                            Running = false;
-                            break;
-                    }
-                }
-                */
             }
         }
 
@@ -505,7 +488,7 @@ namespace CLIForms
 
             if (newDP != null)
             {
-                newDP.FireFocusOut(responsibleKey);
+                newDP.FireFocusIn(responsibleKey);
                 newDP.Focused = true;
             }
 

@@ -49,6 +49,8 @@
     <Compile Include="Components\Containers\Tabs.cs" />
     <Compile Include="Components\Drawings\HorizontalLine.cs" />
     <Compile Include="Components\Drawings\VericalLine.cs" />
+    <Compile Include="Components\Globals\MenuItem.cs" />
+    <Compile Include="Components\Globals\MenuBar.cs" />
     <Compile Include="Components\Globals\StatusBar.cs" />
     <Compile Include="Components\Spinners\Spinner.cs" />
     <Compile Include="Components\Spinners\TinySpinner.cs" />

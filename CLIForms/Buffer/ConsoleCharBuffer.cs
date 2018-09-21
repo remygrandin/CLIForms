@@ -199,16 +199,6 @@ namespace CLIForms.Buffer
                 }
 
             }
-
-            /*
-            foreach (PositionedConsoleChar ch in chars)
-            {
-                Console.SetCursorPosition(ch.X, ch.Y);
-                Console.BackgroundColor = ch.Background;
-                Console.ForegroundColor = ch.Foreground;
-                Console.Write(ch.Char);
-            }
-            */
         }
     }
 }
