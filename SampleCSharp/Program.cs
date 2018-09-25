@@ -20,7 +20,7 @@ namespace SampleCSharp
             Screen screen = new Screen();
 
             engine.ActiveScreen = screen;
-
+            engine.DebugEnabled = true;
 
             Tabs tabs = new Tabs(screen, new[] { "Texts", "Forms", "Drawings", "Spinners", "Tables" }, 77, 26)
             {
@@ -36,9 +36,11 @@ namespace SampleCSharp
             };
 
             MenuBar menuBar = new MenuBar(screen, new MenuItem(" ==CLIForms== ", null, true,
-                new MenuItem("Menu 1", new MenuItem("Item 1")
+                new MenuItem("Menu 1", new MenuItem("Item 1"
+                                        , new MenuItem("Sub-Item 1")
+                                        , new MenuItem("Sub-Item 2"))
                                      , new MenuItem("Item 2")
-                                     , new MenuItem("Item 3")),
+                                     , new MenuItem("Item looong")),
                 new MenuItem("Menu 2"),
                 new MenuItem("Menu 3")));
 

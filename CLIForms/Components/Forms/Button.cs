@@ -6,12 +6,12 @@ using CLIForms.Styles;
 
 namespace CLIForms.Components.Forms
 {
-    public class Button : DisplayObject, IFocusable, IAcceptInput
+    public class Button : DisplayObject, IInterractive
     {
-        public ConsoleColor? BackgroudColor = ConsoleColor.DarkGray;
+        public ConsoleColor? BackgroundColor = ConsoleColor.DarkGray;
         public ConsoleColor ForegroundColor = ConsoleColor.Black;
 
-        public ConsoleColor? BackgroudColorFocused = ConsoleColor.Magenta;
+        public ConsoleColor? BackgroundColorFocused = ConsoleColor.Magenta;
         public ConsoleColor ForegroundColorFocused = ConsoleColor.Black;
 
         public ShadowStyle Shadow = ShadowStyle.None;
@@ -96,14 +96,14 @@ namespace CLIForms.Components.Forms
             ConsoleCharBuffer buffer = new ConsoleCharBuffer(_width + 1, _height + 1);
 
             DrawingHelper.DrawBlockFull(buffer, this, true, 0, 0, _width, _height,
-                _focused ? BackgroudColorFocused : BackgroudColor, _focused ? ForegroundColorFocused : ForegroundColor,
+                _focused ? BackgroundColorFocused : BackgroundColor, _focused ? ForegroundColorFocused : ForegroundColor,
                 BorderStyle.None, _focused ? ShadowFocused : Shadow);
             
             int yOffset = (int) Math.Floor((Height - 1) / 2.0);
 
             int xOffset = (int)Math.Floor(((double)Width - _text.Length) / 2);
 
-            buffer.DrawString(this, _text, true, xOffset, yOffset, _focused ? BackgroudColorFocused : BackgroudColor,
+            buffer.DrawString(this, _text, true, xOffset, yOffset, _focused ? BackgroundColorFocused : BackgroundColor,
                 _focused ? ForegroundColorFocused : ForegroundColor);
 
             _dirty = false;
@@ -122,14 +122,24 @@ namespace CLIForms.Components.Forms
         }
         public event FocusEventHandler FocusIn;
         public event FocusEventHandler FocusOut;
-        public void FireFocusIn(ConsoleKeyInfo? key)
+        public void FocusedIn(ConsoleKeyInfo? key)
         {
-
+            if (FocusIn != null)
+                foreach (FocusEventHandler handler in FocusIn.GetInvocationList())
+                {
+                    if (handler?.Invoke(this) == true)
+                        return;
+                }
         }
 
-        public void FireFocusOut(ConsoleKeyInfo? key)
+        public void FocusedOut(ConsoleKeyInfo? key)
         {
-
+            if (FocusOut != null)
+                foreach (FocusEventHandler handler in FocusOut.GetInvocationList())
+                {
+                    if (handler?.Invoke(this) == true)
+                        return;
+                }
         }
 
         public bool KeyPressed(ConsoleKeyInfo key)
@@ -140,14 +150,18 @@ namespace CLIForms.Components.Forms
                 case ConsoleKey.Spacebar:
                 case ConsoleKey.Enter:
                 {
-                    Clicked(this, new EventArgs());
+                    if (Activated != null)
+                        foreach (ActivatedEventHandler handler in Activated.GetInvocationList())
+                        {
+                            handler?.Invoke(this);
+                        }
 
-                    return true;
+                        return true;
                 }
             }
             return false;
         }
 
-        public event EventHandler Clicked;
+        public event ActivatedEventHandler Activated;
     }
 }

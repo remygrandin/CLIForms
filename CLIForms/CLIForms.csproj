@@ -75,8 +75,7 @@
     <Compile Include="Components\DisplayObject.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Interfaces\IAcceptInput.cs" />
-    <Compile Include="Interfaces\IFocusable.cs" />
+    <Compile Include="Interfaces\IInterractive.cs" />
     <Compile Include="Components\Drawings\Box.cs" />
     <Compile Include="Extentions\StringExtentions.cs" />
   </ItemGroup>

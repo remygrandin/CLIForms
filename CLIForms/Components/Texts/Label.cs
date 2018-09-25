@@ -9,7 +9,7 @@ namespace CLIForms.Components.Texts
     public class Label : DisplayObject
     {
 
-        public ConsoleColor? BackgroudColor = null;
+        public ConsoleColor? BackgroundColor = null;
         public ConsoleColor ForegroundColor = ConsoleColor.Black;
 
         private string _text;
@@ -63,7 +63,7 @@ namespace CLIForms.Components.Texts
 
                 for (int i = 0; i < lines.Length; i++)
                 {
-                    buffer.DrawString(this, lines[i], false, 0, i, BackgroudColor, ForegroundColor);
+                    buffer.DrawString(this, lines[i], false, 0, i, BackgroundColor, ForegroundColor);
                 }
             }
             else
@@ -72,7 +72,7 @@ namespace CLIForms.Components.Texts
 
                 for (int i = 0; i < lines.Length; i++)
                 {
-                    buffer.DrawString(this, lines[i].Truncate(MaxLength.Value), false, 0, i, BackgroudColor, ForegroundColor);
+                    buffer.DrawString(this, lines[i].Truncate(MaxLength.Value), false, 0, i, BackgroundColor, ForegroundColor);
                 }
 
             }

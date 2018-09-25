@@ -17,8 +17,8 @@ namespace CLIForms.Buffer
             get
             {
                 List<PositionedConsoleChar> chars = new List<PositionedConsoleChar>();
-                int xDim = data.GetLength(0);
-                int yDim = data.GetLength(1);
+                int xDim = Width;
+                int yDim = Height;
 
                 for (int x = 0; x < xDim; x++)
                 {
@@ -37,8 +37,8 @@ namespace CLIForms.Buffer
             get
             {
                 StringBuilder sb = new StringBuilder();
-                int xDim = data.GetLength(0);
-                int yDim = data.GetLength(1);
+                int xDim = Width;
+                int yDim = Height;
 
                 for (int y = 0; y < yDim; y++)
                 {
@@ -66,11 +66,20 @@ namespace CLIForms.Buffer
             Clear();
         }
 
+        public int Width
+        {
+            get => data.GetLength(0);
+        }
+
+        public int Height
+        {
+            get => data.GetLength(1);
+        }
 
         public ConsoleCharBuffer Clear(ConsoleChar consoleChar = null)
         {
-            int xDim = data.GetLength(0);
-            int yDim = data.GetLength(1);
+            int xDim = Width;
+            int yDim = Height;
 
             for (int x = 0; x < xDim; x++)
             {
@@ -88,8 +97,8 @@ namespace CLIForms.Buffer
             if (str == null)
                 return this;
 
-            int xDim = this.data.GetLength(0);
-            int yDim = this.data.GetLength(1);
+            int xDim = Width;
+            int yDim = Height;
 
             if (y >= 0 && y < yDim)
             {
@@ -110,18 +119,13 @@ namespace CLIForms.Buffer
             return this;
         }
 
-        public ConsoleCharBuffer Merge(ConsoleCharBuffer slaveBuffer)
+        public ConsoleCharBuffer Merge(ConsoleCharBuffer slaveBuffer, int xOffset = 0, int yOffset = 0)
         {
-            return Merge(slaveBuffer, 0, 0);
-        }
+            int xDimMaster = this.Width;
+            int yDimMaster = this.Height;
 
-        public ConsoleCharBuffer Merge(ConsoleCharBuffer slaveBuffer, int xOffset, int yOffset)
-        {
-            int xDimMaster = this.data.GetLength(0);
-            int yDimMaster = this.data.GetLength(1);
-
-            int xDimSlave = slaveBuffer.data.GetLength(0);
-            int yDimSlave = slaveBuffer.data.GetLength(1);
+            int xDimSlave = slaveBuffer.Width;
+            int yDimSlave = slaveBuffer.Height;
 
             for (int x = 0; x < xDimSlave; x++)
             {
@@ -147,11 +151,11 @@ namespace CLIForms.Buffer
 
         public List<PositionedConsoleChar> Diff(ConsoleCharBuffer secondBuffer)
         {
-            int xDimB1 = this.data.GetLength(0);
-            int yDimB1 = this.data.GetLength(1);
+            int xDimB1 = this.Width;
+            int yDimB1 = this.Height;
 
-            int xDimB2 = secondBuffer.data.GetLength(0);
-            int yDimB2 = secondBuffer.data.GetLength(1);
+            int xDimB2 = secondBuffer.Width;
+            int yDimB2 = secondBuffer.Height;
 
             if (xDimB1 != xDimB2 || yDimB1 != yDimB2)
                 throw new Exception("buffers are of different size");
@@ -167,6 +171,20 @@ namespace CLIForms.Buffer
             }
 
             return outList;
+        }
+
+        public static void Display(ConsoleCharBuffer buffer)
+        {
+            for (int x = 0; x < buffer.Width; x++)
+                for (int y = 0; y < buffer.Height; y++)
+                {
+                    Console.SetCursorPosition(x, y);
+                    Console.BackgroundColor = buffer.data[x,y].Background ?? ConsoleColor.Black;
+                    Console.ForegroundColor = buffer.data[x, y].Foreground;
+                    Console.Write(buffer.data[x, y].Char);
+                }
+
+            Console.SetCursorPosition(0, 0);
         }
 
         public static void Display(List<PositionedConsoleChar> chars)

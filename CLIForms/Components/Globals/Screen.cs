@@ -6,7 +6,7 @@ namespace CLIForms.Components.Globals
 {
     public class Screen : Container
     {
-        public ConsoleColor BackgroudColor = ConsoleColor.Blue;
+        public ConsoleColor BackgroundColor = ConsoleColor.Blue;
 
         public Screen(int width, int height) : base(null, width, height)
         {
@@ -35,7 +35,7 @@ namespace CLIForms.Components.Globals
 
         protected override ConsoleCharBuffer RenderContainer()
         {
-            return new ConsoleCharBuffer(Width, Height).Clear(new ConsoleChar(owner: this, focussable: false, ch: ' ', background: BackgroudColor));
+            return new ConsoleCharBuffer(Width, Height).Clear(new ConsoleChar(owner: this, focussable: false, ch: ' ', background: BackgroundColor));
         }
 
 

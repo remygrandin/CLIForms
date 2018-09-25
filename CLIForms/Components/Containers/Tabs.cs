@@ -7,7 +7,7 @@ using CLIForms.Styles;
 
 namespace CLIForms.Components.Containers
 {
-    public class Tabs : Container, IFocusable, IAcceptInput
+    public class Tabs : Container, IInterractive
     {
         public ConsoleColor? BackgroundColor = ConsoleColor.Gray;
         public ConsoleColor ForegroundColor = ConsoleColor.Black;
@@ -111,6 +111,7 @@ namespace CLIForms.Components.Containers
 
         public event FocusEventHandler FocusIn;
         public event FocusEventHandler FocusOut;
+
         public event KeyPressEventHandler Keypress;
 
         public Tabs(Container parent, IEnumerable<string> tabs, int width = 30, int height = 12) : base(parent, width, height)
@@ -340,7 +341,7 @@ namespace CLIForms.Components.Containers
             Dirty = true;
         }
 
-        public void FireFocusIn(ConsoleKeyInfo? key)
+        public void FocusedIn(ConsoleKeyInfo? key)
         {
             List<List<Tuple<int, string>>> subPools = OrderTabForDisplay();
 
@@ -366,10 +367,10 @@ namespace CLIForms.Components.Containers
                     break;
             }
 
-            return;
+            FocusIn?.Invoke(this);
         }
 
-        public void FireFocusOut(ConsoleKeyInfo? key)
+        public void FocusedOut(ConsoleKeyInfo? key)
         {
             return;
         }

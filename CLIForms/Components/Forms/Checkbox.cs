@@ -6,18 +6,18 @@ using CLIForms.Styles;
 
 namespace CLIForms.Components.Forms
 {
-    public class Checkbox : DisplayObject, IFocusable, IAcceptInput
+    public class Checkbox : DisplayObject, IInterractive
     {
-        public ConsoleColor? LabelBackgroudColor = null;
+        public ConsoleColor? LabelBackgroundColor = null;
         public ConsoleColor LabelForegroundColor = ConsoleColor.White;
 
-        public ConsoleColor? BackgroudColor = null;
+        public ConsoleColor? BackgroundColor = null;
         public ConsoleColor ForegroundColor = ConsoleColor.Black;
 
-        public ConsoleColor? BackgroudColorFocused = ConsoleColor.White;
+        public ConsoleColor? BackgroundColorFocused = ConsoleColor.White;
         public ConsoleColor ForegroundColorFocused = ConsoleColor.Black;
 
-        public ConsoleColor? BackgroudColorChecked = ConsoleColor.Green;
+        public ConsoleColor? BackgroundColorChecked = ConsoleColor.Green;
         public ConsoleColor ForegroundColorChecked = ConsoleColor.Black;
 
         private string _label;
@@ -64,12 +64,12 @@ namespace CLIForms.Components.Forms
             ConsoleCharBuffer buffer = new ConsoleCharBuffer(Label.Length + 4, 1);
 
             if (_isChecked)
-                buffer.DrawString(this, "[X]", true, 0, 0, _focused ? BackgroudColorFocused : BackgroudColorChecked, _focused ? ForegroundColorFocused : ForegroundColorChecked);
+                buffer.DrawString(this, "[X]", true, 0, 0, _focused ? BackgroundColorFocused : BackgroundColorChecked, _focused ? ForegroundColorFocused : ForegroundColorChecked);
             else
-                buffer.DrawString(this, "[ ]", true, 0, 0, _focused ? BackgroudColorFocused : BackgroudColor, _focused ? ForegroundColorFocused : ForegroundColor);
+                buffer.DrawString(this, "[ ]", true, 0, 0, _focused ? BackgroundColorFocused : BackgroundColor, _focused ? ForegroundColorFocused : ForegroundColor);
 
 
-            buffer.DrawString(this, _label, false, 4, 0, LabelBackgroudColor, LabelForegroundColor);
+            buffer.DrawString(this, _label, false, 4, 0, LabelBackgroundColor, LabelForegroundColor);
 
             _dirty = false;
 
@@ -89,14 +89,25 @@ namespace CLIForms.Components.Forms
 
         public event FocusEventHandler FocusIn;
         public event FocusEventHandler FocusOut;
-        public void FireFocusIn(ConsoleKeyInfo? key)
-        {
 
+        public void FocusedIn(ConsoleKeyInfo? key)
+        {
+            if (FocusIn != null)
+                foreach (FocusEventHandler handler in FocusIn.GetInvocationList())
+                {
+                    if (handler?.Invoke(this) == true)
+                        return;
+                }
         }
 
-        public void FireFocusOut(ConsoleKeyInfo? key)
+        public void FocusedOut(ConsoleKeyInfo? key)
         {
-
+            if (FocusOut != null)
+                foreach (FocusEventHandler handler in FocusOut.GetInvocationList())
+                {
+                    if (handler?.Invoke(this) == true)
+                        return;
+                }
         }
 
         public bool KeyPressed(ConsoleKeyInfo key)
@@ -109,8 +120,12 @@ namespace CLIForms.Components.Forms
                     {
                         IsChecked = !IsChecked;
 
+                        if (Activated != null)
+                            foreach (ActivatedEventHandler handler in Activated.GetInvocationList())
+                            {
+                                handler?.Invoke(this);
+                            }
 
-                        Clicked?.Invoke(this, new EventArgs());
                         Dirty = true;
                         return true;
                     }
@@ -118,6 +133,6 @@ namespace CLIForms.Components.Forms
             return false;
         }
 
-        public event EventHandler Clicked;
+        public event ActivatedEventHandler Activated;
     }
 }

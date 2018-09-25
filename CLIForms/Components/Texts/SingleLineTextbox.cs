@@ -6,13 +6,13 @@ using CLIForms.Interfaces;
 
 namespace CLIForms.Components.Texts
 {
-    public class SingleLineTextbox : DisplayObject, IAcceptInput, IFocusable
+    public class SingleLineTextbox : DisplayObject, IInterractive
     {
 
-        public ConsoleColor? BackgroudColor = ConsoleColor.DarkGray;
+        public ConsoleColor? BackgroundColor = ConsoleColor.DarkGray;
         public ConsoleColor ForegroundColor = ConsoleColor.Black;
 
-        public ConsoleColor? FocusedBackgroudColor = ConsoleColor.DarkMagenta;
+        public ConsoleColor? FocusedBackgroundColor = ConsoleColor.DarkMagenta;
         public ConsoleColor FocusedForegroundColor = ConsoleColor.Black;
 
         public ConsoleColor? CursorBackGroundColor = ConsoleColor.White;
@@ -127,13 +127,13 @@ namespace CLIForms.Components.Texts
 
             if (string.IsNullOrEmpty(_text))
             {
-                buffer.Clear(new ConsoleChar(this, ' ', true, Focused ? FocusedBackgroudColor : BackgroudColor, PlaceHolderForegroundColor));
+                buffer.Clear(new ConsoleChar(this, ' ', true, Focused ? FocusedBackgroundColor : BackgroundColor, PlaceHolderForegroundColor));
 
-                buffer.DrawString(this, _placeHolderText.Truncate(Width), true, 0, 0, Focused ? FocusedBackgroudColor : BackgroudColor, PlaceHolderForegroundColor);
+                buffer.DrawString(this, _placeHolderText.Truncate(Width), true, 0, 0, Focused ? FocusedBackgroundColor : BackgroundColor, PlaceHolderForegroundColor);
             }
             else
             {
-                buffer.Clear(new ConsoleChar(this, ' ', true, Focused ? FocusedBackgroudColor : BackgroudColor, Focused ? FocusedForegroundColor : ForegroundColor));
+                buffer.Clear(new ConsoleChar(this, ' ', true, Focused ? FocusedBackgroundColor : BackgroundColor, Focused ? FocusedForegroundColor : ForegroundColor));
 
                 string displayStr = "";
 
@@ -146,7 +146,7 @@ namespace CLIForms.Components.Texts
                     displayStr = (_text + new string(' ', _width)).Substring(_displayOffset, _width);
                 }
 
-                buffer.DrawString(this, displayStr, true, 0, 0, Focused ? FocusedBackgroudColor : BackgroudColor,
+                buffer.DrawString(this, displayStr, true, 0, 0, Focused ? FocusedBackgroundColor : BackgroundColor,
                     Focused ? FocusedForegroundColor : ForegroundColor);
 
                 ConsoleChar cursor = buffer.data[_cursorOffset - _displayOffset, 0];
@@ -256,8 +256,6 @@ namespace CLIForms.Components.Texts
             return false;
         }
 
-        public event KeyPressEventHandler Keypress;
-
         private bool _focused = false;
         public bool Focused
         {
@@ -274,14 +272,24 @@ namespace CLIForms.Components.Texts
 
         public event FocusEventHandler FocusIn;
         public event FocusEventHandler FocusOut;
-        public void FireFocusIn(ConsoleKeyInfo? key)
+        public void FocusedIn(ConsoleKeyInfo? key)
         {
-
+            if (FocusIn != null)
+                foreach (FocusEventHandler handler in FocusIn.GetInvocationList())
+                {
+                    if (handler?.Invoke(this) == true)
+                        return;
+                }
         }
 
-        public void FireFocusOut(ConsoleKeyInfo? key)
+        public void FocusedOut(ConsoleKeyInfo? key)
         {
-
+            if (FocusOut != null)
+                foreach (FocusEventHandler handler in FocusOut.GetInvocationList())
+                {
+                    if (handler?.Invoke(this) == true)
+                        return;
+                }
         }
     }
 }

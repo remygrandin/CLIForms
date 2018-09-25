@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Timers;
 using CLIForms.Buffer;
 using CLIForms.Components;
@@ -76,7 +77,7 @@ namespace CLIForms
             }
         }
 
-        public List<IFocusable> VisibleFocussableObjects = new List<IFocusable>();
+        public List<IInterractive> VisibleFocusableObjects = new List<IInterractive>();
         public List<DisplayObject> AllObjects = new List<DisplayObject>();
 
         public bool Draw = true;
@@ -115,18 +116,18 @@ namespace CLIForms
 
                 engineBuffer = screenbuffer;
 
-                VisibleFocussableObjects = engineBuffer.data.Flatten().Where(item => item.Focussable)
+                VisibleFocusableObjects = engineBuffer.data.Flatten().Where(item => item.Focussable)
                     .Select(item => item.Owner).Distinct()
                     .Where(item => item.Parents(itm => itm.Parent).All(itm => item.Disabled == false))
-                    .Select(item => (IFocusable) item).ToList();
+                    .Select(item => (IInterractive)item).ToList();
 
                 AllObjects = new List<DisplayObject>(ActiveScreen.GetAllChildren());
                 AllObjects.Add(ActiveScreen);
 
-                if (FocusedObject != null && !VisibleFocussableObjects.Contains(FocusedObject))
+                if (FocusedObject != null && !VisibleFocusableObjects.Contains(FocusedObject))
                 {
                     TransferFocus(FocusedObject,
-                        (IFocusable) VisibleFocussableObjects.Select(item => (DisplayObject) item)
+                        (IInterractive)VisibleFocusableObjects.Select(item => (DisplayObject)item)
                             .OrderBy(item => item.DisplayY).ThenBy(item => item.DisplayX).First(), null);
                 }
 
@@ -135,28 +136,59 @@ namespace CLIForms
             }
         }
 
-        public IFocusable FocusedObject;
+        public IInterractive FocusedObject;
+
+        public bool DebugEnabled = false;
 
         public void Start()
         {
+            Console.OutputEncoding = Encoding.UTF8;
             Console.CursorVisible = false;
 
             if (FocusedObject == null)
             {
                 ForceDraw();
 
-                TransferFocus(FocusedObject, (IFocusable)VisibleFocussableObjects.Cast<DisplayObject>().OrderBy(item => item.DisplayY).ThenBy(item => item.DisplayX).FirstOrDefault(), null);
+                TransferFocus(FocusedObject, (IInterractive)VisibleFocusableObjects.Cast<DisplayObject>().OrderBy(item => item.DisplayY).ThenBy(item => item.DisplayX).FirstOrDefault(), null);
 
             }
 
-            
+
 
 
             while (true)
             {
-                ForceDraw();
+                
 
                 ConsoleKeyInfo k = Console.ReadKey(true);
+                
+
+                if (DebugEnabled)
+                {
+                    switch (k.Key)
+                    {
+                        case ConsoleKey.F12:
+                            {
+                                var oldBuffer = engineBuffer;
+                                engineBuffer = new ConsoleCharBuffer(oldBuffer.Width, oldBuffer.Height);
+
+                                for (int x = 0; x < engineBuffer.Width; x++)
+                                    for (int y = 0; y < engineBuffer.Height; y++)
+                                    {
+                                        if (!oldBuffer.data[x, y].Focussable)
+                                            engineBuffer.data[x, y] = new ConsoleChar(oldBuffer.data[x, y].Owner, oldBuffer.data[x, y].Char, oldBuffer.data[x, y].Focussable, ConsoleColor.Blue, ConsoleColor.Black);
+                                        else
+                                            engineBuffer.data[x, y] = new ConsoleChar(oldBuffer.data[x, y].Owner, oldBuffer.data[x, y].Char, oldBuffer.data[x, y].Focussable, ConsoleColor.DarkMagenta, ConsoleColor.Black);
+                                    }
+
+                                ConsoleCharBuffer.Display(engineBuffer);
+
+                                continue;
+                            }
+                    }
+                }
+
+                ForceDraw();
                 bool breakAndContinue = false;
 
                 // First we give a chance to the global listeners to intercept the key (true to break)
@@ -169,13 +201,13 @@ namespace CLIForms
                     }
                 }
 
-                if(breakAndContinue)
+                if (breakAndContinue)
                     continue;
 
                 // Then we give a chance to focussed object to intercept the key
-                if (FocusedObject != null && FocusedObject is IAcceptInput)
+                if (FocusedObject != null && FocusedObject is IInterractive)
                 {
-                    if (((IAcceptInput)FocusedObject).KeyPressed(k))
+                    if (((IInterractive)FocusedObject).KeyPressed(k))
                     {
                         continue;
                     }
@@ -250,7 +282,7 @@ namespace CLIForms
 
             if (candidatesShortList.Count() == 1)
             {
-                TransferFocus(FocusedObject, (IFocusable)candidatesShortList.First().Key, responsibleKey);
+                TransferFocus(FocusedObject, (IInterractive)candidatesShortList.First().Key, responsibleKey);
             }
             else
             {
@@ -261,11 +293,11 @@ namespace CLIForms
 
                 if (candidatesShortList.Count() == 1)
                 {
-                    TransferFocus(FocusedObject, (IFocusable)candidatesShortList.First().Key, responsibleKey);
+                    TransferFocus(FocusedObject, (IInterractive)candidatesShortList.First().Key, responsibleKey);
                 }
                 else// If multiple candidate are at a tie, select the lefter one
                 {
-                    TransferFocus(FocusedObject, (IFocusable)candidatesShortList.OrderBy(item => item.Key.DisplayX).First().Key, responsibleKey);
+                    TransferFocus(FocusedObject, (IInterractive)candidatesShortList.OrderBy(item => item.Key.DisplayX).First().Key, responsibleKey);
                 }
             }
 
@@ -297,14 +329,14 @@ namespace CLIForms
 
                     // Direct line bonus
                     if (focusedChar.X == notFocusedChar.X)
-                        distance /= 2; 
+                        distance /= 2;
 
                     if (!candidates.ContainsKey(notFocusedChar.Owner))
                     {
                         candidates.Add(notFocusedChar.Owner, new List<double>());
                     }
                     candidates[notFocusedChar.Owner].Add(distance);
-                    
+
                 }
             }
 
@@ -314,7 +346,7 @@ namespace CLIForms
 
             if (candidatesShortList.Count() == 1)
             {
-                TransferFocus(FocusedObject, (IFocusable)candidatesShortList.First().Key, responsibleKey);
+                TransferFocus(FocusedObject, (IInterractive)candidatesShortList.First().Key, responsibleKey);
             }
             else
             {
@@ -322,14 +354,14 @@ namespace CLIForms
 
                 candidatesShortList = candidatesShortList.Where(item => item.Value.Count == maxDistancesCount);
 
-                
+
                 if (candidatesShortList.Count() == 1)
                 {
-                    TransferFocus(FocusedObject, (IFocusable)candidatesShortList.First().Key, responsibleKey);
+                    TransferFocus(FocusedObject, (IInterractive)candidatesShortList.First().Key, responsibleKey);
                 }
                 else// If multiple candidate are at a tie, select the lefter one
                 {
-                    TransferFocus(FocusedObject, (IFocusable)candidatesShortList.OrderBy(item => item.Key.DisplayX).First().Key, responsibleKey);
+                    TransferFocus(FocusedObject, (IInterractive)candidatesShortList.OrderBy(item => item.Key.DisplayX).First().Key, responsibleKey);
                 }
             }
 
@@ -378,7 +410,7 @@ namespace CLIForms
 
             if (candidatesShortList.Count() == 1)
             {
-                TransferFocus(FocusedObject, (IFocusable)candidatesShortList.First().Key, responsibleKey);
+                TransferFocus(FocusedObject, (IInterractive)candidatesShortList.First().Key, responsibleKey);
             }
             else
             {
@@ -389,11 +421,11 @@ namespace CLIForms
 
                 if (candidatesShortList.Count() == 1)
                 {
-                    TransferFocus(FocusedObject, (IFocusable)candidatesShortList.First().Key, responsibleKey);
+                    TransferFocus(FocusedObject, (IInterractive)candidatesShortList.First().Key, responsibleKey);
                 }
                 else// If multiple candidate are at a tie, select the upper one
                 {
-                    TransferFocus(FocusedObject, (IFocusable)candidatesShortList.OrderBy(item => item.Key.DisplayY).First().Key, responsibleKey);
+                    TransferFocus(FocusedObject, (IInterractive)candidatesShortList.OrderBy(item => item.Key.DisplayY).First().Key, responsibleKey);
                 }
             }
 
@@ -442,7 +474,7 @@ namespace CLIForms
 
             if (candidatesShortList.Count() == 1)
             {
-                TransferFocus(FocusedObject, (IFocusable)candidatesShortList.First().Key, responsibleKey);
+                TransferFocus(FocusedObject, (IInterractive)candidatesShortList.First().Key, responsibleKey);
             }
             else
             {
@@ -453,11 +485,11 @@ namespace CLIForms
 
                 if (candidatesShortList.Count() == 1)
                 {
-                    TransferFocus(FocusedObject, (IFocusable)candidatesShortList.First().Key, responsibleKey);
+                    TransferFocus(FocusedObject, (IInterractive)candidatesShortList.First().Key, responsibleKey);
                 }
                 else// If multiple candidate are at a tie, select the upper one
                 {
-                    TransferFocus(FocusedObject, (IFocusable)candidatesShortList.OrderBy(item => item.Key.DisplayY).First().Key, responsibleKey);
+                    TransferFocus(FocusedObject, (IInterractive)candidatesShortList.OrderBy(item => item.Key.DisplayY).First().Key, responsibleKey);
                 }
             }
 
@@ -465,30 +497,30 @@ namespace CLIForms
 
         private void CycleFocus(int direction, ConsoleKeyInfo responsibleKey)
         {
-            int focusedIndex = VisibleFocussableObjects.IndexOf(FocusedObject);
+            int focusedIndex = VisibleFocusableObjects.IndexOf(FocusedObject);
 
             int nextFocusedIndex = focusedIndex + direction;
 
-            if (nextFocusedIndex >= VisibleFocussableObjects.Count)
+            if (nextFocusedIndex >= VisibleFocusableObjects.Count)
                 nextFocusedIndex = 0;
-            else if(nextFocusedIndex < 0)
-                nextFocusedIndex = VisibleFocussableObjects.Count - 1;
+            else if (nextFocusedIndex < 0)
+                nextFocusedIndex = VisibleFocusableObjects.Count - 1;
 
 
-            TransferFocus(FocusedObject, VisibleFocussableObjects[nextFocusedIndex], responsibleKey);
+            TransferFocus(FocusedObject, VisibleFocusableObjects[nextFocusedIndex], responsibleKey);
         }
 
-        private void TransferFocus(IFocusable oldDP, IFocusable newDP, ConsoleKeyInfo? responsibleKey)
+        private void TransferFocus(IInterractive oldDP, IInterractive newDP, ConsoleKeyInfo? responsibleKey)
         {
             if (oldDP != null)
             {
-                oldDP.FireFocusOut(responsibleKey);
+                oldDP.FocusedOut(responsibleKey);
                 oldDP.Focused = false;
             }
 
             if (newDP != null)
             {
-                newDP.FireFocusIn(responsibleKey);
+                newDP.FocusedIn(responsibleKey);
                 newDP.Focused = true;
             }
 

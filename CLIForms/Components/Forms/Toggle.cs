@@ -5,9 +5,9 @@ using CLIForms.Interfaces;
 
 namespace CLIForms.Components.Forms
 {
-    public class Toggle : DisplayObject, IFocusable, IAcceptInput
+    public class Toggle : DisplayObject, IInterractive
     {
-        public ConsoleColor? LabelBackgroudColor = null;
+        public ConsoleColor? LabelBackgroundColor = null;
         public ConsoleColor LabelForegroundColor = ConsoleColor.White;
 
         public ConsoleColor CursorForegroundColor = ConsoleColor.White;
@@ -15,8 +15,8 @@ namespace CLIForms.Components.Forms
         public ConsoleColor InactiveAreaForegroundColor = ConsoleColor.Red;
 
 
-        public ConsoleColor? BackgroudColor = null;
-        public ConsoleColor? BackgroudColorFocused = ConsoleColor.White;
+        public ConsoleColor? BackgroundColor = null;
+        public ConsoleColor? BackgroundColorFocused = ConsoleColor.White;
         public ConsoleColor CursorForegroundColorFocused = ConsoleColor.Black;
 
         private string _label;
@@ -64,18 +64,18 @@ namespace CLIForms.Components.Forms
 
             if (_isChecked)
             {
-                buffer.data[0, 0] = new ConsoleChar(this, '■', true, _focused ? BackgroudColorFocused : BackgroudColor, ActiveAreaForegroundColor);
-                buffer.data[1, 0] = new ConsoleChar(this, '■', true, _focused ? BackgroudColorFocused : BackgroudColor, ActiveAreaForegroundColor);
-                buffer.data[2, 0] = new ConsoleChar(this, '■', true, _focused ? BackgroudColorFocused : BackgroudColor, _focused ? CursorForegroundColorFocused : CursorForegroundColor);
+                buffer.data[0, 0] = new ConsoleChar(this, '■', true, _focused ? BackgroundColorFocused : BackgroundColor, ActiveAreaForegroundColor);
+                buffer.data[1, 0] = new ConsoleChar(this, '■', true, _focused ? BackgroundColorFocused : BackgroundColor, ActiveAreaForegroundColor);
+                buffer.data[2, 0] = new ConsoleChar(this, '■', true, _focused ? BackgroundColorFocused : BackgroundColor, _focused ? CursorForegroundColorFocused : CursorForegroundColor);
             }
             else
             {
-                buffer.data[0, 0] = new ConsoleChar(this, '■', true, _focused ? BackgroudColorFocused : BackgroudColor, _focused ? CursorForegroundColorFocused : CursorForegroundColor);
-                buffer.data[1, 0] = new ConsoleChar(this, '■', true, _focused ? BackgroudColorFocused : BackgroudColor, InactiveAreaForegroundColor);
-                buffer.data[2, 0] = new ConsoleChar(this, '■', true, _focused ? BackgroudColorFocused : BackgroudColor, InactiveAreaForegroundColor);
+                buffer.data[0, 0] = new ConsoleChar(this, '■', true, _focused ? BackgroundColorFocused : BackgroundColor, _focused ? CursorForegroundColorFocused : CursorForegroundColor);
+                buffer.data[1, 0] = new ConsoleChar(this, '■', true, _focused ? BackgroundColorFocused : BackgroundColor, InactiveAreaForegroundColor);
+                buffer.data[2, 0] = new ConsoleChar(this, '■', true, _focused ? BackgroundColorFocused : BackgroundColor, InactiveAreaForegroundColor);
             }
 
-            buffer.DrawString(this, _label, true, 4, 0, LabelBackgroudColor, LabelForegroundColor);
+            buffer.DrawString(this, _label, true, 4, 0, LabelBackgroundColor, LabelForegroundColor);
 
             _dirty = false;
 
@@ -95,14 +95,24 @@ namespace CLIForms.Components.Forms
 
         public event FocusEventHandler FocusIn;
         public event FocusEventHandler FocusOut;
-        public void FireFocusIn(ConsoleKeyInfo? key)
+        public void FocusedIn(ConsoleKeyInfo? key)
         {
-
+            if (FocusIn != null)
+                foreach (FocusEventHandler handler in FocusIn.GetInvocationList())
+                {
+                    if (handler?.Invoke(this) == true)
+                        return;
+                }
         }
 
-        public void FireFocusOut(ConsoleKeyInfo? key)
+        public void FocusedOut(ConsoleKeyInfo? key)
         {
-
+            if (FocusOut != null)
+                foreach (FocusEventHandler handler in FocusOut.GetInvocationList())
+                {
+                    if (handler?.Invoke(this) == true)
+                        return;
+                }
         }
 
         public bool KeyPressed(ConsoleKeyInfo key)
@@ -115,8 +125,12 @@ namespace CLIForms.Components.Forms
                     {
                         IsChecked = !IsChecked;
 
+                        if (Activated != null)
+                            foreach (ActivatedEventHandler handler in Activated.GetInvocationList())
+                            {
+                                handler?.Invoke(this);
+                            }
 
-                        Clicked?.Invoke(this, new EventArgs());
                         Dirty = true;
                         return true;
                     }
@@ -124,6 +138,6 @@ namespace CLIForms.Components.Forms
             return false;
         }
 
-        public event EventHandler Clicked;
+        public event ActivatedEventHandler Activated;
     }
 }

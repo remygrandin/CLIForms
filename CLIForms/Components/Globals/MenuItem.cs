@@ -1,22 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using CLIForms.Buffer;
-using CLIForms.Components.Containers;
-using CLIForms.Extentions;
-using CLIForms.Interfaces;
 
 namespace CLIForms.Components.Globals
 {
     public class MenuItem
     {
-        public ConsoleColor? BackgroundColor = ConsoleColor.Gray;
+        public ConsoleColor? BackgroundColor = ConsoleColor.DarkGray;
         public ConsoleColor ForegroundColor = ConsoleColor.Black;
 
         
-        public ConsoleColor? ActiveBackgroundColor = ConsoleColor.Green;
-        public ConsoleColor ActiveForegroundColor = ConsoleColor.Blue;
+        public ConsoleColor? ActiveBackgroundColor = ConsoleColor.White;
+        public ConsoleColor ActiveForegroundColor = ConsoleColor.Black;
 
 
         public ConsoleColor? FocusedBackgroundColor = ConsoleColor.Green;
@@ -26,10 +21,12 @@ namespace CLIForms.Components.Globals
 
         public char? HotChar;
 
+        internal bool RightSubMenu = true;
+
         public List<MenuItem> Children = new List<MenuItem>();
 
         public bool isActive = false;
-        internal bool IsOpen = false;
+        internal bool IsOpen;
         internal int XPos = 0;
         internal int YPos = 0;
 
@@ -42,6 +39,24 @@ namespace CLIForms.Components.Globals
             Text = text;
         }
 
+        private MenuItem parent;
+        public MenuItem Parent
+        {
+            get => parent;
+            set
+            {
+                if (parent != value)
+                {
+                    parent?.Children.Remove(this);
+
+                    parent = value;
+
+                    parent?.Children.Add(this);
+
+                }
+
+            }
+        }
 
         public MenuItem(string text, char? hotChar, bool inheritStyle = true, params MenuItem[] children)
         {
@@ -49,7 +64,13 @@ namespace CLIForms.Components.Globals
 
             HotChar = hotChar;
 
-            Children = children?.ToList() ?? new List<MenuItem>();
+            Children = new List<MenuItem>();
+
+            foreach (MenuItem item in children?.ToList() ?? new List<MenuItem>())
+            {
+                item.Parent = this;
+            }
+            
 
             if (inheritStyle && Children != null)
             {
@@ -71,8 +92,13 @@ namespace CLIForms.Components.Globals
         public MenuItem(string text, params MenuItem[] children)
         {
             Text = text;
-            
-            Children = children?.ToList() ?? new List<MenuItem>();
+
+            Children = new List<MenuItem>();
+
+            foreach (MenuItem item in children?.ToList() ?? new List<MenuItem>())
+            {
+                item.Parent = this;
+            }
 
             if (Children != null)
             {
