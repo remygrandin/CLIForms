@@ -64,15 +64,15 @@ namespace CLIForms.Components.Forms
 
             if (_isChecked)
             {
-                buffer.data[0, 0] = new ConsoleChar(this, '■', true, _focused ? BackgroundColorFocused : BackgroundColor, ActiveAreaForegroundColor);
-                buffer.data[1, 0] = new ConsoleChar(this, '■', true, _focused ? BackgroundColorFocused : BackgroundColor, ActiveAreaForegroundColor);
-                buffer.data[2, 0] = new ConsoleChar(this, '■', true, _focused ? BackgroundColorFocused : BackgroundColor, _focused ? CursorForegroundColorFocused : CursorForegroundColor);
+                buffer.data[0, 0] = new ConsoleChar(this, '█', true, _focused ? BackgroundColorFocused : BackgroundColor, ActiveAreaForegroundColor);
+                buffer.data[1, 0] = new ConsoleChar(this, '█', true, _focused ? BackgroundColorFocused : BackgroundColor, ActiveAreaForegroundColor);
+                buffer.data[2, 0] = new ConsoleChar(this, '█', true, _focused ? BackgroundColorFocused : BackgroundColor, _focused ? CursorForegroundColorFocused : CursorForegroundColor);
             }
             else
             {
-                buffer.data[0, 0] = new ConsoleChar(this, '■', true, _focused ? BackgroundColorFocused : BackgroundColor, _focused ? CursorForegroundColorFocused : CursorForegroundColor);
-                buffer.data[1, 0] = new ConsoleChar(this, '■', true, _focused ? BackgroundColorFocused : BackgroundColor, InactiveAreaForegroundColor);
-                buffer.data[2, 0] = new ConsoleChar(this, '■', true, _focused ? BackgroundColorFocused : BackgroundColor, InactiveAreaForegroundColor);
+                buffer.data[0, 0] = new ConsoleChar(this, '█', true, _focused ? BackgroundColorFocused : BackgroundColor, _focused ? CursorForegroundColorFocused : CursorForegroundColor);
+                buffer.data[1, 0] = new ConsoleChar(this, '█', true, _focused ? BackgroundColorFocused : BackgroundColor, InactiveAreaForegroundColor);
+                buffer.data[2, 0] = new ConsoleChar(this, '█', true, _focused ? BackgroundColorFocused : BackgroundColor, InactiveAreaForegroundColor);
             }
 
             buffer.DrawString(this, _label, true, 4, 0, LabelBackgroundColor, LabelForegroundColor);

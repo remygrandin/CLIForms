@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Timers;
 using CLIForms.Buffer;
 using CLIForms.Components;
@@ -142,8 +141,10 @@ namespace CLIForms
 
         public void Start()
         {
-            Console.OutputEncoding = Encoding.UTF8;
+
+            Console.OutputEncoding = System.Text.Encoding.Unicode;
             Console.CursorVisible = false;
+
 
             if (FocusedObject == null)
             {

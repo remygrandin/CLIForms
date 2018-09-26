@@ -294,7 +294,7 @@ namespace CLIForms.Components.Globals
                         }
                     case ConsoleKey.DownArrow:
                         {
-                            if (FocusedNode.Children == null || RootNode.Children.Count == 0)
+                            if (FocusedNode.Children == null || FocusedNode.Children.Count == 0)
                                 return false;
 
                             FocusedNode = FocusedNode.Children.First();
