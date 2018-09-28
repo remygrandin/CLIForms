@@ -56,6 +56,7 @@
     <Compile Include="Components\Globals\StatusBar.cs" />
     <Compile Include="Components\Spinners\Spinner.cs" />
     <Compile Include="Components\Spinners\TinySpinner.cs" />
+    <Compile Include="Components\Texts\FIG.cs" />
     <Compile Include="Styles\AlignmentStyle.cs" />
     <Compile Include="Components\Tables\SimpleTable.cs" />
     <Compile Include="Styles\TableStyle.cs" />
@@ -86,6 +87,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Components\Graphs\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CLIForms-FIGFonts\CLIForms-FIGFonts.csproj">
+      <Project>{f2636f77-e3dd-429e-b866-4ccdb3be006d}</Project>
+      <Name>CLIForms-FIGFonts</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

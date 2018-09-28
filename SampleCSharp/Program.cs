@@ -61,6 +61,13 @@ namespace SampleCSharp
             };
             tabs.AddChild(multiLinesLabel, "Texts");
 
+            FIG fig = new FIG(null, "Simple Label")
+            {
+                X = 1,
+                Y = 10
+            };
+            tabs.AddChild(fig, "Texts");
+
             // ==== Forms Tab ====
 
             Button button = new Button(null, "Button")
@@ -204,7 +211,7 @@ namespace SampleCSharp
 
             tabs.AddChild(table, "Tables");
 
-            tabs.ActiveTab = 1;
+            tabs.ActiveTab = 0;
 
             engine.Start();
 
