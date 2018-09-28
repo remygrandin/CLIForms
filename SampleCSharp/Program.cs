@@ -114,6 +114,19 @@ namespace SampleCSharp
             };
             tabs.AddChild(toggle, "Forms");
 
+            SingleLineListBox singleLineTextbox = new SingleLineListBox(null,new []
+            {
+                new {id = 1, Text = "First Element" },
+                new {id = 2, Text = "Second Element" },
+                new {id = 3, Text = "Third Element" }
+            }, "List Box")
+            {
+                X = 25,
+                Y = 2,
+                DisplayProperty = "Text"
+            };
+            tabs.AddChild(singleLineTextbox, "Forms");
+
             // ==== Drawings Tab ====
             Box box = new Box(null, 20, 10)
             {

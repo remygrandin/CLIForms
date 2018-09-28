@@ -43,6 +43,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Components\Forms\SingleLineListBox.cs" />
     <Compile Include="Components\Forms\Toggle.cs" />
     <Compile Include="Components\Forms\Radio.cs" />
     <Compile Include="Components\Forms\Checkbox.cs" />
