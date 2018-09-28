@@ -77,6 +77,7 @@ namespace CLIForms
         }
 
         public List<IInterractive> VisibleFocusableObjects = new List<IInterractive>();
+        public List<PositionedConsoleChar> VisibleFocusableChars = new List<PositionedConsoleChar>();
         public List<DisplayObject> AllObjects = new List<DisplayObject>();
 
         public bool Draw = true;
@@ -115,8 +116,8 @@ namespace CLIForms
 
                 engineBuffer = screenbuffer;
 
-                VisibleFocusableObjects = engineBuffer.data.Flatten().Where(item => item.Focussable)
-                    .Select(item => item.Owner).Distinct()
+                VisibleFocusableChars = engineBuffer.dataPositioned.Where(item => item.Focussable).ToList();
+                VisibleFocusableObjects = VisibleFocusableChars.Select(item => item.Owner).Distinct()
                     .Where(item => item.Parents(itm => itm.Parent).All(itm => item.Disabled == false))
                     .Select(item => (IInterractive)item).ToList();
 
@@ -126,8 +127,7 @@ namespace CLIForms
                 if (FocusedObject != null && !VisibleFocusableObjects.Contains(FocusedObject))
                 {
                     TransferFocus(FocusedObject,
-                        (IInterractive)VisibleFocusableObjects.Select(item => (DisplayObject)item)
-                            .OrderBy(item => item.DisplayY).ThenBy(item => item.DisplayX).First(), null);
+                        (IInterractive)VisibleFocusableChars.OrderBy(item => Math.Pow(item.Y, 2) + Math.Pow(item.X, 2)).FirstOrDefault()?.Owner, null);
                 }
 
                 Console.SetWindowPosition(0, 0);
@@ -150,7 +150,7 @@ namespace CLIForms
             {
                 ForceDraw();
 
-                TransferFocus(FocusedObject, (IInterractive)VisibleFocusableObjects.Cast<DisplayObject>().OrderBy(item => item.DisplayY).ThenBy(item => item.DisplayX).FirstOrDefault(), null);
+                TransferFocus(FocusedObject, (IInterractive)VisibleFocusableChars.OrderBy(item => Math.Pow(item.Y, 2) + Math.Pow(item.X, 2)).FirstOrDefault()?.Owner, null);
 
             }
 
@@ -159,10 +159,10 @@ namespace CLIForms
 
             while (true)
             {
-                
+
 
                 ConsoleKeyInfo k = Console.ReadKey(true);
-                
+
 
                 if (DebugEnabled)
                 {
@@ -240,21 +240,8 @@ namespace CLIForms
             }
         }
 
-        private void MoveUp(ConsoleKeyInfo responsibleKey)
+        private Dictionary<DisplayObject, List<double>> ComputeDistances(IEnumerable<PositionedConsoleChar> candidatesFocused, IEnumerable<PositionedConsoleChar> candidatesNotFocused)
         {
-            IEnumerable<PositionedConsoleChar> positionnedChars = engineBuffer.dataPositioned.Where(item => item.Focussable);
-
-            int minYActive = positionnedChars.Where(item => item.Owner == FocusedObject).Min(item => item.Y);
-
-            IEnumerable<PositionedConsoleChar> candidatesFocused = positionnedChars.Where(item => item.Owner == FocusedObject && item.Y == minYActive);
-
-            IEnumerable<PositionedConsoleChar> candidatesNotFocused = positionnedChars.Where(item => item.Owner != FocusedObject && item.Y < minYActive);
-
-            if (!candidatesNotFocused.Any())
-            {
-                return;
-            }
-            // Target, Distance
             Dictionary<DisplayObject, List<double>> candidates = new Dictionary<DisplayObject, List<double>>();
 
             foreach (PositionedConsoleChar focusedChar in candidatesFocused)
@@ -277,6 +264,35 @@ namespace CLIForms
                 }
             }
 
+            return candidates;
+        }
+
+        private void MoveUp(ConsoleKeyInfo responsibleKey)
+        {
+            IEnumerable<PositionedConsoleChar> positionedChars = engineBuffer.dataPositioned.Where(item => item.Focussable);
+
+            int minYActive = positionedChars.Where(item => item.Owner == FocusedObject).Min(item => item.Y);
+
+            IEnumerable<PositionedConsoleChar> candidatesFocused = positionedChars.Where(item => item.Owner == FocusedObject && item.Y == minYActive);
+
+            IEnumerable<PositionedConsoleChar> candidatesNotFocused = positionedChars.Where(item => item.Owner != FocusedObject && item.Y < minYActive);
+
+            if (!candidatesNotFocused.Any())
+            {
+                return;
+            }
+            // Target, Distance
+
+            // direct up Candidate Test then full up candidate test
+            int minXActive = positionedChars.Where(item => item.Owner == FocusedObject).Min(item => item.X);
+            int maxXActive = positionedChars.Where(item => item.Owner == FocusedObject).Max(item => item.X);
+
+            Dictionary<DisplayObject, List<double>> candidates = ComputeDistances(candidatesFocused,
+                                                                                  candidatesNotFocused.Where(item => item.X <= maxXActive && item.X >= minXActive));
+
+            if(candidates.Count == 0)
+                candidates = ComputeDistances(candidatesFocused, candidatesNotFocused);
+            
             double minDistance = candidates.SelectMany(item => item.Value).Min();
 
             IEnumerable<KeyValuePair<DisplayObject, List<double>>> candidatesShortList = candidates.Where(item => item.Value.Contains(minDistance));
@@ -306,40 +322,30 @@ namespace CLIForms
 
         private void MoveDown(ConsoleKeyInfo responsibleKey)
         {
-            IEnumerable<PositionedConsoleChar> positionnedChars = engineBuffer.dataPositioned.Where(item => item.Focussable);
+            IEnumerable<PositionedConsoleChar> positionedChars = engineBuffer.dataPositioned.Where(item => item.Focussable);
 
-            int maxYActive = positionnedChars.Where(item => item.Owner == FocusedObject).Max(item => item.Y);
+            int maxYActive = positionedChars.Where(item => item.Owner == FocusedObject).Max(item => item.Y);
 
-            IEnumerable<PositionedConsoleChar> candidatesFocused = positionnedChars.Where(item => item.Owner == FocusedObject && item.Y == maxYActive);
+            IEnumerable<PositionedConsoleChar> candidatesFocused = positionedChars.Where(item => item.Owner == FocusedObject && item.Y == maxYActive);
 
-            IEnumerable<PositionedConsoleChar> candidatesNotFocused = positionnedChars.Where(item => item.Owner != FocusedObject && item.Y > maxYActive);
+            IEnumerable<PositionedConsoleChar> candidatesNotFocused = positionedChars.Where(item => item.Owner != FocusedObject && item.Y > maxYActive);
 
             if (!candidatesNotFocused.Any())
             {
                 return;
             }
             // Target, Distance
-            Dictionary<DisplayObject, List<double>> candidates = new Dictionary<DisplayObject, List<double>>();
 
-            foreach (PositionedConsoleChar focusedChar in candidatesFocused)
-            {
-                foreach (PositionedConsoleChar notFocusedChar in candidatesNotFocused)
-                {
-                    double distance = Math.Pow(focusedChar.X - notFocusedChar.X, 2) +
-                                      Math.Pow(focusedChar.Y - notFocusedChar.Y, 2);
+            // direct up Candidate Test then full up candidate test
+            int minXActive = positionedChars.Where(item => item.Owner == FocusedObject).Min(item => item.X);
+            int maxXActive = positionedChars.Where(item => item.Owner == FocusedObject).Max(item => item.X);
 
-                    // Direct line bonus
-                    if (focusedChar.X == notFocusedChar.X)
-                        distance /= 2;
+            Dictionary<DisplayObject, List<double>> candidates = ComputeDistances(candidatesFocused,
+                candidatesNotFocused.Where(item => item.X <= maxXActive && item.X >= minXActive));
 
-                    if (!candidates.ContainsKey(notFocusedChar.Owner))
-                    {
-                        candidates.Add(notFocusedChar.Owner, new List<double>());
-                    }
-                    candidates[notFocusedChar.Owner].Add(distance);
+            if (candidates.Count == 0)
+                candidates = ComputeDistances(candidatesFocused, candidatesNotFocused);
 
-                }
-            }
 
             double minDistance = candidates.SelectMany(item => item.Value).Min();
 
@@ -370,40 +376,30 @@ namespace CLIForms
 
         private void MoveLeft(ConsoleKeyInfo responsibleKey)
         {
-            IEnumerable<PositionedConsoleChar> positionnedChars = engineBuffer.dataPositioned.Where(item => item.Focussable);
+            IEnumerable<PositionedConsoleChar> positionedChars = engineBuffer.dataPositioned.Where(item => item.Focussable);
 
-            int minXActive = positionnedChars.Where(item => item.Owner == FocusedObject).Min(item => item.X);
+            int minXActive = positionedChars.Where(item => item.Owner == FocusedObject).Min(item => item.X);
 
-            IEnumerable<PositionedConsoleChar> candidatesFocused = positionnedChars.Where(item => item.Owner == FocusedObject && item.X == minXActive);
+            IEnumerable<PositionedConsoleChar> candidatesFocused = positionedChars.Where(item => item.Owner == FocusedObject && item.X == minXActive);
 
-            IEnumerable<PositionedConsoleChar> candidatesNotFocused = positionnedChars.Where(item => item.Owner != FocusedObject && item.X < minXActive);
+            IEnumerable<PositionedConsoleChar> candidatesNotFocused = positionedChars.Where(item => item.Owner != FocusedObject && item.X < minXActive);
 
             if (!candidatesNotFocused.Any())
             {
                 return;
             }
             // Target, Distance
-            Dictionary<DisplayObject, List<double>> candidates = new Dictionary<DisplayObject, List<double>>();
 
-            foreach (PositionedConsoleChar focusedChar in candidatesFocused)
-            {
-                foreach (PositionedConsoleChar notFocusedChar in candidatesNotFocused)
-                {
-                    double distance = Math.Pow(focusedChar.X - notFocusedChar.X, 2) +
-                                      Math.Pow(focusedChar.Y - notFocusedChar.Y, 2);
+            // direct up Candidate Test then full up candidate test
+            int minYActive = positionedChars.Where(item => item.Owner == FocusedObject).Min(item => item.Y);
+            int maxYActive = positionedChars.Where(item => item.Owner == FocusedObject).Max(item => item.Y);
 
-                    // Direct line bonus
-                    if (focusedChar.Y == notFocusedChar.Y)
-                        distance /= 2;
+            Dictionary<DisplayObject, List<double>> candidates = ComputeDistances(candidatesFocused,
+                candidatesNotFocused.Where(item => item.Y <= maxYActive && item.Y >= minYActive));
 
-                    if (!candidates.ContainsKey(notFocusedChar.Owner))
-                    {
-                        candidates.Add(notFocusedChar.Owner, new List<double>());
-                    }
-                    candidates[notFocusedChar.Owner].Add(distance);
+            if (candidates.Count == 0)
+                candidates = ComputeDistances(candidatesFocused, candidatesNotFocused);
 
-                }
-            }
 
             double minDistance = candidates.SelectMany(item => item.Value).Min();
 
@@ -434,40 +430,29 @@ namespace CLIForms
 
         private void MoveRight(ConsoleKeyInfo responsibleKey)
         {
-            IEnumerable<PositionedConsoleChar> positionnedChars = engineBuffer.dataPositioned.Where(item => item.Focussable);
+            IEnumerable<PositionedConsoleChar> positionedChars = engineBuffer.dataPositioned.Where(item => item.Focussable);
 
-            int maxXActive = positionnedChars.Where(item => item.Owner == FocusedObject).Max(item => item.X);
+            int maxXActive = positionedChars.Where(item => item.Owner == FocusedObject).Max(item => item.X);
 
-            IEnumerable<PositionedConsoleChar> candidatesFocused = positionnedChars.Where(item => item.Owner == FocusedObject && item.X == maxXActive);
+            IEnumerable<PositionedConsoleChar> candidatesFocused = positionedChars.Where(item => item.Owner == FocusedObject && item.X == maxXActive);
 
-            IEnumerable<PositionedConsoleChar> candidatesNotFocused = positionnedChars.Where(item => item.Owner != FocusedObject && item.X > maxXActive);
+            IEnumerable<PositionedConsoleChar> candidatesNotFocused = positionedChars.Where(item => item.Owner != FocusedObject && item.X > maxXActive);
 
             if (!candidatesNotFocused.Any())
             {
                 return;
             }
             // Target, Distance
-            Dictionary<DisplayObject, List<double>> candidates = new Dictionary<DisplayObject, List<double>>();
 
-            foreach (PositionedConsoleChar focusedChar in candidatesFocused)
-            {
-                foreach (PositionedConsoleChar notFocusedChar in candidatesNotFocused)
-                {
-                    double distance = Math.Pow(focusedChar.X - notFocusedChar.X, 2) +
-                                      Math.Pow(focusedChar.Y - notFocusedChar.Y, 2);
+            // direct up Candidate Test then full up candidate test
+            int minYActive = positionedChars.Where(item => item.Owner == FocusedObject).Min(item => item.Y);
+            int maxYActive = positionedChars.Where(item => item.Owner == FocusedObject).Max(item => item.Y);
 
-                    // Direct line bonus
-                    if (focusedChar.Y == notFocusedChar.Y)
-                        distance /= 2;
+            Dictionary<DisplayObject, List<double>> candidates = ComputeDistances(candidatesFocused,
+                candidatesNotFocused.Where(item => item.Y <= maxYActive && item.Y >= minYActive));
 
-                    if (!candidates.ContainsKey(notFocusedChar.Owner))
-                    {
-                        candidates.Add(notFocusedChar.Owner, new List<double>());
-                    }
-                    candidates[notFocusedChar.Owner].Add(distance);
-
-                }
-            }
+            if (candidates.Count == 0)
+                candidates = ComputeDistances(candidatesFocused, candidatesNotFocused);
 
             double minDistance = candidates.SelectMany(item => item.Value).Min();
 
