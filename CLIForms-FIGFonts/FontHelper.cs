@@ -45,7 +45,7 @@ namespace CLIForms_FIGFonts
 
             string[] headerParameters = line0.Split(' ');
 
-            if (headerParameters.Length != 9)
+            if (headerParameters.Length < 7)
                 throw new Exception("Font Header decoding problem : parameter count mismatch");
 
             Font font = new Font();
@@ -74,17 +74,120 @@ namespace CLIForms_FIGFonts
             if (font.MaxCharWidth < 0)
                 throw new Exception("Font Header decoding problem : max char width is < 0");
 
-            // max char width
+            // old layout
+            if (!int.TryParse(headerParameters[4], out font.OldLayout))
+                throw new Exception("Font Header decoding problem : old layout is not an integer");
+
+            // comment lines count
             if (!int.TryParse(headerParameters[5], out font.CommentLinesCount))
                 throw new Exception("Font Header decoding problem : comment lines count is not an integer");
 
             if (font.CommentLinesCount < 0)
                 throw new Exception("Font Header decoding problem : comment lines count is < 0");
 
+            // Print direction
+            if (!int.TryParse(headerParameters[6], out font.PrintDirection))
+                throw new Exception("Font Header decoding problem : print direction is not an integer");
+
+            if (font.PrintDirection != 0 && font.PrintDirection != 1)
+                throw new Exception("Font Header decoding problem : print direction is not 0 or 1");
+
+            if (headerParameters.Length >= 8)
+            {
+                // full layout
+                if (!int.TryParse(headerParameters[7], out font.FullLayout))
+                    throw new Exception("Font Header decoding problem : full layout is not an integer");
+
+            }
+
+            if (headerParameters.Length >= 9)
+            {
+                // Code Tagged Count
+                if (!int.TryParse(headerParameters[8], out font.CodetagCount))
+                    throw new Exception("Font Header decoding problem : codetag count is not an integer");
+
+                if (font.CodetagCount < 0)
+                    throw new Exception("Font Header decoding problem : print direction is not 0 or 1");
+            }
+
+            // Extracting comments lines
+            font.CommentLines = lines.Skip(1).Take(font.CommentLinesCount).ToArray();
+
+
+            bool baseExtract = true;
+            int baseExtractOffset = 0;
+            int lineOffset = font.CommentLinesCount + 1;
+
+            while (lineOffset < lines.Length)
+            {
+                if (baseExtract)
+                {
+                    List<string> charLines = new List<string>();
+
+                    for (int i = lineOffset; i < lineOffset + font.CharHeight - 1; i++)
+                    {
+                        string line = lines[i];
+
+                        char lineLastChar = line.ToCharArray().Last();
+
+                        while (lineLastChar == line.ToCharArray().Last())
+                        {
+                            line = line.Substring(0, line.Length - 1);
+                        }
+
+                        charLines.Add(line);
+                    }
+
+                    font.LoadChar(Font.BaseCharcodes[baseExtractOffset], charLines);
+
+                    lineOffset += font.CharHeight;
+                    baseExtractOffset++;
+
+                    if (baseExtractOffset >= Font.BaseCharcodes.Length)
+                        baseExtract = false;
+                }
+                else
+                {
+                    string charCodeStr = lines[lineOffset].Split().First();
+
+                    int charCode;
+                    bool toNegative = false;
+                    if (charCodeStr.StartsWith("-"))
+                    {
+                        toNegative = true;
+                        charCodeStr = charCodeStr.Substring(1);
+                    }
+
+                    if (charCodeStr.ToLower().StartsWith("0x")) // Octal
+                    {
+                        charCode = Convert.ToInt32(charCodeStr, 16);
+                    }
+                    else if(charCodeStr.StartsWith("0"))
+                    {
+                        charCode = Convert.ToInt32(charCodeStr, 8);
+                    }
+                    else
+                    {
+                        charCode = Convert.ToInt32(charCodeStr, 10);
+                    }
+
+                    List<string> charLines = new List<string>();
+
+                    lineOffset++;
+
+                    break;
+
+                    
+                }
 
 
 
-            return new Font();
+            }
+
+            string a = font.GetCharString(91);
+
+
+            return font;
         }
 
     }
