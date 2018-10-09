@@ -1,0 +1,2 @@
+* [Home](/)
+* [Components](components.md)
