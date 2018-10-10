@@ -54,6 +54,7 @@
     <Compile Include="Components\Globals\MenuItem.cs" />
     <Compile Include="Components\Globals\MenuBar.cs" />
     <Compile Include="Components\Globals\StatusBar.cs" />
+    <Compile Include="Components\Spinners\SpinnerBar.cs" />
     <Compile Include="Components\Spinners\Spinner.cs" />
     <Compile Include="Components\Spinners\TinySpinner.cs" />
     <Compile Include="Components\Texts\FIG.cs" />

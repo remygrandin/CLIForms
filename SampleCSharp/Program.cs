@@ -173,6 +173,13 @@ namespace SampleCSharp
             };
             tabs.AddChild(spinner, "Spinners");
 
+            SpinnerBar spinnerBar = new SpinnerBar(null)
+            {
+                X = 8,
+                Y = 1
+            };
+            tabs.AddChild(spinnerBar, "Spinners");
+
             // ==== Tables Tab ====
             SimpleTable table = new SimpleTable(null)
             {
@@ -211,7 +218,7 @@ namespace SampleCSharp
 
             tabs.AddChild(table, "Tables");
 
-            tabs.ActiveTab = 0;
+            tabs.ActiveTab = 3;
 
             engine.Start();
 
