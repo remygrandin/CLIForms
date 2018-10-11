@@ -20,7 +20,8 @@ None
 
 <!-- tabs:start -->
 
-<!-- tab:Class -->
+###### **Class**
+
 | Name | Type | Default | Description |
 |--|--|--|--|
 | X | Int32 | 0 | The x position relative to the parent center of coordinate. |
@@ -32,7 +33,8 @@ None
 | Dirty | Boolean | false | A flag to know of the object display buffer is dirty and should be redrawn. Setting this property to true will bubble up to the parent chain to the top level and trigger a partial screen redraw. Most if not all modifying action on the displayObject will auto trigger this mechanic. See Engine for more detail. |
 | Visible| Boolean | true | The visiblilty of the DisplayObject. If set to false, the object will not be drawn on screen. |
 
-<!-- tab:Inherited -->
+###### **Inherited**
+
 None
 
 <!-- tabs:end -->

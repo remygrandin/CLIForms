@@ -1,41 +1,333 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
+
 <head>
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta charset="UTF-8">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
+    <meta name="description" content="docsify-tabs - A docsify.js plugin for rendering tabbed content from markdown.">
+    <title>CLIForms</title>
 
-  <!-- Theme: Simple -->
-<link rel="stylesheet" href="https://unpkg.com/docsify-themeable/dist/css/theme-simple-dark.css">
+    <!-- <link rel="stylesheet" href="//unpkg.com/docsify/themes/vue.css"> -->
+    <!-- <link rel="stylesheet" href="//unpkg.com/docsify/themes/buble.css"> -->
+    <!-- <link rel="stylesheet" href="//unpkg.com/docsify/themes/dark.css"> -->
+    <!-- <link rel="stylesheet" href="//unpkg.com/docsify/themes/pure.css"> -->
+    <link rel="stylesheet" href="https://unpkg.com/docsify-themeable/dist/css/theme-simple.css" title="Simple">
+    <style>
+	/* Required for browsers w/o shadow DOM support */
+iframe[src*="buttons.github.io"] {
+    margin: 0;
+}
 
-<style>
-:root {
-    --content-max-width : 90%
-	}
-</style>
+.markdown-section strong code {
+    font-weight: normal;
+}
+
+
+/* Custom Styles */
+/* ========================================================================== */
+/* Icon Only */
+.docsify-tabs__tab[data-tab="icon only"] {
+    letter-spacing: -100vw;
+    color: transparent;
+}
+.docsify-tabs__tab[data-tab="icon only"]:before {
+    content: url(https://icongr.am/feather/image.svg?size=18&color=999999);
+    vertical-align: middle;
+}
+
+/* Icon + Label */
+[data-tab="icon + label"]:before {
+    content: url(https://icongr.am/feather/image.svg?size=18&color=999999);
+    height: 16px;
+    margin-right: 0.5em;
+    vertical-align: middle;
+}
+
+/* Active State */
+.docsify-tabs__tab--active[data-tab="active state"] {
+    box-shadow: none;
+    background: #13547a;
+    color: white;
+}
+.docsify-tabs__content[data-tab-content="active state"] {
+    background-image: linear-gradient(0deg, #80d0c7 0%, #13547a 100%);
+}
+.docsify-tabs__content[data-tab-content="active state"] p strong {
+    color: white;
+}
+
+/* JSBin */
+[data-tab-content="jsbin"] {
+    padding: 0 !important;
+}
+[data-tab-content="jsbin"] > * {
+    margin: 0 !important;
+}
+[data-tab-content="jsbin"] iframe {
+    display: block;
+    min-height: 350px;
+    margin: 0;
+    border: 0 !important;
+}
+
+/* Badge */
+[data-tab="badge"]:after {
+    content: 'New!';
+    position: absolute;
+    top: 0;
+    right: 0;
+    min-height: 1em;
+    min-width: 1em;
+    padding: 0.325em 0.5em 0.3em 0.5em;
+    border-radius: 3px;
+    background: red;
+    color: #fff;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 11px;
+    line-height: 1;
+    transform: translate(35%, -45%);
+}
+	</style>
 </head>
+
 <body>
-  <div id="app"></div>
-  <script>
-    window.$docsify = {
-      homepage: 'index.md',
-	  loadSidebar: true,
-	  subMaxLevel: 3,
-	  tabs: {
-		  persist    : true,      // default
-		  sync       : true,      // default
-		  theme      : 'classic', // default
-		  tabComments: true,      // default
-		  tabHeadings: true       // default
-		}
+    <div id="app"></div>
+
+    <!-- JavaScript -->
+    <script>
+        window.$docsify = {
+            // GENERAL
+            // -----------------------------------------------------------------
+            name       : 'docsify-tabs',
+            repo       : 'https://github.com/jhildenbiddle/docsify-tabs',
+            homepage   : 'index.md',
+            loadSidebar: '_sidebar.md',
+
+            // NAVIGATION
+            // -----------------------------------------------------------------
+            alias: {
+                '.*?/changelog': 'https://unpkg.com/docsify-tabs/CHANGELOG.md',
+            },
+            auto2top   : true,
+            maxLevel   : 3,
+            subMaxLevel: 3,
+
+            // PLUGINS
+            // -----------------------------------------------------------------
+            executeScript: true,
+            search: {
+                depth      : 3,
+                noData     : 'No results!',
+                placeholder: 'Search...'
+            },
+            tabs: {
+                // persist    : false,
+                // sync       : false,
+                // theme      : 'material',
+                // tabComments: false,
+                // tabHeadings: false
+            }
+        };
+    </script>
+    <script src="https://unpkg.com/docsify/lib/docsify.js"></script>
+    <script src="https://unpkg.com/docsify-themeable"></script>
+    <script src="https://unpkg.com/docsify-copy-code"></script>
+    <script>
+	/*!
+ * docsify-tabs
+ * v1.0.4
+ * https://jhildenbiddle.github.io/docsify-tabs/
+ * (c) 2018 John Hildenbiddle
+ * MIT license
+ */
+(function() {
+    "use strict";
+    var version = "1.0.4";
+    function styleInject(css, ref) {
+        if (ref === void 0) ref = {};
+        var insertAt = ref.insertAt;
+        if (!css || typeof document === "undefined") {
+            return;
+        }
+        var head = document.head || document.getElementsByTagName("head")[0];
+        var style = document.createElement("style");
+        style.type = "text/css";
+        if (insertAt === "top") {
+            if (head.firstChild) {
+                head.insertBefore(style, head.firstChild);
+            } else {
+                head.appendChild(style);
+            }
+        } else {
+            head.appendChild(style);
+        }
+        if (style.styleSheet) {
+            style.styleSheet.cssText = css;
+        } else {
+            style.appendChild(document.createTextNode(css));
+        }
     }
-  </script>
-  <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
-  
-  <!-- docsify-themeable -->
-<script src="https://unpkg.com/docsify-themeable"></script>
-  
-  <!-- docsify-tabs v1.x -->
-<script src="//unpkg.com/docsify-tabs@1"></script>
+    var css = ':root{--docsifytabs-border-color:#ededed;--docsifytabs-border-px:1px;--docsifytabs-margin:1.5em 0;--docsifytabs-tab-background:#f8f8f8;--docsifytabs-tab-background--active:var(--docsifytabs-content-background);--docsifytabs-tab-color:#999;--docsifytabs-tab-color--active:inherit;--docsifytabs-tab-highlight-px:3px;--docsifytabs-tab-highlight-color:var(--theme-color,currentColor);--docsifytabs-tab-padding:0.6em 1em;--docsifytabs-content-background:inherit;--docsifytabs-content-padding:0.5rem 1.75rem}.docsify-tabs:before,.docsify-tabs__tab{z-index:1}.docsify-tabs__tab--active,.docsify-tabs__tab:focus{z-index:2}.docsify-tabs{display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap;position:relative}.docsify-tabs:before{content:"";-ms-flex-order:0;order:0;-ms-flex:1;flex:1 1}.docsify-tabs__tab{-ms-flex-order:-1;order:-1;position:relative;margin:0;font-size:inherit;appearance:none}.docsify-tabs__content{visibility:hidden;position:absolute;overflow:hidden;height:0;width:100%}.docsify-tabs__tab--active+.docsify-tabs__content{visibility:visible;position:relative;overflow:auto;height:auto}[class*=docsify-tabs--]{margin:1.5em 0;margin:var(--docsifytabs-margin)}[class*=docsify-tabs--] .docsify-tabs__tab{padding:.6em 1em;padding:var(--docsifytabs-tab-padding);background:#f8f8f8;background:var(--docsifytabs-tab-background);color:#999;color:var(--docsifytabs-tab-color)}[class*=docsify-tabs--] .docsify-tabs__tab--active{background:inherit;background:var(--docsifytabs-tab-background--active);color:inherit;color:var(--docsifytabs-tab-color--active)}[class*=docsify-tabs--] .docsify-tabs__content{padding:.5rem 1.75rem;padding:var(--docsifytabs-content-padding);background:inherit;background:var(--docsifytabs-content-background)}.docsify-tabs--classic .docsify-tabs__content,.docsify-tabs--classic .docsify-tabs__tab,.docsify-tabs--classic:before{border-width:1px;border-color:#ededed;border:var(--docsifytabs-border-px) solid var(--docsifytabs-border-color)}.docsify-tabs--classic:before{margin-right:1px;margin-right:var(--docsifytabs-border-px);border-top-width:0;border-left-width:0;border-right-width:0}.docsify-tabs--classic .docsify-tabs__tab:first-of-type{border-top-left-radius:var(--docsifytabs-border-radius-px)}.docsify-tabs--classic .docsify-tabs__tab:last-of-type{border-top-right-radius:var(--docsifytabs-border-radius-px)}.docsify-tabs--classic .docsify-tabs__tab~.docsify-tabs__tab{margin-left:-1px;margin-left:calc(0px - var(--docsifytabs-border-px))}.docsify-tabs--classic .docsify-tabs__tab--active{border-bottom-width:0;box-shadow:inset 0 3px 0 0 currentColor;box-shadow:inset 0 var(--docsifytabs-tab-highlight-px) 0 0 var(--docsifytabs-tab-highlight-color)}.docsify-tabs--classic .docsify-tabs__content{margin-top:-1px;margin-top:calc(0px - var(--docsifytabs-border-px));border-top:0;border-radius:0 ;border-radius:0 var(--docsifytabs-border-radius-px) var(--docsifytabs-border-radius-px) var(--docsifytabs-border-radius-px)}.docsify-tabs--material .docsify-tabs__tab{margin-bottom:2px;margin-bottom:calc(var(--docsifytabs-tab-highlight-px) - var(--docsifytabs-border-px));background:transparent;border:0}.docsify-tabs--material .docsify-tabs__tab--active{box-shadow:0 3px 0 0 currentColor;box-shadow:0 var(--docsifytabs-tab-highlight-px) 0 0 var(--docsifytabs-tab-highlight-color);background:transparent}.docsify-tabs--material .docsify-tabs__content{border-width:1px 0;border-width:var(--docsifytabs-border-px) 0;border-style:solid;border-color:#ededed;border-color:var(--docsifytabs-border-color)}';
+    styleInject(css, {
+        insertAt: "top"
+    });
+    var commentReplaceMark = "tabs:replace";
+    var classNames = {
+        tabsContainer: "content",
+        tabBlock: "docsify-tabs",
+        tabButton: "docsify-tabs__tab",
+        tabButtonActive: "docsify-tabs__tab--active",
+        tabContent: "docsify-tabs__content"
+    };
+    var regex = {
+        codeMarkup: new RegExp(/(```[\s\S]*?```)/gm),
+        commentReplaceMarkup: new RegExp("\x3c!-- " + commentReplaceMark + " (.*) --\x3e"),
+        tabBlockMarkup: new RegExp(/^(<!-+\s+tabs:\s*?start\s+-+>)[\r\n]+([\s|\S]*?)[\r\n]+(<!-+\s+tabs:\s*?end\s+-+>)/m),
+        tabCommentMarkup: new RegExp(/^<!-+\s+tab:\s*(.*)\s+-+>[\r\n]+([\s\S]*?)[\r\n]+(?=<!-+\s+tabs?:)/m),
+        tabHeadingMarkup: new RegExp(/^#{1,6}\s*[*_]{2}\s*(.*[^\s])\s*[*_]{2}[\r\n]+([\s\S]*?)(?=#{1,6}\s*[*_]{2}|<!-+\s+tabs:\s*?end\s+-+>)/m)
+    };
+    var settings = {
+        persist: true,
+        sync: true,
+        theme: "classic",
+        tabComments: true,
+        tabHeadings: true
+    };
+    function renderTabsStage1(content) {
+        var codeBlockMatch = content.match(regex.codeMarkup) || [];
+        var codeBlockMarkers = codeBlockMatch.map(function(item, i) {
+            var codeMarker = "\x3c!-- " + commentReplaceMark + " CODEBLOCK" + i + " --\x3e";
+            content = content.replace(item, codeMarker);
+            return codeMarker;
+        });
+        var tabTheme = settings.theme ? classNames.tabBlock + "--" + settings.theme : "";
+        var tabBlockMatch = void 0;
+        var tabMatch = void 0;
+        while ((tabBlockMatch = regex.tabBlockMarkup.exec(content)) !== null) {
+            var tabBlock = tabBlockMatch[0];
+            var tabStartReplacement = "";
+            var tabEndReplacement = "";
+            var hasTabComments = settings.tabComments && regex.tabCommentMarkup.test(tabBlock);
+            var hasTabHeadings = settings.tabHeadings && regex.tabHeadingMarkup.test(tabBlock);
+            var tabBlockStart = tabBlockMatch[1];
+            var tabBlockEnd = tabBlockMatch[3];
+            if (hasTabComments || hasTabHeadings) {
+                tabStartReplacement = "\x3c!-- " + commentReplaceMark + ' <div class="' + [ classNames.tabBlock, tabTheme ].join(" ") + '"> --\x3e';
+                tabEndReplacement = "\x3c!-- " + commentReplaceMark + " </div> --\x3e";
+                while ((tabMatch = (settings.tabComments ? regex.tabCommentMarkup.exec(tabBlock) : null) || (settings.tabHeadings ? regex.tabHeadingMarkup.exec(tabBlock) : null)) !== null) {
+                    var tabTitle = (tabMatch[1] || "[Tab]").trim();
+                    var tabContent = tabMatch[2] || "";
+                    tabBlock = tabBlock.replace(tabMatch[0], [ '<button class="' + classNames.tabButton + '" data-tab="' + tabTitle.toLowerCase() + '">' + tabTitle + "</button>", "\x3c!-- " + commentReplaceMark + ' <div class="' + classNames.tabContent + '" data-tab-content="' + tabTitle.toLowerCase() + '"> --\x3e', "" + tabContent, "\x3c!-- " + commentReplaceMark + " </div> --\x3e\n\n" ].join("\n\n"));
+                }
+            }
+            tabBlock = tabBlock.replace(tabBlockStart, tabStartReplacement);
+            tabBlock = tabBlock.replace(tabBlockEnd, tabEndReplacement);
+            content = content.replace(tabBlockMatch[0], tabBlock);
+        }
+        codeBlockMarkers.forEach(function(item, i) {
+            content = content.replace(item, codeBlockMatch[i]);
+        });
+        return content;
+    }
+    function renderTabsStage2(html) {
+        var tabReplaceMatch = void 0;
+        while ((tabReplaceMatch = regex.commentReplaceMarkup.exec(html)) !== null) {
+            var tabComment = tabReplaceMatch[0];
+            var tabReplacement = tabReplaceMatch[1] || "";
+            html = html.replace(tabComment, tabReplacement);
+        }
+        return html;
+    }
+    function setDefaultTabs() {
+        var tabsContainer = document.querySelector("." + classNames.tabsContainer);
+        var tabBlocks = tabsContainer ? Array.apply(null, tabsContainer.querySelectorAll("." + classNames.tabBlock)) : [];
+        var tabStorage = JSON.parse(sessionStorage.getItem(window.location.href)) || {};
+        tabBlocks.forEach(function(tabBlock, index) {
+            var activeButtonDefault = tabBlock.querySelector("." + classNames.tabButton);
+            var activeButtonPersist = settings.persist ? tabBlock.querySelector("." + classNames.tabButton + '[data-tab="' + tabStorage[index] + '"]') : null;
+            var activeButton = activeButtonPersist || activeButtonDefault;
+            activeButton && activeButton.classList.add(classNames.tabButtonActive);
+        });
+    }
+    function setActiveTab(elm, isSync) {
+        var isTabButton = elm.classList.contains(classNames.tabButton);
+        if (isTabButton) {
+            var activeButton = elm;
+            var activeButtonLabel = activeButton.getAttribute("data-tab");
+            var tabsContainer = document.querySelector("." + classNames.tabsContainer);
+            var tabBlock = activeButton.parentNode;
+            var tabButtons = Array.apply(null, tabBlock.querySelectorAll("." + classNames.tabButton));
+            var tabBlockOffset = tabBlock.offsetTop;
+            tabButtons.forEach(function(buttonElm) {
+                return buttonElm.classList.remove(classNames.tabButtonActive);
+            });
+            activeButton.classList.add(classNames.tabButtonActive);
+            if (settings.persist) {
+                var tabBlocks = tabsContainer ? Array.apply(null, tabsContainer.querySelectorAll("." + classNames.tabBlock)) : [];
+                var tabBlockIndex = tabBlocks.indexOf(tabBlock);
+                var tabStorage = JSON.parse(sessionStorage.getItem(window.location.href)) || {};
+                tabStorage[tabBlockIndex] = activeButtonLabel;
+                sessionStorage.setItem(window.location.href, JSON.stringify(tabStorage));
+            }
+            if (settings.sync && !isSync) {
+                var tabButtonMatches = tabsContainer ? Array.apply(null, tabsContainer.querySelectorAll("." + classNames.tabButton + '[data-tab="' + activeButtonLabel + '"]')) : [];
+                tabButtonMatches.forEach(function(tabButtonMatch) {
+                    setActiveTab(tabButtonMatch, true);
+                });
+                window.scrollBy(0, 0 - (tabBlockOffset - tabBlock.offsetTop));
+            }
+        }
+    }
+    function docsifyTabs(hook, vm) {
+        var hasTabs = false;
+        hook.beforeEach(function(content) {
+            hasTabs = regex.tabBlockMarkup.test(content);
+            if (hasTabs) {
+                content = renderTabsStage1(content);
+            }
+            return content;
+        });
+        hook.afterEach(function(html, next) {
+            if (hasTabs) {
+                html = renderTabsStage2(html);
+            }
+            next(html);
+        });
+        hook.doneEach(function() {
+            if (hasTabs) {
+                setDefaultTabs();
+            }
+        });
+        hook.mounted(function() {
+            var tabsContainer = document.querySelector("." + classNames.tabsContainer);
+            tabsContainer && tabsContainer.addEventListener("click", function(evt) {
+                setActiveTab(evt.target);
+            });
+        });
+    }
+    if (window) {
+        window.$docsify = window.$docsify || {};
+        window.$docsify.tabs = window.$docsify.tabs || {};
+        Object.keys(window.$docsify.tabs).forEach(function(key) {
+            if (settings.hasOwnProperty(key)) {
+                settings[key] = window.$docsify.tabs[key];
+            }
+        });
+        window.$docsify.tabs.version = version;
+        if (settings.tabComments || settings.tabHeadings) {
+            window.$docsify.plugins = [].concat(docsifyTabs, window.$docsify.plugins || []);
+        }
+    }
+})();
+//# sourceMappingURL=docsify-tabs.js.map
+	</script>
+    <script src="https://unpkg.com/docsify/lib/plugins/search.js"></script>
+    <script src="https://unpkg.com/class-change@1"></script>
+    <script>
+        // Initialize the default attribute listener
+        classChange.attrs();
+    </script>
 </body>
 </html>
