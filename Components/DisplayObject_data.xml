@@ -1,0 +1,43 @@
+<ClassData>
+	<Name>DisplayObject</Name>
+	<Inherit/>
+	<Properties>
+		<Property>
+			<Name>Prop1</Name>
+			<ReturnType>Int32</ReturnType>
+			<ShortDesc>short desc</ShortDesc>
+			<LongDesc>
+				<![CDATA[
+test
+
+## HAHAHAHA
+			
+]]>
+			</LongDesc>
+			<ReadOnly>false</ReadOnly>
+		</Property>
+	</Properties>
+	<Methods>
+		<Method>
+			<Name>M1</Name>
+			<ReturnType>void</ReturnType>
+			<ShortDesc>short desc</ShortDesc>
+			<LongDesc>
+				<![CDATA[
+test
+
+## HAHAHAHA
+			
+]]>
+			</LongDesc>
+			<Arguments>
+				<Property>
+					<Name>Arg1</Name>
+					<Type>Int32</Type>
+					<ShortDesc>desc</ShortDesc>
+					<Default/>
+				</Property>
+			</Arguments>
+		</Method>
+	</Methods>
+</ClassData>
