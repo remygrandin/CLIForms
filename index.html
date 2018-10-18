@@ -13,7 +13,21 @@
     <!-- <link rel="stylesheet" href="//unpkg.com/docsify/themes/dark.css"> -->
     <!-- <link rel="stylesheet" href="//unpkg.com/docsify/themes/pure.css"> -->
     <link rel="stylesheet" href="https://unpkg.com/docsify-themeable/dist/css/theme-simple.css" title="Simple">
-	<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <style>
+    table.autoDocsTable{
+        width: 100%;
+        display: table;
+    }
+
+    table.autoDocsTable td:first-child, table.autoDocsTable th:first-child{
+        width: 10px;
+    }
+
+    table.autoDocsTable td:last-child, table.autoDocsTable th:last-child{
+        width: 25%;
+    }
+
+    </style>
 </head>
 
 <body>
@@ -24,23 +38,23 @@
         window.$docsify = {
             // GENERAL
             // -----------------------------------------------------------------
-            name       : 'docsify-tabs',
-            homepage   : 'index.md',
+            name: 'docsify-tabs',
+            homepage: 'index.md',
             loadSidebar: '_sidebar.md',
 
             // NAVIGATION
             // -----------------------------------------------------------------
 
-            auto2top   : true,
-            maxLevel   : 3,
+            auto2top: true,
+            maxLevel: 3,
             subMaxLevel: 3,
 
             // PLUGINS
             // -----------------------------------------------------------------
             executeScript: true,
             search: {
-                depth      : 3,
-                noData     : 'No results!',
+                depth: 3,
+                noData: 'No results!',
                 placeholder: 'Search...'
             },
             tabs: {
@@ -52,48 +66,216 @@
             }
         };
     </script>
-	<script>
+    <script>
 
 
-(function() {
-    "use strict";
+        (function () {
+            "use strict";
 
-	
-	
-    function docsifyAutoDocs(hook, vm) {
-		var regex = {
-			InsertTag: /^<!-+\s+autoDocs:\s*?(.*)\s+-+>/mg
-		};
-		
-		hook.beforeEach(function(content, next) {
-			while(regex.InsertTag.test(content))		
-			{
-				
-			
-				var newContent = "";
-			
-				var regexMatch = regex.InsertTag.exec(content);
-				
-				newContent += "#### Properties\r\n"
-								
-				newContent += "#### Methods\r\n"
-				
-				newContent += "#### Events\r\n"
-			
-				content = content.replace(regexMatch[0], newContent)
-			}
-		
-			// Invoked each time before parsing the Markdown file.
-			// ...
-			next(content)
-		})
-        
-    };
-    
-   
-    window.$docsify = window.$docsify || {}; 	
-    window.$docsify.plugins = [ docsifyAutoDocs ].concat(window.$docsify.plugins || []);
-})();
+            function getAllMatches(regex, text) {
+                var res = [];
+                text.replace(regex, function () {
+                    var matches = arguments;
+                    res.push(matches);
+                });
+
+                return res;
+            }
+
+            function getByTagName(parent, tagName) {
+                var c = parent.children;
+                var x = [];
+                for (var i = 0; i < c.length; i++) {
+                    if (c[i].tagName === tagName) { // children_tag_name should be in capital, eg. "SPAN"
+                        x.push(c[i]);
+                    }
+                };
+                return x;
+            }
+
+            var newLine = "\r\n";
+
+            function renderTables(obj) {
+                var content = "";
+
+                content += "## " + obj.Name + newLine;
+
+                content += "<table class='autoDocsTable'>";
+                content += "<thead>";
+                content += "<tr><th colspan='2'>Property</th><th>Defined By</th></tr>";
+                content += "</thead>";
+                content += "<tbody>";
+
+                obj.Properties.forEach(function (element) {
+                    content += "<tr>";
+
+                    content += "<td>" + "" + "</td>";
+                    content += "<td>" + element.Name + " : " + element.ReturnType + "<br/>" + 
+                    (element.ReadOnly ? "[read-only]" : "") +
+                    element.ShortDesc + "</td>";
+                    content += "<td>" + element.DefinedBy + "</td>";
+
+                    content += "</tr>";
+                });
+
+                content += "</tbody>";
+                content += "</table>"+ newLine;
+
+                content += "### Property Detail" + newLine;
+
+                obj.Properties.forEach(function (element) {
+                    content += "### **" + element.Name + "** property" + newLine;
+                    content += element.Name + ":" + element.ReturnType + newLine;
+                    content += element.LongDesc + newLine;
+
+                });
+
+                return content;
+
+            }
+
+            var classes = {};
+            var classesToLoad = [];
+
+            var loadedCallback;
+            var tempContent;
+            var classesToLoadPos = 0;
+
+            function loadNextClass() {
+                if (classesToLoadPos >= classesToLoad.length) {
+                    // Render
+                    var matches = getAllMatches(regex.InsertTag, tempContent);
+
+                    for (var i = 0; i < matches.length; i++) {
+                        var match = matches[i];
+
+                        tempContent = tempContent.replace(match[0], renderTables(classes[match[1]]))
+                    }
+
+                    loadedCallback(tempContent);
+                    return
+                }
+
+                var currentClass = classesToLoad[classesToLoadPos];
+
+                if (typeof classes[currentClass.Name] == "undefined") {
+                    window.Docsify.get(currentClass.Url, true).then(function (content) {
+                        var classDef = {}
+
+                        classes[currentClass.Name] = classDef;
+
+                        var parser = new DOMParser();
+                        var xmlDoc = parser.parseFromString(content, "text/xml");
+
+                        classDef.Name = getByTagName(xmlDoc.firstChild, "Name")[0].textContent;
+
+                        var properties = getByTagName(getByTagName(xmlDoc.firstChild, "Properties")[0], "Property");
+
+                        classDef.Properties = [];
+
+                        for (var i = 0; i < properties.length; i++) {
+                            var property = properties[i];
+                            var propertyObj = {};
+
+                            propertyObj.Name = getByTagName(property, "Name")[0].textContent;
+                            propertyObj.ReturnType = getByTagName(property, "ReturnType")[0].textContent;
+                            propertyObj.ShortDesc = getByTagName(property, "ShortDesc")[0].textContent;
+                            propertyObj.LongDesc = getByTagName(property, "LongDesc")[0].textContent;
+                            propertyObj.ReadOnly = getByTagName(property, "ReadOnly")[0].textContent == "true";
+                            propertyObj.DefinedBy = classDef.Name;
+
+                            classDef.Properties.push(propertyObj);
+                        }
+
+                        var methods = getByTagName(getByTagName(xmlDoc.firstChild, "Methods")[0], "Method");
+
+                        classDef.Methods = [];
+
+                        for (var i = 0; i < methods.length; i++) {
+                            var method = methods[i];
+                            var methodObj = {};
+
+                            methodObj.Name = getByTagName(method, "Name")[0].textContent;
+                            methodObj.ReturnType = getByTagName(method, "ReturnType")[0].textContent;
+                            methodObj.ShortDesc = getByTagName(method, "ShortDesc")[0].textContent;
+                            methodObj.LongDesc = getByTagName(method, "LongDesc")[0].textContent;
+
+                            var argumentsArr = getByTagName(getByTagName(method, "Arguments")[0], "Argument");
+
+                            methodObj.Arguments = [];
+
+                            for (var i = 0; i < argumentsArr.length; i++) {
+                                var argument = argumentsArr[i];
+                                var argumentObj = {};
+
+                                argumentObj.Name = getByTagName(argument, "Name")[0].textContent;
+                                argumentObj.Type = getByTagName(argument, "Type")[0].textContent;
+                                argumentObj.ShortDesc = getByTagName(argument, "ShortDesc")[0].textContent;
+                                argumentObj.Default = getByTagName(argument, "Default")[0].textContent;
+
+                                methodObj.Arguments.push(argumentObj);
+                            }
+
+                            classDef.Methods.push(methodObj);
+                        }
+
+                        classesToLoadPos++;
+
+                        loadNextClass();
+
+                        return;
+                    })
+                }
+                else {
+                    loadNextClass();
+
+                    return;
+                }
+            }
+
+            var regex = {
+                InsertTag: /<!-+\s+autoDocs:\s*?(.*)\s+-+>/g
+            };
+
+            function docsifyAutoDocs(hook, vm) {
+
+
+                hook.beforeEach(function (content, next) {
+
+                    if (regex.InsertTag.test(content)) {
+
+                        classes = {};
+                        classesToLoad = [];
+                        classesToLoadPos = 0;
+                        loadedCallback = next;
+
+                        var matches = getAllMatches(regex.InsertTag, content);
+
+                        for (var i = 0; i < matches.length; i++) {
+                            var match = matches[i];
+
+                            var dataUrl = window.Docsify.util.getParentPath(document.location.href).replace(/#\//g, "") + match[1] + "_data.xml";
+
+                            classesToLoad.push({ Name: match[1], Url: dataUrl });
+                        }
+
+                        tempContent = content;
+
+
+                        loadNextClass();
+
+                    }
+                    else {
+                        next(content);
+                    }
+                })
+
+            };
+
+
+            window.$docsify = window.$docsify || {};
+            window.$docsify.plugins = [docsifyAutoDocs].concat(window.$docsify.plugins || []);
+        })();
 
     </script>
     <script src="https://unpkg.com/docsify/lib/docsify.js"></script>
@@ -103,7 +285,4 @@
     <script src="https://unpkg.com/docsify-tabs"></script>
 
     <script src="https://unpkg.com/docsify/lib/plugins/search.js"></script>
-	    <
-	
-</body>
-</html>
+    < </body> </html>

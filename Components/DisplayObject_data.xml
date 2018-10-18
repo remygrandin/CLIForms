@@ -31,12 +31,12 @@ test
 ]]>
 			</LongDesc>
 			<Arguments>
-				<Property>
+				<Argument>
 					<Name>Arg1</Name>
 					<Type>Int32</Type>
 					<ShortDesc>desc</ShortDesc>
 					<Default/>
-				</Property>
+				</Argument>
 			</Arguments>
 		</Method>
 	</Methods>
