@@ -3,31 +3,100 @@
 	<Inherit/>
 	<Properties>
 		<Property>
-			<Name>Prop1</Name>
+			<Name>X</Name>
 			<ReturnType>Int32</ReturnType>
-			<ShortDesc>short desc</ShortDesc>
+			<ShortDesc>Indicates the x position relative to the parent center of coordinate.</ShortDesc>
+			<LongDesc>Indicates the x position relative to the parent center of coordinate.</LongDesc>
+			<ReadOnly>false</ReadOnly>
+			<Default>0</Default>
+		</Property>
+		<Property>
+			<Name>X</Name>
+			<ReturnType>Int32</ReturnType>
+			<ShortDesc>Indicates the x position relative to the parent center of coordinate.</ShortDesc>
+			<LongDesc>Indicates the x position relative to the parent center of coordinate.</LongDesc>
+			<ReadOnly>false</ReadOnly>
+			<Default>0</Default>
+		</Property>
+		<Property>
+			<Name>DisplayX</Name>
+			<ReturnType>Int32</ReturnType>
+			<ShortDesc>Indicates the x position relative to the root center of coordinate.</ShortDesc>
+			<LongDesc>Indicates the x position relative to the root center of coordinate.</LongDesc>
+			<ReadOnly>true</ReadOnly>
+			<Default>-</Default>
+		</Property>
+		<Property>
+			<Name>DisplayY</Name>
+			<ReturnType>Int32</ReturnType>
+			<ShortDesc>Indicates the y position relative to the root center of coordinate.</ShortDesc>
+			<LongDesc>Indicates the y position relative to the root center of coordinate.</LongDesc>
+			<ReadOnly>true</ReadOnly>
+			<Default>-</Default>
+		</Property>
+		<Property>
+			<Name>Parent</Name>
+			<ReturnType>Container</ReturnType>
+			<ShortDesc>Indicates the **Container** that currently contain the DisplayObject.</ShortDesc>
 			<LongDesc>
-				<![CDATA[
-test
-
-## HAHAHAHA
-			
+				<![CDATA[Indicates the **Container** that currently contain the DisplayObject. 
+Setting this property will automaticly remove the displayObject from the previous parent display list (if any) and add it to the new parent display list (if any). 
+Can be set to null.
 ]]>
 			</LongDesc>
 			<ReadOnly>false</ReadOnly>
+			<Default>null</Default>
 		</Property>
+		<Property>
+			<Name>Disabled</Name>
+			<ReturnType>Boolean</ReturnType>
+			<ShortDesc>Indicates whether or not the object is in a disabled state.</ShortDesc>
+			<LongDesc>
+				<![CDATA[Indicates whether or not the object is in a disabled state.
+If disabled, the object will not trigger any event and will not do anything. 
+Components may rely on this property to implement custom disabled behavior, refer to their descriptions of the property for more infos.
+]]>
+			</LongDesc>
+			<ReadOnly>false</ReadOnly>
+			<Default>false</Default>
+		</Property>
+		<Property>
+			<Name>Visible</Name>
+			<ReturnType>Boolean</ReturnType>
+			<ShortDesc>Indicates whether  or not the object is visible.</ShortDesc>
+			<LongDesc>
+				<![CDATA[Indicates whether or not the object is visible. 
+If set to false, the object will not be drawn on screen.
+]]>
+			</LongDesc>
+			<ReadOnly>false</ReadOnly>
+			<Default>false</Default>
+		</Property>
+		<Property>
+			<Name>Dirty</Name>
+			<ReturnType>Boolean</ReturnType>
+			<ShortDesc>Indicates if the object need to be redrawn.</ShortDesc>
+			<LongDesc>
+				<![CDATA[Indicates if the object need to be redrawn.
+automaticly raised by the object if it's internal states does not reflect the one drawn in it's object display buffer.
+Setting this property to true will bubble up to the parent chain to the top level and trigger a partial screen redraw.
+Most if not all modifying action on the displayObject will auto trigger this mechanic. 
+See Engine for more detail.
+]]>
+			</LongDesc>
+			<ReadOnly>false</ReadOnly>
+			<Default>false</Default>
+		</Property>
+		
 	</Properties>
 	<Methods>
 		<Method>
-			<Name>M1</Name>
+			<Name>Show</Name>
 			<ReturnType>void</ReturnType>
-			<ShortDesc>short desc</ShortDesc>
+			<ShortDesc>Show the DisplayObject</ShortDesc>
 			<LongDesc>
-				<![CDATA[
-test
-
-## HAHAHAHA
-			
+				<![CDATA[Show the DisplayObject.
+Short for displayObject.Visible = true
 ]]>
 			</LongDesc>
 			<Arguments>
@@ -37,6 +106,30 @@ test
 					<ShortDesc>desc</ShortDesc>
 					<Default/>
 				</Argument>
+			</Arguments>
+		</Method>
+		<Method>
+			<Name>Hide</Name>
+			<ReturnType>void</ReturnType>
+			<ShortDesc>Hide the DisplayObject</ShortDesc>
+			<LongDesc>
+				<![CDATA[Hide the DisplayObject.
+Short for displayObject.Visible = false
+]]>
+			</LongDesc>
+			<Arguments>
+			</Arguments>
+		</Method>
+		<Method>
+			<Name>Render</Name>
+			<ReturnType>ConsoleCharBuffer</ReturnType>
+			<ShortDesc>Abstract method to handle the render of the DisplayObject.</ShortDesc>
+			<LongDesc>
+				<![CDATA[Abstract method to handle the render of the DisplayObject.
+Called by the parent Container when rendering the children.
+]]>
+			</LongDesc>
+			<Arguments>
 			</Arguments>
 		</Method>
 	</Methods>

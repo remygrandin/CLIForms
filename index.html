@@ -121,13 +121,23 @@
                 content += "</tbody>";
                 content += "</table>"+ newLine;
 
-                content += "### Property Detail" + newLine;
+				
+				
+				
+				
+				
+				
+				
+                content += "## Property Detail" + newLine;
 
                 obj.Properties.forEach(function (element) {
+					
                     content += "### **" + element.Name + "** property" + newLine;
                     content += element.Name + ":" + element.ReturnType + newLine;
+					content += "**Read-Only : **" + element.ReadOnly + newLine;
+					content += "**Default : **" + element.Default + newLine;
                     content += element.LongDesc + newLine;
-
+					content += "----------"+ newLine;
                 });
 
                 return content;
@@ -182,6 +192,7 @@
                             propertyObj.ShortDesc = getByTagName(property, "ShortDesc")[0].textContent;
                             propertyObj.LongDesc = getByTagName(property, "LongDesc")[0].textContent;
                             propertyObj.ReadOnly = getByTagName(property, "ReadOnly")[0].textContent == "true";
+							propertyObj.Default = getByTagName(property, "Default")[0].textContent;
                             propertyObj.DefinedBy = classDef.Name;
 
                             classDef.Properties.push(propertyObj);
@@ -285,4 +296,4 @@
     <script src="https://unpkg.com/docsify-tabs"></script>
 
     <script src="https://unpkg.com/docsify/lib/plugins/search.js"></script>
-    < </body> </html>
+    </body> </html>
