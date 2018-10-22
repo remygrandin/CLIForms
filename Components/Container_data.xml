@@ -1,6 +1,6 @@
 <ClassData>
-	<Name>DisplayObject</Name>
-	<Inherit/>
+	<Name>Container</Name>
+	<Inherit>DisplayObject</Inherit>
 	<Properties>
 		<Property>
 			<Name>X</Name>
@@ -11,10 +11,10 @@
 			<Default>0</Default>
 		</Property>
 		<Property>
-			<Name>Y</Name>
+			<Name>X</Name>
 			<ReturnType>Int32</ReturnType>
-			<ShortDesc>Indicates the y position relative to the parent center of coordinate.</ShortDesc>
-			<LongDesc>Indicates the y position relative to the parent center of coordinate.</LongDesc>
+			<ShortDesc>Indicates the x position relative to the parent center of coordinate.</ShortDesc>
+			<LongDesc>Indicates the x position relative to the parent center of coordinate.</LongDesc>
 			<ReadOnly>false</ReadOnly>
 			<Default>0</Default>
 		</Property>
@@ -39,7 +39,7 @@
 			<ReturnType>Container</ReturnType>
 			<ShortDesc>Indicates the **Container** that currently contain the DisplayObject.</ShortDesc>
 			<LongDesc>
-				<![CDATA[Indicates the **Container** that currently contain the DisplayObject. 
+				<![CDATA[Indicates the **Container** that currently contain the DisplayObject.
 				
 Setting this property will automaticly remove the displayObject from the previous parent display list (if any) and add it to the new parent display list (if any). 
 
@@ -96,7 +96,7 @@ See Engine for more detail.
 			<ReadOnly>false</ReadOnly>
 			<Default>false</Default>
 		</Property>
-
+		
 	</Properties>
 	<Methods>
 		<Method>

@@ -83,7 +83,7 @@
             }
 
             function getByTagName(parent, tagName) {
-                var c = parent.children;
+                var c = parent.childNodes;
                 var x = [];
                 for (var i = 0; i < c.length; i++) {
                     if (c[i].tagName === tagName) { // children_tag_name should be in capital, eg. "SPAN"
@@ -93,7 +93,25 @@
                 return x;
             }
 
+            function getTagText(parent, tagName) {
+                var childNodes = getByTagName(parent, tagName)[0].childNodes;
+                if(childNodes.length == 0)
+                {
+                    return null;
+                }
+                else if(childNodes.length == 1)
+                {
+                    return childNodes[0].textContent;
+                }
+                else // CDATA
+                {
+                    return childNodes[1].textContent;
+                }
+
+            }
+
             var newLine = "\r\n";
+            var doubleNewLine = newLine + newLine;
 
             function renderTables(obj) {
                 var content = "";
@@ -110,8 +128,8 @@
                     content += "<tr>";
 
                     content += "<td>" + "" + "</td>";
-                    content += "<td>" + element.Name + " : " + element.ReturnType + "<br/>" + 
-                    (element.ReadOnly ? "[read-only]" : "") +
+                    content += "<td>" + element.Name + " : _" + element.ReturnType + "_<br/>" + 
+                    (element.ReadOnly ? "[read-only] " : "") +
                     element.ShortDesc + "</td>";
                     content += "<td>" + element.DefinedBy + "</td>";
 
@@ -122,23 +140,35 @@
                 content += "</table>"+ newLine;
 
 				
+						
 				
 				
-				
-				
-				
-				
-                content += "## Property Detail" + newLine;
+                content += "## Property Detail" + doubleNewLine;
 
                 obj.Properties.forEach(function (element) {
 					
-                    content += "### **" + element.Name + "** property" + newLine;
-                    content += element.Name + ":" + element.ReturnType + newLine;
-					content += "**Read-Only : **" + element.ReadOnly + newLine;
-					content += "**Default : **" + element.Default + newLine;
-                    content += element.LongDesc + newLine;
-					content += "----------"+ newLine;
+                    content += "### **" + element.Name + "** property" + doubleNewLine;
+
+                    content += element.Name + " : " + element.ReturnType + doubleNewLine;
+					content += "**Read-Only :** " + element.ReadOnly + doubleNewLine;
+					content += "**Default :** " + element.Default + doubleNewLine;
+                    content += element.LongDesc + doubleNewLine;
+					content += "----------"+ doubleNewLine;
                 });
+
+                content += "## Method Detail" + doubleNewLine;
+
+                obj.Properties.forEach(function (element) {
+                    
+                    content += "### **" + element.Name + "** method" + doubleNewLine;
+
+                    content += element.Name + " : " + element.ReturnType + doubleNewLine;
+                    content += "**Read-Only :** " + element.ReadOnly + doubleNewLine;
+                    content += "**Default :** " + element.Default + doubleNewLine;
+                    content += element.LongDesc + doubleNewLine;
+                    content += "----------"+ doubleNewLine;
+                });
+
 
                 return content;
 
@@ -177,7 +207,7 @@
                         var parser = new DOMParser();
                         var xmlDoc = parser.parseFromString(content, "text/xml");
 
-                        classDef.Name = getByTagName(xmlDoc.firstChild, "Name")[0].textContent;
+                        classDef.Name = getTagText(xmlDoc.firstChild, "Name");
 
                         var properties = getByTagName(getByTagName(xmlDoc.firstChild, "Properties")[0], "Property");
 
@@ -187,12 +217,12 @@
                             var property = properties[i];
                             var propertyObj = {};
 
-                            propertyObj.Name = getByTagName(property, "Name")[0].textContent;
-                            propertyObj.ReturnType = getByTagName(property, "ReturnType")[0].textContent;
-                            propertyObj.ShortDesc = getByTagName(property, "ShortDesc")[0].textContent;
-                            propertyObj.LongDesc = getByTagName(property, "LongDesc")[0].textContent;
-                            propertyObj.ReadOnly = getByTagName(property, "ReadOnly")[0].textContent == "true";
-							propertyObj.Default = getByTagName(property, "Default")[0].textContent;
+                            propertyObj.Name = getTagText(property, "Name");
+                            propertyObj.ReturnType = getTagText(property, "ReturnType");
+                            propertyObj.ShortDesc = getTagText(property, "ShortDesc");
+                            propertyObj.LongDesc = getTagText(property, "LongDesc");
+                            propertyObj.ReadOnly = getTagText(property, "ReadOnly") == "true";
+							propertyObj.Default = getTagText(property, "Default");
                             propertyObj.DefinedBy = classDef.Name;
 
                             classDef.Properties.push(propertyObj);
@@ -206,23 +236,23 @@
                             var method = methods[i];
                             var methodObj = {};
 
-                            methodObj.Name = getByTagName(method, "Name")[0].textContent;
-                            methodObj.ReturnType = getByTagName(method, "ReturnType")[0].textContent;
-                            methodObj.ShortDesc = getByTagName(method, "ShortDesc")[0].textContent;
-                            methodObj.LongDesc = getByTagName(method, "LongDesc")[0].textContent;
+                            methodObj.Name = getTagText(method, "Name");
+                            methodObj.ReturnType = getTagText(method, "ReturnType");
+                            methodObj.ShortDesc = getTagText(method, "ShortDesc");
+                            methodObj.LongDesc = getTagText(method, "LongDesc");
 
                             var argumentsArr = getByTagName(getByTagName(method, "Arguments")[0], "Argument");
 
                             methodObj.Arguments = [];
 
-                            for (var i = 0; i < argumentsArr.length; i++) {
-                                var argument = argumentsArr[i];
+                            for (var j = 0; j < argumentsArr.length; j++) {
+                                var argument = argumentsArr[j];
                                 var argumentObj = {};
 
-                                argumentObj.Name = getByTagName(argument, "Name")[0].textContent;
-                                argumentObj.Type = getByTagName(argument, "Type")[0].textContent;
-                                argumentObj.ShortDesc = getByTagName(argument, "ShortDesc")[0].textContent;
-                                argumentObj.Default = getByTagName(argument, "Default")[0].textContent;
+                                argumentObj.Name = getTagText(argument, "Name");
+                                argumentObj.Type = getTagText(argument, "Type");
+                                argumentObj.ShortDesc = getTagText(argument, "ShortDesc");
+                                argumentObj.Default = getTagText(argument, "Default");
 
                                 methodObj.Arguments.push(argumentObj);
                             }
