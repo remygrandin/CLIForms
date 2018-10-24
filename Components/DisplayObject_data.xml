@@ -98,7 +98,7 @@ See Engine for more detail.
 		</Property>
 
 	</Properties>
-	<Methods>
+	<Methods>	
 		<Method>
 			<Name>Show</Name>
 			<ReturnType>void</ReturnType>
@@ -109,14 +109,7 @@ See Engine for more detail.
 Short for displayObject.Visible = true
 ]]>
 			</LongDesc>
-			<Arguments>
-				<Argument>
-					<Name>Arg1</Name>
-					<Type>Int32</Type>
-					<ShortDesc>desc</ShortDesc>
-					<Default/>
-				</Argument>
-			</Arguments>
+			<Arguments/>
 		</Method>
 		<Method>
 			<Name>Hide</Name>
@@ -128,8 +121,7 @@ Short for displayObject.Visible = true
 Short for displayObject.Visible = false
 ]]>
 			</LongDesc>
-			<Arguments>
-			</Arguments>
+			<Arguments/>
 		</Method>
 		<Method>
 			<Name>Render</Name>
@@ -141,8 +133,7 @@ Short for displayObject.Visible = false
 Called by the parent Container when rendering the children.
 ]]>
 			</LongDesc>
-			<Arguments>
-			</Arguments>
+			<Arguments/>
 		</Method>
 	</Methods>
 </ClassData>

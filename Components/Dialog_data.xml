@@ -1,0 +1,62 @@
+<ClassData>
+	<Name>Container</Name>
+	<Inherit>DisplayObject</Inherit>
+	<Properties>
+		<Property>
+			<Name>BackgroundColor</Name>
+			<ReturnType>ConsoleColor?</ReturnType>
+			<ShortDesc>Indicates the background color of the **Dialog** panel.</ShortDesc>
+			<LongDesc>
+				<![CDATA[The background color of the **Dialog** panel.
+				
+It include the border and all the child "drawing area".
+
+Can be set to **null** for transparency.
+]]>
+			</LongDesc>
+			<ReadOnly>false</ReadOnly>
+			<Default>ConsoleColor.Gray</Default>
+		</Property>
+		<Property>
+			<Name>ForegroundColor</Name>
+			<ReturnType>ConsoleColor</ReturnType>
+			<ShortDesc>Indicates the foreground color of the **Dialog** panel.</ShortDesc>
+			<LongDesc>
+				<![CDATA[Indicates the foreground (text) color of the **Dialog** panel.
+				
+It include the border and all the child "drawing area".
+]]>
+			</LongDesc>
+			<ReadOnly>false</ReadOnly>
+			<Default>ConsoleColor.Black</Default>
+		</Property>
+		<Property>
+			<Name>Border</Name>
+			<ReturnType>BorderStyle</ReturnType>
+			<ShortDesc>Indicates the outline border style.</ShortDesc>
+			<LongDesc>
+				<![CDATA[Indicates the outline border style.
+				
+See Border Style for more infos
+]]>
+			</LongDesc>
+			<ReadOnly>false</ReadOnly>
+			<Default>BorderStyle.Thick</Default>
+		</Property>
+		<Property>
+			<Name>Shadow </Name>
+			<ReturnType>ShadowStyle</ReturnType>
+			<ShortDesc>Indicates the panel shadow style.</ShortDesc>
+			<LongDesc>
+				<![CDATA[Indicates the panel shadow style.
+				
+See Shadow Style for more infos
+]]>
+			</LongDesc>
+			<ReadOnly>false</ReadOnly>
+			<Default>BorderStyle.Light</Default>
+		</Property>
+	</Properties>
+	<Methods>
+	</Methods>
+</ClassData>
