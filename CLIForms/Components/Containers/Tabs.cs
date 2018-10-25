@@ -46,7 +46,6 @@ namespace CLIForms.Components.Containers
             }
         }
 
-        private string _activeTabName;
         public string ActiveTabName
         {
             get

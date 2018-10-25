@@ -5,6 +5,7 @@ using System.Timers;
 using CLIForms.Buffer;
 using CLIForms.Components;
 using CLIForms.Components.Globals;
+using CLIForms.Console;
 using CLIForms.Extentions;
 using CLIForms.Interfaces;
 
@@ -22,14 +23,16 @@ namespace CLIForms
             }
         }
 
-
+        private IConsole currentConsole = null;
 
         private ConsoleCharBuffer engineBuffer;
         public Engine(int width = 80, int height = 30)
         {
+            currentConsole = new WindowsConsole();
 
-            Console.WindowWidth = width;
-            Console.WindowHeight = height;
+
+            currentConsole.Width = width;
+            currentConsole.Height = height;
 
             engineBuffer = new ConsoleCharBuffer(width, height);
 
@@ -40,11 +43,10 @@ namespace CLIForms
 
         public int Width
         {
-            get => Console.WindowWidth;
+            get => currentConsole.Width;
             set
             {
-                Console.WindowWidth = value;
-                Console.SetBufferSize(Width, Height);
+                currentConsole.Width = value;
 
                 engineBuffer = new ConsoleCharBuffer(Width, Height);
                 ActiveScreen.Width = Width;
@@ -53,12 +55,10 @@ namespace CLIForms
 
         public int Height
         {
-            get => Console.WindowHeight;
+            get => currentConsole.Height;
             set
             {
-                Console.WindowHeight = value;
-                Console.SetBufferSize(Width, Height);
-                engineBuffer = new ConsoleCharBuffer(Width, Height);
+                currentConsole.Height = value;
 
                 engineBuffer = new ConsoleCharBuffer(Width, Height);
                 ActiveScreen.Height = Height;
@@ -112,7 +112,7 @@ namespace CLIForms
 
                 List<PositionedConsoleChar> diff = engineBuffer.Diff(screenbuffer);
 
-                ConsoleCharBuffer.Display(diff);
+                currentConsole.Display(diff);
 
                 engineBuffer = screenbuffer;
 
@@ -130,8 +130,6 @@ namespace CLIForms
                         (IInterractive)VisibleFocusableChars.OrderBy(item => Math.Pow(item.Y, 2) + Math.Pow(item.X, 2)).FirstOrDefault()?.Owner, null);
                 }
 
-                Console.SetWindowPosition(0, 0);
-                Console.SetCursorPosition(0, 0);
             }
         }
 
@@ -141,11 +139,7 @@ namespace CLIForms
 
         public void Start()
         {
-
-            Console.OutputEncoding = System.Text.Encoding.Unicode;
-            Console.CursorVisible = false;
-
-
+            
             if (FocusedObject == null)
             {
                 ForceDraw();
@@ -182,7 +176,7 @@ namespace CLIForms
                                             engineBuffer.data[x, y] = new ConsoleChar(oldBuffer.data[x, y].Owner, oldBuffer.data[x, y].Char, oldBuffer.data[x, y].Focussable, ConsoleColor.DarkMagenta, ConsoleColor.Black);
                                     }
 
-                                ConsoleCharBuffer.Display(engineBuffer);
+                                WindowsConsole.Display(engineBuffer);
 
                                 continue;
                             }

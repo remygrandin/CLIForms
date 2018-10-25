@@ -172,51 +172,5 @@ namespace CLIForms.Buffer
 
             return outList;
         }
-
-        public static void Display(ConsoleCharBuffer buffer)
-        {
-            for (int x = 0; x < buffer.Width; x++)
-                for (int y = 0; y < buffer.Height; y++)
-                {
-                    Console.SetCursorPosition(x, y);
-                    Console.BackgroundColor = buffer.data[x,y].Background ?? ConsoleColor.Black;
-                    Console.ForegroundColor = buffer.data[x, y].Foreground;
-                    Console.Write(buffer.data[x, y].Char);
-                }
-
-            Console.SetCursorPosition(0, 0);
-        }
-
-        public static void Display(List<PositionedConsoleChar> chars)
-        {
-
-            var result = chars.GroupBy(item =>
-                new
-                {
-                    item.Y,
-                    item.Background,
-                    item.Foreground
-                });
-
-            foreach (var lineChars in result)
-            {
-                var groupped = lineChars.GroupAdjacentBy((x1, x2) => x1.X + 1 == x2.X);
-
-                foreach (var subGroup in groupped)
-                {
-                    var orderedSubGroup = subGroup.OrderBy(item => item.X);
-
-                    var firstChar = orderedSubGroup.First();
-                    string groupStr = new string(orderedSubGroup.Select(item => item.Char).ToArray());
-
-                    Console.SetCursorPosition(firstChar.X, firstChar.Y);
-                    Console.BackgroundColor = firstChar.Background ?? ConsoleColor.Black;
-                    Console.ForegroundColor = firstChar.Foreground;
-                    Console.Write(groupStr);
-
-                }
-
-            }
-        }
     }
 }
