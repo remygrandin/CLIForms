@@ -8,8 +8,8 @@ namespace CLIForms.Components.Spinners
 {
     public class SpinnerBar : DisplayObject
     {
-        public ConsoleColor? BackgroundColor = ConsoleColor.Black;
-        public ConsoleColor ForegroundColor = ConsoleColor.White;
+        public ConsoleColor? BackgroundColor = null;
+        public ConsoleColor ForegroundColor = ConsoleColor.Black;
 
         private Timer timer = new Timer();
 

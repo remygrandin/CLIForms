@@ -140,7 +140,7 @@ namespace CLIForms.Components.Forms
             }
         }
 
-        public SingleLineListBox(Container parent, object[] items, string placeHolderText = "", int width = 10, bool multiSelectEnabled = true) : base(parent)
+        public SingleLineListBox(Container parent, object[] items, string placeHolderText = "", int width = 10, bool multiSelectEnabled = false) : base(parent)
         {
             _placeHolderText = placeHolderText;
             _width = width;
@@ -196,7 +196,7 @@ namespace CLIForms.Components.Forms
 
                 int bufferMaxWidth = Math.Max(Width, maxWidth);
 
-                buffer = new ConsoleCharBuffer(bufferMaxWidth + 1, 1 + _items.Length);
+                buffer = new ConsoleCharBuffer(bufferMaxWidth + 1, 1 + _items.Length + 1);
 
                 int yOffset = 1;
                 foreach (object obj in _items)
@@ -228,6 +228,9 @@ namespace CLIForms.Components.Forms
 
                     yOffset++;
                 }
+
+                buffer = DrawingHelper.DrawShadow(buffer, this, false, 0, 1, maxWidth, _items.Length,
+                    ConsoleColor.Black, DropdownShadow);
 
             }
 
@@ -307,7 +310,11 @@ namespace CLIForms.Components.Forms
                             }
                             else
                             {
-                                SelectedItems = new object[0];
+                                if (FocusedItem == SelectedItems[0])
+                                    SelectedItems = new object[0];
+                                else
+                                    SelectedItems = new object[] { FocusedItem };
+
                                 IsOpen = false;
                             }
                         }
