@@ -109,7 +109,7 @@ See Engine for more detail.
 Short for displayObject.Visible = true
 ]]>
 			</LongDesc>
-			<Arguments/>
+			<Parameters/>
 		</Method>
 		<Method>
 			<Name>Hide</Name>
@@ -121,7 +121,7 @@ Short for displayObject.Visible = true
 Short for displayObject.Visible = false
 ]]>
 			</LongDesc>
-			<Arguments/>
+			<Parameters/>
 		</Method>
 		<Method>
 			<Name>Render</Name>
@@ -133,7 +133,7 @@ Short for displayObject.Visible = false
 Called by the parent Container when rendering the children.
 ]]>
 			</LongDesc>
-			<Arguments/>
+			<Parameters/>
 		</Method>
 	</Methods>
 </ClassData>

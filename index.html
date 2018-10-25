@@ -136,6 +136,34 @@
                     targetObj = classes[targetObj.Inherit];
                 }
 
+                // Sorting
+
+                newObj.Properties.sort(function (a, b) {
+                    return (a.Name).localeCompare(b.Name);
+                });
+
+                newObj.Methods.sort(function (a, b) {
+                    if (a.Name != b.Name)
+                        return (a.Name).localeCompare(b.Name);
+                    else {
+                        if (a.DefinedBy != b.DefinedBy) {
+                            if (a.DefinedBy == newObj.Name)
+                                return -1;
+                            else if (b.DefinedBy == newObj.Name)
+                                return 1;
+
+                        }
+
+                        if (a.Parameters.length == b.Parameters.length)
+                            return 0;
+                        else if (a.Parameters.length < b.Parameters.length)
+                            return -1;
+                        else
+                            return 1;
+                    }
+                    return 0;
+                });
+
                 return newObj;
             }
 
@@ -159,7 +187,7 @@
                     //content += "<tr style='" + (element.DefinedBy != flattenObject.Name ? "display:none" : "") + "'>";
                     content += "<tr>";
 
-                    content += "<td>" + (element.DefinedBy != flattenObject.Name ? "<span title='Inherited'>⤊</span>" : "") + "</td>";
+                    content += "<td>" + (element.DefinedBy != flattenObject.Name ? "<span title='Inherited'>▲</span>" : "") + "</td>";
                     content += "<td>" + element.Name + " : _" + element.ReturnType + "_<br/>" +
                         (element.ReadOnly ? "[read-only] " : "") +
                         element.ShortDesc + "</td>";
@@ -182,12 +210,12 @@
                 flattenObject.Methods.forEach(function (element) {
                     content += "<tr>";
 
-                    content += "<td>" + "" + "</td>";
+                    content += "<td>" + (element.DefinedBy != flattenObject.Name ? "<span title='Inherited'>▲</span>" : "") + "</td>";
                     content += "<td>" + element.Name;
                     content += "(";
 
 
-                    content += element.Arguments.map(function (item) {
+                    content += element.Parameters.map(function (item) {
                         return item.Name + ":" + item.Type + (item.Default != null ? " = " + item.Default : "")
                     }).join(', ');
 
@@ -213,9 +241,9 @@
 
                     content += "### **" + element.Name + "** property" + doubleNewLine;
 
-                    content += element.Name + " : " + element.ReturnType + doubleNewLine;
-                    content += "**Read-Only :** " + element.ReadOnly + doubleNewLine;
-                    content += "**Default :** " + element.Default + doubleNewLine;
+                    content += element.Name + " : _" + element.ReturnType + "_" + doubleNewLine;
+
+                    content += "<strong>Default :</strong> " + element.Default + " | <strong>Read-Only :</strong> " + element.ReadOnly + doubleNewLine;
                     content += element.LongDesc + doubleNewLine;
                     content += "----------" + doubleNewLine;
                 });
@@ -226,10 +254,25 @@
 
                     content += "### **" + element.Name + "** method" + doubleNewLine;
 
-                    content += element.Name + " : " + element.ReturnType + doubleNewLine;
-                    content += "**Read-Only :** " + element.ReadOnly + doubleNewLine;
-                    content += "**Default :** " + element.Default + doubleNewLine;
+                    content += element.Name;
+                    content += "(";
+
+
+                    content += element.Parameters.map(function (item) {
+                        return item.Name + ":" + item.Type + (item.Default != null ? " = " + item.Default : "")
+                    }).join(', ');
+
+
+                    content += ")" + " : _" + element.ReturnType + "_" + doubleNewLine;
                     content += element.LongDesc + doubleNewLine;
+
+                    if (element.Parameters.length != 0) {
+                        content += "#### **Parameters**" + doubleNewLine;
+
+                        element.Parameters.forEach(function (Parameter) {
+                            content += "";
+                        });
+                    }
                     content += "----------" + doubleNewLine;
                 });
 
@@ -314,20 +357,20 @@
                             methodObj.LongDesc = getTagText(method, "LongDesc");
                             methodObj.DefinedBy = classDef.Name;
 
-                            var argumentsArr = getByTagName(getByTagName(method, "Arguments")[0], "Argument");
+                            var parameters = getByTagName(getByTagName(method, "Parameters")[0], "Parameter");
 
-                            methodObj.Arguments = [];
+                            methodObj.Parameters = [];
 
-                            for (var j = 0; j < argumentsArr.length; j++) {
-                                var argument = argumentsArr[j];
-                                var argumentObj = {};
+                            for (var j = 0; j < parameters.length; j++) {
+                                var parameter = parameters[j];
+                                var parameterObj = {};
 
-                                argumentObj.Name = getTagText(argument, "Name");
-                                argumentObj.Type = getTagText(argument, "Type");
-                                argumentObj.ShortDesc = getTagText(argument, "ShortDesc");
-                                argumentObj.Default = getTagText(argument, "Default");
+                                parameterObj.Name = getTagText(parameter, "Name");
+                                parameterObj.Type = getTagText(parameter, "Type");
+                                parameterObj.ShortDesc = getTagText(parameter, "ShortDesc");
+                                parameterObj.Default = getTagText(parameter, "Default");
 
-                                methodObj.Arguments.push(argumentObj);
+                                methodObj.Parameters.push(parameterObj);
                             }
 
                             classDef.Methods.push(methodObj);

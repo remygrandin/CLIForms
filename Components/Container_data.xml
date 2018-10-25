@@ -42,7 +42,7 @@ In it's default implementation, the container will clamp the drawing of it's chi
 The list is a recursive search of all direct displayObject children and of all container children GetAllChildren() results.
 ]]>
 			</LongDesc>
-			<Arguments/>
+			<Parameters/>
 		</Method>
 		<Method>
 			<Name>AddChild</Name>
@@ -58,14 +58,14 @@ The **child** *Parent* property will be set to the container, automaticly removi
 If **child** is already part of the container, nothing will happend.
 ]]>
 			</LongDesc>
-			<Arguments>
-				<Argument>
+			<Parameters>
+				<Parameter>
 					<Name>child</Name>
 					<Type>DisplayObject</Type>
 					<ShortDesc>The child object to add to the display list.</ShortDesc>
 					<Default/>
-				</Argument>
-			</Arguments>
+				</Parameter>
+			</Parameters>
 		</Method>
 		<Method>
 			<Name>RemoveChild</Name>
@@ -79,14 +79,14 @@ The **child** **parent** property will be set to **null**.
 If **child** is not already part of the container, nothing will happend.
 ]]>
 			</LongDesc>
-			<Arguments>
-				<Argument>
+			<Parameters>
+				<Parameter>
 					<Name>child</Name>
 					<Type>DisplayObject</Type>
 					<ShortDesc>The child object to remove of the display list</ShortDesc>
 					<Default/>
-				</Argument>
-			</Arguments>
+				</Parameter>
+			</Parameters>
 		</Method>
 		<Method>
 			<Name>GetSiblings</Name>
@@ -102,14 +102,14 @@ This method is to be overriden by classes which inherith **Container** and which
 If the child object is not part of any of the container display list, **null** is returned.
 ]]>
 			</LongDesc>
-			<Arguments>
-				<Argument>
+			<Parameters>
+				<Parameter>
 					<Name>child</Name>
 					<Type>DisplayObject</Type>
 					<ShortDesc>A child attached to the **Container**.</ShortDesc>
 					<Default/>
-				</Argument>
-			</Arguments>
+				</Parameter>
+			</Parameters>
 		</Method>
 		<Method>
 			<Name>Render</Name>
@@ -126,7 +126,7 @@ Only the **Visible** children will be rendered.
 Their buffers will be merged one after the other, ensuring background transparency of each if needed.
 ]]>
 			</LongDesc>
-			<Arguments/>
+			<Parameters/>
 		</Method>
 		<Method>
 			<Name>RenderContainer</Name>
@@ -138,7 +138,7 @@ Their buffers will be merged one after the other, ensuring background transparen
 In it's base implementation, the **Container** return a transparent (i.e. empty) ConsoleCharBuffer with the **Width** and **Height** specified by the object properties.
 ]]>
 			</LongDesc>
-			<Arguments/>
+			<Parameters/>
 		</Method>
 	</Methods>
 </ClassData>
