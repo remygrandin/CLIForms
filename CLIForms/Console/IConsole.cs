@@ -8,11 +8,16 @@ namespace CLIForms.Console
         int Width { get; set; }
         int Height { get; set; }
 
+        bool Draw { get; set; }
+
         void Init();
         void End();
 
         void Display(ConsoleCharBuffer buffer);
-        void Display(List<PositionedConsoleChar> chars);
+        void Display(IEnumerable<PositionedConsoleChar> chars);
 
+        event KeyEventHandler KeyPressed;
+
+        void StartCaptureKeyboard();
     }
 }

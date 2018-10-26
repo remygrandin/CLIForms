@@ -58,6 +58,9 @@
     <Compile Include="Components\Spinners\Spinner.cs" />
     <Compile Include="Components\Spinners\TinySpinner.cs" />
     <Compile Include="Components\Texts\FIG.cs" />
+    <Compile Include="Console\IConsole.cs" />
+    <Compile Include="Console\KeyEvent.cs" />
+    <Compile Include="Console\WindowsConsole.cs" />
     <Compile Include="Styles\AlignmentStyle.cs" />
     <Compile Include="Components\Tables\SimpleTable.cs" />
     <Compile Include="Styles\TableStyle.cs" />

@@ -87,9 +87,9 @@ namespace CLIForms.Buffer
 
             if (shadow != ShadowStyle.None)
             {
-                for (int i = y + 1; i < y + h - 1; i++)
+                for (int i = y + 1; i < y + h; i++)
                 {
-                    buffer.DrawString(owner, GetShadow(shadow), focusable, x + w + 1, i, null, foregroundColor);
+                    buffer.DrawString(owner, GetShadow(shadow), focusable, x + w, i, null, foregroundColor);
                 }
 
                 buffer.DrawString(owner, new string(GetShadow(shadow)[0], w), focusable, x + 1, y + h, null, foregroundColor);

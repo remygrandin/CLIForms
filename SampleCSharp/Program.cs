@@ -27,7 +27,7 @@ namespace SampleCSharp
                 X = 1,
                 Y = 2
             };
-
+            
             StatusBar statusBar = new StatusBar(screen)
             {
                 TextLeft = "Left Text",
@@ -219,10 +219,10 @@ namespace SampleCSharp
             tabs.AddChild(table, "Tables");
 
             tabs.ActiveTab = 3;
-
+            
             engine.Start();
 
-            Console.ReadLine();
+           // Console.ReadLine();
         }
     }
 }

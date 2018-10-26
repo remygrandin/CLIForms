@@ -13,54 +13,46 @@ namespace CLIForms
 {
     public sealed class Engine
     {
-        private static readonly Engine instance = new Engine();
+        public static Engine Instance { get; } = new Engine();
 
-        public static Engine Instance
-        {
-            get
-            {
-                return instance;
-            }
-        }
+        private IConsole _currentConsole = null;
 
-        private IConsole currentConsole = null;
-
-        private ConsoleCharBuffer engineBuffer;
+        private ConsoleCharBuffer _engineBuffer;
         public Engine(int width = 80, int height = 30)
         {
-            currentConsole = new WindowsConsole();
+            _currentConsole = new WindowsConsole();
 
 
-            currentConsole.Width = width;
-            currentConsole.Height = height;
+            _currentConsole.Width = width;
+            _currentConsole.Height = height;
 
-            engineBuffer = new ConsoleCharBuffer(width, height);
+            _engineBuffer = new ConsoleCharBuffer(width, height);
 
-            DebounceDirty.AutoReset = false;
-            DebounceDirty.Elapsed += DebounceDirty_Elapsed;
+            _debounceDirty.AutoReset = false;
+            _debounceDirty.Elapsed += DebounceDirty_Elapsed;
         }
 
 
         public int Width
         {
-            get => currentConsole.Width;
+            get => _currentConsole.Width;
             set
             {
-                currentConsole.Width = value;
+                _currentConsole.Width = value;
 
-                engineBuffer = new ConsoleCharBuffer(Width, Height);
+                _engineBuffer = new ConsoleCharBuffer(Width, Height);
                 ActiveScreen.Width = Width;
             }
         }
 
         public int Height
         {
-            get => currentConsole.Height;
+            get => _currentConsole.Height;
             set
             {
-                currentConsole.Height = value;
+                _currentConsole.Height = value;
 
-                engineBuffer = new ConsoleCharBuffer(Width, Height);
+                _engineBuffer = new ConsoleCharBuffer(Width, Height);
                 ActiveScreen.Height = Height;
             }
         }
@@ -80,56 +72,73 @@ namespace CLIForms
         public List<PositionedConsoleChar> VisibleFocusableChars = new List<PositionedConsoleChar>();
         public List<DisplayObject> AllObjects = new List<DisplayObject>();
 
-        public bool Draw = true;
-
-        private Timer DebounceDirty = new Timer(10);
+        private Timer _debounceDirty = new Timer(50);
 
         public void SignalDirty(Screen screen)
         {
             if (ActiveScreen == screen)
             {
-                DebounceDirty.Stop();
-                DebounceDirty.Start();
+                _debounceDirty.Stop();
+                _debounceDirty.Start();
             }
         }
 
 
         private void DebounceDirty_Elapsed(object sender, ElapsedEventArgs e)
         {
-            if (Draw)
+            if (_currentConsole.Draw)
             {
-                ForceDraw();
+                StandardDraw();
             }
         }
 
-        private object _drawLock = new object();
-
         public void ForceDraw()
         {
-            lock (_drawLock)
+            ConsoleCharBuffer screenbuffer = ActiveScreen.Render();
+
+            _currentConsole.Display(screenbuffer);
+
+            _engineBuffer = screenbuffer;
+
+            VisibleFocusableChars = _engineBuffer.dataPositioned.Where(item => item.Focussable).ToList();
+            VisibleFocusableObjects = VisibleFocusableChars.Select(item => item.Owner).Distinct()
+                .Where(item => item.Parents(itm => itm.Parent).All(itm => item.Disabled == false))
+                .Select(item => (IInterractive)item).ToList();
+
+            AllObjects = new List<DisplayObject>(ActiveScreen.GetAllChildren());
+            AllObjects.Add(ActiveScreen);
+
+            if (FocusedObject != null && !VisibleFocusableObjects.Contains(FocusedObject))
             {
-                ConsoleCharBuffer screenbuffer = ActiveScreen.Render();
+                TransferFocus(FocusedObject,
+                    (IInterractive)VisibleFocusableChars.OrderBy(item => Math.Pow(item.Y, 2) + Math.Pow(item.X, 2)).FirstOrDefault()?.Owner, null);
+            }
 
-                List<PositionedConsoleChar> diff = engineBuffer.Diff(screenbuffer);
+        }
 
-                currentConsole.Display(diff);
+        public void StandardDraw()
+        {
 
-                engineBuffer = screenbuffer;
+            ConsoleCharBuffer screenbuffer = ActiveScreen.Render();
 
-                VisibleFocusableChars = engineBuffer.dataPositioned.Where(item => item.Focussable).ToList();
-                VisibleFocusableObjects = VisibleFocusableChars.Select(item => item.Owner).Distinct()
-                    .Where(item => item.Parents(itm => itm.Parent).All(itm => item.Disabled == false))
-                    .Select(item => (IInterractive)item).ToList();
+            List<PositionedConsoleChar> diff = _engineBuffer.Diff(screenbuffer);
 
-                AllObjects = new List<DisplayObject>(ActiveScreen.GetAllChildren());
-                AllObjects.Add(ActiveScreen);
+            _currentConsole.Display(diff);
 
-                if (FocusedObject != null && !VisibleFocusableObjects.Contains(FocusedObject))
-                {
-                    TransferFocus(FocusedObject,
-                        (IInterractive)VisibleFocusableChars.OrderBy(item => Math.Pow(item.Y, 2) + Math.Pow(item.X, 2)).FirstOrDefault()?.Owner, null);
-                }
+            _engineBuffer = screenbuffer;
 
+            VisibleFocusableChars = _engineBuffer.dataPositioned.Where(item => item.Focussable).ToList();
+            VisibleFocusableObjects = VisibleFocusableChars.Select(item => item.Owner).Distinct()
+                .Where(item => item.Parents(itm => itm.Parent).All(itm => item.Disabled == false))
+                .Select(item => (IInterractive)item).ToList();
+
+            AllObjects = new List<DisplayObject>(ActiveScreen.GetAllChildren());
+            AllObjects.Add(ActiveScreen);
+
+            if (FocusedObject != null && !VisibleFocusableObjects.Contains(FocusedObject))
+            {
+                TransferFocus(FocusedObject,
+                    (IInterractive)VisibleFocusableChars.OrderBy(item => Math.Pow(item.Y, 2) + Math.Pow(item.X, 2)).FirstOrDefault()?.Owner, null);
             }
         }
 
@@ -139,7 +148,8 @@ namespace CLIForms
 
         public void Start()
         {
-            
+            _currentConsole.Init();
+
             if (FocusedObject == null)
             {
                 ForceDraw();
@@ -148,90 +158,86 @@ namespace CLIForms
 
             }
 
+            ForceDraw();
 
+            _currentConsole.KeyPressed += CurrentConsole_KeyPressed;
+            _currentConsole.StartCaptureKeyboard();
+        }
 
-
-            while (true)
+        private void CurrentConsole_KeyPressed(ConsoleKeyInfo key)
+        {
+            if (DebugEnabled)
             {
-
-
-                ConsoleKeyInfo k = Console.ReadKey(true);
-
-
-                if (DebugEnabled)
+                switch (key.Key)
                 {
-                    switch (k.Key)
-                    {
-                        case ConsoleKey.F12:
-                            {
-                                var oldBuffer = engineBuffer;
-                                engineBuffer = new ConsoleCharBuffer(oldBuffer.Width, oldBuffer.Height);
+                    case ConsoleKey.F12:
+                        {
+                            var oldBuffer = _engineBuffer;
+                            _engineBuffer = new ConsoleCharBuffer(oldBuffer.Width, oldBuffer.Height);
 
-                                for (int x = 0; x < engineBuffer.Width; x++)
-                                    for (int y = 0; y < engineBuffer.Height; y++)
-                                    {
-                                        if (!oldBuffer.data[x, y].Focussable)
-                                            engineBuffer.data[x, y] = new ConsoleChar(oldBuffer.data[x, y].Owner, oldBuffer.data[x, y].Char, oldBuffer.data[x, y].Focussable, ConsoleColor.Blue, ConsoleColor.Black);
-                                        else
-                                            engineBuffer.data[x, y] = new ConsoleChar(oldBuffer.data[x, y].Owner, oldBuffer.data[x, y].Char, oldBuffer.data[x, y].Focussable, ConsoleColor.DarkMagenta, ConsoleColor.Black);
-                                    }
+                            for (int x = 0; x < _engineBuffer.Width; x++)
+                                for (int y = 0; y < _engineBuffer.Height; y++)
+                                {
+                                    if (!oldBuffer.data[x, y].Focussable)
+                                        _engineBuffer.data[x, y] = new ConsoleChar(oldBuffer.data[x, y].Owner, oldBuffer.data[x, y].Char, oldBuffer.data[x, y].Focussable, ConsoleColor.Blue, ConsoleColor.Black);
+                                    else
+                                        _engineBuffer.data[x, y] = new ConsoleChar(oldBuffer.data[x, y].Owner, oldBuffer.data[x, y].Char, oldBuffer.data[x, y].Focussable, ConsoleColor.DarkMagenta, ConsoleColor.Black);
+                                }
 
-                                WindowsConsole.Display(engineBuffer);
+                            _currentConsole.Display(_engineBuffer);
 
-                                continue;
-                            }
-                    }
+                            return;
+                        }
                 }
-
-                ForceDraw();
-                bool breakAndContinue = false;
-
-                // First we give a chance to the global listeners to intercept the key (true to break)
-                foreach (IAcceptGlobalInput dp in AllObjects.Where(item => item is IAcceptGlobalInput))
-                {
-                    if (dp.FireGlobalKeypress(k))
-                    {
-                        breakAndContinue = true;
-                        break;
-                    }
-                }
-
-                if (breakAndContinue)
-                    continue;
-
-                // Then we give a chance to focussed object to intercept the key
-                if (FocusedObject != null && FocusedObject is IInterractive)
-                {
-                    if (((IInterractive)FocusedObject).KeyPressed(k))
-                    {
-                        continue;
-                    }
-                }
-
-
-                // Finally we try to use it as a moving mechanism
-
-                switch (k.Key)
-                {
-                    case ConsoleKey.Tab:
-                        CycleFocus(k.Modifiers.HasFlag(ConsoleModifiers.Shift) ? -1 : 1, k);
-                        break;
-                    case ConsoleKey.UpArrow:
-                        MoveUp(k);
-                        break;
-                    case ConsoleKey.DownArrow:
-                        MoveDown(k);
-                        break;
-                    case ConsoleKey.LeftArrow:
-                        MoveLeft(k);
-                        break;
-                    case ConsoleKey.RightArrow:
-                        MoveRight(k);
-                        break;
-                }
-
-
             }
+
+            ForceDraw();
+            bool breakAndContinue = false;
+
+            // First we give a chance to the global listeners to intercept the key (true to break)
+            foreach (IAcceptGlobalInput dp in AllObjects.Where(item => item is IAcceptGlobalInput))
+            {
+                if (dp.FireGlobalKeypress(key))
+                {
+                    breakAndContinue = true;
+                    break;
+                }
+            }
+
+            if (breakAndContinue)
+                return;
+
+            // Then we give a chance to focused object to intercept the key
+            if (FocusedObject != null && FocusedObject is IInterractive)
+            {
+                if (((IInterractive)FocusedObject).KeyPressed(key))
+                {
+                    return;
+                }
+            }
+
+
+            // Finally we try to use it as a moving mechanism
+
+            switch (key.Key)
+            {
+                case ConsoleKey.Tab:
+                    CycleFocus(key.Modifiers.HasFlag(ConsoleModifiers.Shift) ? -1 : 1, key);
+                    break;
+                case ConsoleKey.UpArrow:
+                    MoveUp(key);
+                    break;
+                case ConsoleKey.DownArrow:
+                    MoveDown(key);
+                    break;
+                case ConsoleKey.LeftArrow:
+                    MoveLeft(key);
+                    break;
+                case ConsoleKey.RightArrow:
+                    MoveRight(key);
+                    break;
+            }
+
         }
 
         private Dictionary<DisplayObject, List<double>> ComputeDistances(IEnumerable<PositionedConsoleChar> candidatesFocused, IEnumerable<PositionedConsoleChar> candidatesNotFocused)
@@ -263,7 +269,7 @@ namespace CLIForms
 
         private void MoveUp(ConsoleKeyInfo responsibleKey)
         {
-            IEnumerable<PositionedConsoleChar> positionedChars = engineBuffer.dataPositioned.Where(item => item.Focussable);
+            IEnumerable<PositionedConsoleChar> positionedChars = _engineBuffer.dataPositioned.Where(item => item.Focussable);
 
             int minYActive = positionedChars.Where(item => item.Owner == FocusedObject).Min(item => item.Y);
 
@@ -284,9 +290,9 @@ namespace CLIForms
             Dictionary<DisplayObject, List<double>> candidates = ComputeDistances(candidatesFocused,
                                                                                   candidatesNotFocused.Where(item => item.X <= maxXActive && item.X >= minXActive));
 
-            if(candidates.Count == 0)
+            if (candidates.Count == 0)
                 candidates = ComputeDistances(candidatesFocused, candidatesNotFocused);
-            
+
             double minDistance = candidates.SelectMany(item => item.Value).Min();
 
             IEnumerable<KeyValuePair<DisplayObject, List<double>>> candidatesShortList = candidates.Where(item => item.Value.Contains(minDistance));
@@ -316,7 +322,7 @@ namespace CLIForms
 
         private void MoveDown(ConsoleKeyInfo responsibleKey)
         {
-            IEnumerable<PositionedConsoleChar> positionedChars = engineBuffer.dataPositioned.Where(item => item.Focussable);
+            IEnumerable<PositionedConsoleChar> positionedChars = _engineBuffer.dataPositioned.Where(item => item.Focussable);
 
             int maxYActive = positionedChars.Where(item => item.Owner == FocusedObject).Max(item => item.Y);
 
@@ -370,7 +376,7 @@ namespace CLIForms
 
         private void MoveLeft(ConsoleKeyInfo responsibleKey)
         {
-            IEnumerable<PositionedConsoleChar> positionedChars = engineBuffer.dataPositioned.Where(item => item.Focussable);
+            IEnumerable<PositionedConsoleChar> positionedChars = _engineBuffer.dataPositioned.Where(item => item.Focussable);
 
             int minXActive = positionedChars.Where(item => item.Owner == FocusedObject).Min(item => item.X);
 
@@ -424,7 +430,7 @@ namespace CLIForms
 
         private void MoveRight(ConsoleKeyInfo responsibleKey)
         {
-            IEnumerable<PositionedConsoleChar> positionedChars = engineBuffer.dataPositioned.Where(item => item.Focussable);
+            IEnumerable<PositionedConsoleChar> positionedChars = _engineBuffer.dataPositioned.Where(item => item.Focussable);
 
             int maxXActive = positionedChars.Where(item => item.Owner == FocusedObject).Max(item => item.X);
 
