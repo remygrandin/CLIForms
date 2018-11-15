@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -176,12 +177,110 @@ namespace CLIForms_FIGFonts
             }
         }
 
-        public bool TestHorizMerge(FIGBuffer secondaryBuffer, FullLayoutEnum layout)
+        public bool TestHorizMerge(FIGBuffer secondaryBuffer, FullLayoutEnum layout, char hardBlank, IList<Tuple<int, int>> smushPoints = null,
+            int xOffset = 0, int yOffset = 0)
         {
+            if (layout.HasFlag(FullLayoutEnum.Horz_Smush) &&
+                !layout.HasFlag(FullLayoutEnum.Horz_Smush_R1) &&
+                !layout.HasFlag(FullLayoutEnum.Horz_Smush_R2) &&
+                !layout.HasFlag(FullLayoutEnum.Horz_Smush_R3) &&
+                !layout.HasFlag(FullLayoutEnum.Horz_Smush_R4) &&
+                !layout.HasFlag(FullLayoutEnum.Horz_Smush_R5) &&
+                !layout.HasFlag(FullLayoutEnum.Horz_Smush_R6)) // universal smushing
+                return true;
 
+            if (smushPoints == null)
+                return true;
+
+            foreach (Tuple<int, int> smushPoint in smushPoints)
+            {
+                char pChar = data[smushPoint.Item1, smushPoint.Item2].Char;
+
+                char sChar = secondaryBuffer.data[smushPoint.Item1 - xOffset, smushPoint.Item2 - yOffset].Char;
+
+
+                if (layout.HasFlag(FullLayoutEnum.Horz_Smush_R1)) // EQUAL CHARACTER SMUSHING
+                {
+                    if (pChar == sChar)
+                        continue;
+                }
+
+                if (layout.HasFlag(FullLayoutEnum.Horz_Smush_R2)) // UNDERSCORE SMUSHING 
+                {
+                    if (pChar == '_' && "|/\\[]{}()<>".Contains(sChar))
+                        continue;
+
+                    if (sChar == '_' && "|/\\[]{}()<>".Contains(pChar))
+                        continue;
+                }
+
+                if (layout.HasFlag(FullLayoutEnum.Horz_Smush_R3)) // HIERARCHY SMUSHING
+                {
+                    string[] classes = new[] { "|", "/\\", "[]", "{}", "()", "<>" };
+
+                    bool found = false;
+
+                    for (int i = 0; i < classes.Length - 1; i++)
+                    {
+                        if (classes[i].Contains(pChar) && String.Join("", classes.Skip(i + 1)).Contains(sChar))
+                        {
+                            found = true;
+                            break;
+                        }
+                        if (classes[i].Contains(sChar) && String.Join("", classes.Skip(i + 1)).Contains(pChar))
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if(found)
+                        continue;
+                }
+
+
+                if (layout.HasFlag(FullLayoutEnum.Horz_Smush_R4)) // OPPOSITE PAIR SMUSHING
+                {
+                    string[] classes = new[] { "[]", "{}", "()" };
+
+                    bool found = false;
+
+                    foreach (string cls in classes)
+                    {
+                        if ((cls[0] == pChar && cls[1] == sChar) || (cls[0] == sChar && cls[1] == pChar))
+                        {
+                            found = true;
+                            break;
+                        }
+                    }
+
+                    if (found)
+                        continue;
+                }
+
+                if (layout.HasFlag(FullLayoutEnum.Horz_Smush_R5)) // BIG X SMUSHING
+                {
+                    if (pChar == '/' && sChar == '\\')
+                        continue;
+                    if (pChar == '\\' && sChar == '/')
+                        continue;
+                    if (pChar == '>' && sChar == '<')
+                        continue;
+                }
+
+                if (layout.HasFlag(FullLayoutEnum.Horz_Smush_R6)) // HARDBLANK SMUSHING
+                {
+                    if (pChar == sChar && pChar == hardBlank)
+                        continue;
+                }
+
+                return false;
+            }
+
+            return true;
         }
 
-        public void HorizMerge(FIGBuffer secondaryBuffer, FullLayoutEnum layout, int xOffset = 0, int yOffset = 0)
+        public void HorizMerge(FIGBuffer secondaryBuffer, FullLayoutEnum layout, char hardBlank, IList<Tuple<int, int>> smushPoints, int xOffset = 0, int yOffset = 0)
         {
             int xDim = Width;
             int yDim = Height;
@@ -204,6 +303,13 @@ namespace CLIForms_FIGFonts
                     if (mainY < 0 || mainY >= yDim)
                         continue;
 
+                    if (smushPoints == null || !smushPoints.Any(item => item.Item1 == mainX && item.Item2 == mainY))
+                    {
+                        data[mainX, mainY].Char = secondaryBuffer.data[x, y].Char;
+                        continue;
+
+                    }
+
                     char primaryChar = data[mainX, mainY].Char;
 
                     char secondaryChar = secondaryBuffer.data[x, y].Char;
@@ -213,14 +319,9 @@ namespace CLIForms_FIGFonts
 
                     if (layout.HasFlag(FullLayoutEnum.Horz_Smush))
                     {
-                        if (layout.HasFlag(FullLayoutEnum.Horz_Smush_R1))
-                        {
-                            if ()
-                        }
+                        resultingChar = HSmush(primaryChar, secondaryChar, layout, hardBlank);
 
                     }
-
-
 
 
                     data[mainX, mainY].Char = resultingChar;

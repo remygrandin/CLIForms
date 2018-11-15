@@ -126,30 +126,59 @@ namespace CLIForms_FIGFonts
             {
                 FIGChar fChar = Chars[Convert.ToInt32(c)];
 
-                
+
 
                 if (!FullLayout.HasFlag(FullLayoutEnum.Horz_Smush) &&
                     FullLayout.HasFlag(FullLayoutEnum.Horz_Fitting)) // full width
                 {
                     output.Width += fChar.Buffer.Width;
 
-                    
+                    output.HorizMerge(fChar.Buffer, FullLayout, Hardblank, null);
 
                 }
                 else
                 {
-                    IList<int> leftMask = output.GetRightSpaceMask();
-                    IList<int> rightMask = fChar.Buffer.GetLeftSpaceMask();
+                    IList<int> primaryMask = output.GetRightSpaceMask();
+                    IList<int> secondaryMask = fChar.Buffer.GetLeftSpaceMask();
 
-                    IList<int> minDist = GetMinDist(leftMask, rightMask);
+                    IList<int> dists = GetMinDist(primaryMask, secondaryMask);
+
+                    int minDist = dists.Min();
+
+                    List<Tuple<int, int>> smushPoints = new List<Tuple<int, int>>();
+
+                    for (int i = 0; i < dists.Count; i++)
+                    {
+                        if (dists[i] == minDist)
+                        {
+                            smushPoints.Add(new Tuple<int, int>(primaryMask[i], i));
+                        }
+                    }
+
+                    int xOffset = output.Width - minDist;
 
                     if (FullLayout.HasFlag(FullLayoutEnum.Horz_Smush))
                     {
+                        
+                        if (output.TestHorizMerge(fChar.Buffer, FullLayout, Hardblank, smushPoints, xOffset, 0)) //smushing
+                        {
+                            output.Width += fChar.Buffer.Width - minDist;
+
+                            output.HorizMerge(fChar.Buffer, FullLayout, Hardblank, smushPoints, xOffset, 0);
+                        }
+                        else // kerning/fitting
+                        {
+                            output.Width += fChar.Buffer.Width - minDist + 1;
+
+                            output.HorizMerge(fChar.Buffer, FullLayout, Hardblank, smushPoints, xOffset +1, 0);
+                        }
 
                     }
                     else if (FullLayout.HasFlag(FullLayoutEnum.Horz_Fitting))
                     {
+                        output.Width += fChar.Buffer.Width - minDist + 1;
 
+                        output.HorizMerge(fChar.Buffer, FullLayout, Hardblank, smushPoints, xOffset + 1, 0);
                     }
 
                 }
