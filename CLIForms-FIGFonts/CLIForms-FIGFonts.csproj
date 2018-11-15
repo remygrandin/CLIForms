@@ -40,8 +40,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="FIGSubChar.cs" />
+    <Compile Include="FIGBuffer.cs" />
+    <Compile Include="FIGChar.cs" />
     <Compile Include="Font.cs" />
     <Compile Include="FontHelper.cs" />
+    <Compile Include="FullLayoutEnum.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="FontRepository.Designer.cs">
       <AutoGen>True</AutoGen>

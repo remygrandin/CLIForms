@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Linq;
 using CLIForms.Buffer;
 using CLIForms.Components.Containers;
-using CLIForms.Extentions;
 using CLIForms_FIGFonts;
 
 namespace CLIForms.Components.Texts

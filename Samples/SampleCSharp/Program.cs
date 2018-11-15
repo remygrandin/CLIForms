@@ -218,7 +218,7 @@ namespace SampleCSharp
 
             tabs.AddChild(table, "Tables");
 
-            tabs.ActiveTab = 3;
+            //tabs.ActiveTab = 0;
             
             engine.Start();
 

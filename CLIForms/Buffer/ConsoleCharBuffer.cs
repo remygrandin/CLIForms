@@ -92,7 +92,7 @@ namespace CLIForms.Buffer
             return this;
         }
 
-        public ConsoleCharBuffer DrawString(DisplayObject owner, string str, bool focussable, int x, int y, ConsoleColor? backgroundColor, ConsoleColor foregroundColor)
+        public ConsoleCharBuffer DrawString(DisplayObject owner, string str, bool focusable, int x, int y, ConsoleColor? backgroundColor, ConsoleColor foregroundColor)
         {
             if (str == null)
                 return this;
@@ -108,9 +108,9 @@ namespace CLIForms.Buffer
                     if (xPos >= 0 && xPos < xDim)
                     {
                         if (data[xPos, y] == null)
-                            data[xPos, y] = new ConsoleChar(owner, str[i], focussable, backgroundColor, foregroundColor);
+                            data[xPos, y] = new ConsoleChar(owner, str[i], focusable, backgroundColor, foregroundColor);
                         else
-                            data[xPos, y] = data[xPos, y].Merge(new ConsoleChar(owner, str[i], focussable, backgroundColor, foregroundColor));
+                            data[xPos, y] = data[xPos, y].Merge(new ConsoleChar(owner, str[i], focusable, backgroundColor, foregroundColor));
                     }
                 }
 
