@@ -5,14 +5,18 @@ VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLIForms", "CLIForms\CLIForms.csproj", "{928EE27E-046E-4DCE-9D04-1C065B51DC67}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample", "Sample\Sample.csproj", "{C0C3D6D3-E58C-4A8E-9B64-B725352EF8C7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sample", "Samples\SamplePS\Sample.csproj", "{C0C3D6D3-E58C-4A8E-9B64-B725352EF8C7}"
 	ProjectSection(ProjectDependencies) = postProject
 		{928EE27E-046E-4DCE-9D04-1C065B51DC67} = {928EE27E-046E-4DCE-9D04-1C065B51DC67}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleCSharp", "SampleCSharp\SampleCSharp.csproj", "{EF900F6B-299F-431A-AA7B-3FA021E76F57}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleCSharp", "Samples\SampleCSharp\SampleCSharp.csproj", "{EF900F6B-299F-431A-AA7B-3FA021E76F57}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CLIForms-FIGFonts", "CLIForms-FIGFonts\CLIForms-FIGFonts.csproj", "{F2636F77-E3DD-429E-B866-4CCDB3BE006D}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{C28CF992-448C-4D12-ACA8-A5825B5AC4D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileBrowser", "FileBrowser\FileBrowser.csproj", "{3A190ADA-5F1A-49D3-81D3-386994CD1DF3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -72,9 +76,26 @@ Global
 		{F2636F77-E3DD-429E-B866-4CCDB3BE006D}.Release|x64.Build.0 = Release|Any CPU
 		{F2636F77-E3DD-429E-B866-4CCDB3BE006D}.Release|x86.ActiveCfg = Release|Any CPU
 		{F2636F77-E3DD-429E-B866-4CCDB3BE006D}.Release|x86.Build.0 = Release|Any CPU
+		{3A190ADA-5F1A-49D3-81D3-386994CD1DF3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A190ADA-5F1A-49D3-81D3-386994CD1DF3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A190ADA-5F1A-49D3-81D3-386994CD1DF3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{3A190ADA-5F1A-49D3-81D3-386994CD1DF3}.Debug|x64.Build.0 = Debug|Any CPU
+		{3A190ADA-5F1A-49D3-81D3-386994CD1DF3}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{3A190ADA-5F1A-49D3-81D3-386994CD1DF3}.Debug|x86.Build.0 = Debug|Any CPU
+		{3A190ADA-5F1A-49D3-81D3-386994CD1DF3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A190ADA-5F1A-49D3-81D3-386994CD1DF3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A190ADA-5F1A-49D3-81D3-386994CD1DF3}.Release|x64.ActiveCfg = Release|Any CPU
+		{3A190ADA-5F1A-49D3-81D3-386994CD1DF3}.Release|x64.Build.0 = Release|Any CPU
+		{3A190ADA-5F1A-49D3-81D3-386994CD1DF3}.Release|x86.ActiveCfg = Release|Any CPU
+		{3A190ADA-5F1A-49D3-81D3-386994CD1DF3}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{C0C3D6D3-E58C-4A8E-9B64-B725352EF8C7} = {C28CF992-448C-4D12-ACA8-A5825B5AC4D2}
+		{EF900F6B-299F-431A-AA7B-3FA021E76F57} = {C28CF992-448C-4D12-ACA8-A5825B5AC4D2}
+		{3A190ADA-5F1A-49D3-81D3-386994CD1DF3} = {C28CF992-448C-4D12-ACA8-A5825B5AC4D2}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A79046D2-4B69-492A-8FAF-22614FE8FD64}
