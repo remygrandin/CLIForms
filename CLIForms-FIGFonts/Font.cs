@@ -65,36 +65,41 @@ namespace CLIForms_FIGFonts
 
         internal int PrintDirection;
 
-        internal int FullLayout;
+        internal FullLayoutEnum FullLayout;
 
         internal int CodetagCount;
 
-        internal Dictionary<int, FigChar> Chars = new Dictionary<int, FigChar>();
+        internal Dictionary<int, FIGChar> Chars = new Dictionary<int, FIGChar>();
 
         internal void LoadChar(int code, string name, IList<string> charData)
         {
-            char[,] charTable = new char[charData.Max(item => item.Length), charData.Count];
+            FIGSubChar[,] charTable = new FIGSubChar[charData.Max(item => item.Length), charData.Count];
 
             for (int y = 0; y < charData.Count; y++)
             {
                 for (int x = 0; x < charData[y].Length; x++)
                 {
-                    charTable[x, y] = charData[y][x];
+                    charTable[x, y] = new FIGSubChar(charData[y][x], x, y);
                 }
             }
 
             if (Chars.ContainsKey(code))
                 Chars.Remove(code);
 
-            Chars.Add(code, new FigChar(code, name, charTable));
+            Chars.Add(code, new FIGChar(code, name, new FIGBuffer(charTable)));
         }
 
         internal string GetCharString(int code)
         {
             if (!Chars.ContainsKey(code))
-                return "invalidChar";
+            {
+                if (Chars.ContainsKey(0))
+                    code = 0;
+                else
+                    return "Unknown Char & no default found";
+            }
 
-            char[,] charTable = Chars[code].Data;
+            FIGSubChar[,] charTable = Chars[code].Buffer.data;
 
             int xDim = charTable.GetLength(0);
             int yDim = charTable.GetLength(1);
@@ -105,12 +110,67 @@ namespace CLIForms_FIGFonts
                 StringBuilder line = new StringBuilder(xDim);
                 for (int x = 0; x < xDim; x++)
                 {
-                    line.Append(charTable[x, y]);
+                    line.Append(charTable[x, y].Char);
                 }
                 lines.Add(line.ToString());
             }
 
             return String.Join("\r\n", lines);
+        }
+
+        public FIGBuffer Render(string text)
+        {
+            FIGBuffer output = new FIGBuffer(0, this.CharHeight);
+
+            foreach (char c in text)
+            {
+                FIGChar fChar = Chars[Convert.ToInt32(c)];
+
+                
+
+                if (!FullLayout.HasFlag(FullLayoutEnum.Horz_Smush) &&
+                    FullLayout.HasFlag(FullLayoutEnum.Horz_Fitting)) // full width
+                {
+                    output.Width += fChar.Buffer.Width;
+
+                    
+
+                }
+                else
+                {
+                    IList<int> leftMask = output.GetRightSpaceMask();
+                    IList<int> rightMask = fChar.Buffer.GetLeftSpaceMask();
+
+                    IList<int> minDist = GetMinDist(leftMask, rightMask);
+
+                    if (FullLayout.HasFlag(FullLayoutEnum.Horz_Smush))
+                    {
+
+                    }
+                    else if (FullLayout.HasFlag(FullLayoutEnum.Horz_Fitting))
+                    {
+
+                    }
+
+                }
+
+            }
+
+            output.Replace(Hardblank, ' ');
+
+            return output;
+        }
+
+        private IList<int> GetMinDist(IList<int> firstList, IList<int> secondList)
+        {
+            List<int> addedLists = new List<int>();
+
+            for (int i = 0; i < firstList.Count; i++)
+            {
+                addedLists.Add(firstList[i] + secondList[i]);
+            }
+
+            return addedLists;
         }
     }
 }

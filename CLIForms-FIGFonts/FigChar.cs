@@ -1,21 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
+﻿
 namespace CLIForms_FIGFonts
 {
-    public class FigChar
+    public class FIGChar
     {
         public int Code;
         public string Name;
-        public char[,] Data;
+        public FIGBuffer Buffer;
 
-        public FigChar(int code, string name, char[,] data)
+        public FIGChar(int code, string name, FIGBuffer buffer)
         {
             Code = code;
             Name = name;
-            Data = data;
+            Buffer = buffer;
         }
     }
 }

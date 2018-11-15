@@ -97,17 +97,20 @@ namespace CLIForms_FIGFonts
                     throw new Exception("Font Header decoding problem : comment lines count is < 0");
 
                 // Print direction
-                if (!int.TryParse(headerParameters[6], out font.PrintDirection))
-                    throw new Exception("Font Header decoding problem : print direction is not an integer");
+                if (headerParameters.Length >= 7)
+                {
+                    if (!int.TryParse(headerParameters[6], out font.PrintDirection))
+                        throw new Exception("Font Header decoding problem : print direction is not an integer");
 
-                if (font.PrintDirection != 0 && font.PrintDirection != 1)
-                    throw new Exception("Font Header decoding problem : print direction is not 0 or 1");
+                    if (font.PrintDirection != 0 && font.PrintDirection != 1)
+                        throw new Exception("Font Header decoding problem : print direction is not 0 or 1");
+                }
 
                 if (headerParameters.Length >= 8)
                 {
                     // full layout
-                    if (!int.TryParse(headerParameters[7], out font.FullLayout))
-                        throw new Exception("Font Header decoding problem : full layout is not an integer");
+                    if (!Enum.TryParse<FullLayoutEnum>(headerParameters[7], out font.FullLayout))
+                        throw new Exception("Font Header decoding problem : full layout is not a valid value");
 
                 }
 
@@ -188,6 +191,9 @@ namespace CLIForms_FIGFonts
                             charCode = charCode * -1;
                         }
 
+                        if(charCode == -1)
+                            throw new Exception("Error parsing at line " + lineOffset +" : char code can't be -1 per FIG specifications");
+
                         List<string> charLines = new List<string>();
 
                         lineOffset++;
@@ -218,16 +224,16 @@ namespace CLIForms_FIGFonts
 
                 string a = font.GetCharString(96);
 
-                foreach (KeyValuePair<int, FigChar> figChar in font.Chars)
+                foreach (KeyValuePair<int, FIGChar> figChar in font.Chars)
                 {
                     Debug.WriteLine("char : " + figChar.Value.Code + "," + figChar.Value.Name);
 
-                    for (int y = 0; y < figChar.Value.Data.GetLength(1); y++)
+                    for (int y = 0; y < figChar.Value.Buffer.data.GetLength(1); y++)
                     {
                         string str = "";
-                        for (int x = 0; x < figChar.Value.Data.GetLength(0); x++)
+                        for (int x = 0; x < figChar.Value.Buffer.data.GetLength(0); x++)
                         {
-                            str += figChar.Value.Data[x, y];
+                            str += figChar.Value.Buffer.data[x, y].Char;
 
                         }
                         Debug.WriteLine(str);
