@@ -124,16 +124,31 @@ namespace CLIForms_FIGFonts
 
             foreach (char c in text)
             {
-                FIGChar fChar = Chars[Convert.ToInt32(c)];
+                int correctedChar = Convert.ToInt32(c);
+
+
+                if (!Chars.ContainsKey(correctedChar))
+                {
+                    if (Chars.ContainsKey(0))
+                    {
+                        correctedChar = 0;
+                    }
+                    else
+                        throw new Exception("unknown char " + correctedChar + " and no default found");
+                }
+
+
+                FIGChar fChar = Chars[correctedChar];
 
 
 
                 if (!FullLayout.HasFlag(FullLayoutEnum.Horz_Smush) &&
-                    FullLayout.HasFlag(FullLayoutEnum.Horz_Fitting)) // full width
+                    !FullLayout.HasFlag(FullLayoutEnum.Horz_Fitting)) // full width
                 {
+                    int oldWidth = output.Width;
                     output.Width += fChar.Buffer.Width;
 
-                    output.HorizMerge(fChar.Buffer, FullLayout, Hardblank, null);
+                    output.HorizMerge(fChar.Buffer, FullLayout, Hardblank, null, oldWidth);
 
                 }
                 else
@@ -200,6 +215,30 @@ namespace CLIForms_FIGFonts
             }
 
             return addedLists;
+        }
+
+        public string DebugDraw()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (KeyValuePair<int, FIGChar> figChar in Chars)
+            {
+                sb.AppendLine("char : " + figChar.Value.Code + "," + figChar.Value.Name);
+
+                for (int y = 0; y < figChar.Value.Buffer.data.GetLength(1); y++)
+                {
+                    string str = "";
+                    for (int x = 0; x < figChar.Value.Buffer.data.GetLength(0); x++)
+                    {
+                        str += figChar.Value.Buffer.data[x, y].Char;
+
+                    }
+
+                    sb.AppendLine(str);
+                }
+            }
+
+            return sb.ToString();
+
         }
     }
 }

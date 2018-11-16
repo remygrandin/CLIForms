@@ -1,36 +1,54 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Resources;
 using System.Text.RegularExpressions;
+using System.IO.Compression;
 
 namespace CLIForms_FIGFonts
 {
     public static class FontFactory
     {
-        private static readonly ResourceSet Fonts = FontRepository.ResourceManager.GetResourceSet(CultureInfo.CurrentCulture, true, true);
+        static FontFactory()
+        {
+            var aa = Assembly.GetExecutingAssembly().GetManifestResourceStream("CLIForms_FIGFonts.fonts.zip");
+            
+            using (ZipArchive zip = ZipFile.Open("test.zip", ZipArchiveMode.Create))
+            {
+                zip.CreateEntryFromFile(@"c:\something.txt", "data/path/something.txt");
+            }
+        }
 
+        //private static readonly ResourceSet Fonts = new ResourceSet("aa");// Assembly.GetExecutingAssembly().ResourceManager.GetResourceSet(CultureInfo.CurrentCulture, true, true));
+        /*
         public static IEnumerable<string> GetAvailableFonts()
         {
             return Fonts.Cast<DictionaryEntry>().Select(item => item.Key.ToString());
         }
+        */
+        private static Dictionary<string, Font> FontCache = new Dictionary<string, Font>();
 
         public static Font GetFont(string fontName)
         {
-            if(Fonts.Cast<DictionaryEntry>().All(item => item.Key.ToString() != fontName))
+            //var assembly = Assembly.GetExecutingAssembly();
+            //var resourceName = assembly.GetManifestResourceNames();
+            /*
+            if (Fonts.Cast<DictionaryEntry>().All(item => item.Key.ToString() != fontName))
                 throw new ArgumentException("Unknown Font");
+
+            if (FontCache.ContainsKey(fontName))
+                return FontCache[fontName];
 
             MemoryStream fileStream = new MemoryStream((byte[])Fonts.GetObject(fontName));
 
             StreamReader streamReader = new StreamReader(fileStream);
 
-            LoadFontFromTextFile(streamReader.ReadToEnd());
+            Font loadedFont = LoadFontFromTextFile(streamReader.ReadToEnd());
 
+            FontCache.Add(fontName, loadedFont);
+
+            return loadedFont;
+            */
             return new Font();
         }
 
@@ -221,25 +239,6 @@ namespace CLIForms_FIGFonts
 
 
                 }
-
-                string a = font.GetCharString(96);
-
-                foreach (KeyValuePair<int, FIGChar> figChar in font.Chars)
-                {
-                    Debug.WriteLine("char : " + figChar.Value.Code + "," + figChar.Value.Name);
-
-                    for (int y = 0; y < figChar.Value.Buffer.data.GetLength(1); y++)
-                    {
-                        string str = "";
-                        for (int x = 0; x < figChar.Value.Buffer.data.GetLength(0); x++)
-                        {
-                            str += figChar.Value.Buffer.data[x, y].Char;
-
-                        }
-                        Debug.WriteLine(str);
-                    }
-                }
-
 
                 return font;
             }

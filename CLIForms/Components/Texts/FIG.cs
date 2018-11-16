@@ -54,7 +54,9 @@ namespace CLIForms.Components.Texts
 
             ConsoleCharBuffer buffer = new ConsoleCharBuffer(1,1);
 
-            FontFactory.GetFont("banner");
+            Font figfont = FontFactory.GetFont("banner");
+
+            string aaa = figfont.Render(Text).StringRender;
             
             Dirty = false;
 

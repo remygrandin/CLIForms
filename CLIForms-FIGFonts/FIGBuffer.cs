@@ -61,7 +61,6 @@ namespace CLIForms_FIGFonts
         public FIGBuffer(FIGSubChar[,] array)
         {
             data = array;
-            Clear();
         }
 
         public int Width
@@ -110,7 +109,7 @@ namespace CLIForms_FIGFonts
             int xDim = Width;
             int yDim = Height;
 
-            List<int> mask = new List<int>();
+            List<int> mask = Enumerable.Repeat(0, yDim).ToList();
 
             for (int y = 0; y < yDim; y++)
             {
@@ -118,7 +117,7 @@ namespace CLIForms_FIGFonts
                 {
                     if (data[x, y].Char != ' ')
                     {
-                        mask.Add(x);
+                        mask[y] = x;
                         break;
                     }
                 }
@@ -132,7 +131,7 @@ namespace CLIForms_FIGFonts
             int xDim = Width;
             int yDim = Height;
 
-            List<int> mask = new List<int>();
+            List<int> mask = Enumerable.Repeat(0, yDim).ToList();
 
             for (int y = 0; y < yDim; y++)
             {
@@ -140,7 +139,7 @@ namespace CLIForms_FIGFonts
                 {
                     if (data[x, y].Char != ' ')
                     {
-                        mask.Add(xDim - 1 - x);
+                        mask[y] = xDim - 1 - x;
                         break;
                     }
                 }
@@ -175,10 +174,11 @@ namespace CLIForms_FIGFonts
                         newData[x, y] = data[x, y];
                 }
             }
+
+            data = newData;
         }
 
-        public bool TestHorizMerge(FIGBuffer secondaryBuffer, FullLayoutEnum layout, char hardBlank, IList<Tuple<int, int>> smushPoints = null,
-            int xOffset = 0, int yOffset = 0)
+        public bool TestHorizMerge(FIGBuffer secondaryBuffer, FullLayoutEnum layout, char hardBlank, IList<Tuple<int, int>> smushPoints = null, int xOffset = 0, int yOffset = 0)
         {
             if (layout.HasFlag(FullLayoutEnum.Horz_Smush) &&
                 !layout.HasFlag(FullLayoutEnum.Horz_Smush_R1) &&
@@ -201,7 +201,7 @@ namespace CLIForms_FIGFonts
 
                 if (layout.HasFlag(FullLayoutEnum.Horz_Smush_R1)) // EQUAL CHARACTER SMUSHING
                 {
-                    if (pChar == sChar)
+                    if (pChar != hardBlank && sChar != hardBlank && pChar == sChar)
                         continue;
                 }
 
@@ -314,7 +314,20 @@ namespace CLIForms_FIGFonts
 
                     char secondaryChar = secondaryBuffer.data[x, y].Char;
 
-                    char resultingChar = secondaryChar == ' ' ? primaryChar : secondaryChar; // default to universal smushing
+
+
+                    char resultingChar = ' ';
+                    // default to universal universal smushing
+                    if (primaryChar == hardBlank && secondaryChar == ' ')
+                        resultingChar = primaryChar;
+                    else if (secondaryChar == hardBlank && primaryChar == ' ')
+                        resultingChar = secondaryChar;
+                    else if (primaryChar == ' ')
+                        resultingChar = secondaryChar;
+                    else if (secondaryChar == ' ')
+                        resultingChar = primaryChar;
+                    else
+                        resultingChar = secondaryChar;
 
 
                     if (layout.HasFlag(FullLayoutEnum.Horz_Smush))
@@ -333,7 +346,7 @@ namespace CLIForms_FIGFonts
         {
             if (layout.HasFlag(FullLayoutEnum.Horz_Smush_R1)) // EQUAL CHARACTER SMUSHING
             {
-                if (pChar == sChar)
+                if (pChar != hardBlank && sChar != hardBlank && pChar == sChar)
                     return pChar;
             }
 
