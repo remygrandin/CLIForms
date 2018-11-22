@@ -118,91 +118,98 @@ namespace CLIForms_FIGFonts
             return String.Join("\r\n", lines);
         }
 
+        public object locktemp = new object();
+
         public FIGBuffer Render(string text)
         {
-            FIGBuffer output = new FIGBuffer(0, this.CharHeight);
-
-            foreach (char c in text)
+            lock (locktemp)
             {
-                int correctedChar = Convert.ToInt32(c);
 
 
-                if (!Chars.ContainsKey(correctedChar))
+                FIGBuffer output = new FIGBuffer(0, this.CharHeight);
+
+                foreach (char c in text)
                 {
-                    if (Chars.ContainsKey(0))
+                    int correctedChar = Convert.ToInt32(c);
+
+
+                    if (!Chars.ContainsKey(correctedChar))
                     {
-                        correctedChar = 0;
+                        if (Chars.ContainsKey(0))
+                        {
+                            correctedChar = 0;
+                        }
+                        else
+                            throw new Exception("unknown char " + correctedChar + " and no default found");
+                    }
+
+
+                    FIGChar fChar = Chars[correctedChar];
+
+
+
+                    if (!FullLayout.HasFlag(FullLayoutEnum.Horz_Smush) &&
+                        !FullLayout.HasFlag(FullLayoutEnum.Horz_Fitting)) // full width
+                    {
+                        int oldWidth = output.Width;
+                        output.Width += fChar.Buffer.Width;
+
+                        output.HorizMerge(fChar.Buffer, FullLayout, Hardblank, null, oldWidth);
+
                     }
                     else
-                        throw new Exception("unknown char " + correctedChar + " and no default found");
-                }
-
-
-                FIGChar fChar = Chars[correctedChar];
-
-
-
-                if (!FullLayout.HasFlag(FullLayoutEnum.Horz_Smush) &&
-                    !FullLayout.HasFlag(FullLayoutEnum.Horz_Fitting)) // full width
-                {
-                    int oldWidth = output.Width;
-                    output.Width += fChar.Buffer.Width;
-
-                    output.HorizMerge(fChar.Buffer, FullLayout, Hardblank, null, oldWidth);
-
-                }
-                else
-                {
-                    IList<int> primaryMask = output.GetRightSpaceMask();
-                    IList<int> secondaryMask = fChar.Buffer.GetLeftSpaceMask();
-
-                    IList<int> dists = GetMinDist(primaryMask, secondaryMask);
-
-                    int minDist = dists.Min();
-
-                    List<Tuple<int, int>> smushPoints = new List<Tuple<int, int>>();
-
-                    for (int i = 0; i < dists.Count; i++)
                     {
-                        if (dists[i] == minDist)
+                        IList<int> primaryMask = output.GetRightSpaceMask();
+                        IList<int> secondaryMask = fChar.Buffer.GetLeftSpaceMask();
+
+                        IList<int> dists = GetMinDist(primaryMask, secondaryMask);
+
+                        int minDist = dists.Min();
+
+                        List<Tuple<int, int>> smushPoints = new List<Tuple<int, int>>();
+
+                        for (int i = 0; i < dists.Count; i++)
                         {
-                            smushPoints.Add(new Tuple<int, int>(primaryMask[i], i));
+                            if (dists[i] == minDist)
+                            {
+                                smushPoints.Add(new Tuple<int, int>(output.Width - primaryMask[i] - 1, i));
+                            }
                         }
-                    }
 
-                    int xOffset = output.Width - minDist;
+                        int xOffset = output.Width - minDist;
 
-                    if (FullLayout.HasFlag(FullLayoutEnum.Horz_Smush))
-                    {
-                        
-                        if (output.TestHorizMerge(fChar.Buffer, FullLayout, Hardblank, smushPoints, xOffset, 0)) //smushing
+                        if (FullLayout.HasFlag(FullLayoutEnum.Horz_Smush))
                         {
-                            output.Width += fChar.Buffer.Width - minDist;
 
-                            output.HorizMerge(fChar.Buffer, FullLayout, Hardblank, smushPoints, xOffset, 0);
+                            if (output.TestHorizMerge(fChar.Buffer, FullLayout, Hardblank, smushPoints, xOffset - 1, 0)) //smushing
+                            {
+                                output.Width += fChar.Buffer.Width - minDist;
+
+                                output.HorizMerge(fChar.Buffer, FullLayout, Hardblank, smushPoints, xOffset - 1, 0);
+                            }
+                            else // kerning/fitting
+                            {
+                                output.Width += fChar.Buffer.Width - minDist;
+
+                                output.HorizMerge(fChar.Buffer, FullLayout, Hardblank, smushPoints, xOffset, 0);
+                            }
+
                         }
-                        else // kerning/fitting
+                        else if (FullLayout.HasFlag(FullLayoutEnum.Horz_Fitting))
                         {
                             output.Width += fChar.Buffer.Width - minDist + 1;
 
-                            output.HorizMerge(fChar.Buffer, FullLayout, Hardblank, smushPoints, xOffset +1, 0);
+                            output.HorizMerge(fChar.Buffer, FullLayout, Hardblank, smushPoints, xOffset, 0);
                         }
 
-                    }
-                    else if (FullLayout.HasFlag(FullLayoutEnum.Horz_Fitting))
-                    {
-                        output.Width += fChar.Buffer.Width - minDist + 1;
-
-                        output.HorizMerge(fChar.Buffer, FullLayout, Hardblank, smushPoints, xOffset + 1, 0);
                     }
 
                 }
 
+                output.Replace(Hardblank, ' ');
+
+                return output;
             }
-
-            output.Replace(Hardblank, ' ');
-
-            return output;
         }
 
         private IList<int> GetMinDist(IList<int> firstList, IList<int> secondList)

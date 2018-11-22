@@ -34,6 +34,9 @@
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="DotNetZip, Version=1.12.0.0, Culture=neutral, PublicKeyToken=6583c7c814667745, processorArchitecture=MSIL">
+      <HintPath>..\packages\DotNetZip.1.12.0\lib\net20\DotNetZip.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -56,7 +59,6 @@
     <EmbeddedResource Include="fonts.zip">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <None Include="FontsIncluded\banner.flf" />
     <None Include="FontsIncluded\contributed\3-d.flf" />
     <None Include="FontsIncluded\contributed\3x5.flf" />
     <None Include="FontsIncluded\contributed\5lineoblique.flf" />
@@ -498,6 +500,7 @@
     <None Include="FontsIncluded\ours\smslant.flf" />
     <None Include="FontsIncluded\ours\standard.flf" />
     <None Include="FontsIncluded\ours\term.flf" />
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="FontsIncluded\contributed\bdffonts\bdffont1.txt" />

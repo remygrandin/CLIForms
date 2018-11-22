@@ -109,7 +109,7 @@ namespace CLIForms_FIGFonts
             int xDim = Width;
             int yDim = Height;
 
-            List<int> mask = Enumerable.Repeat(0, yDim).ToList();
+            List<int> mask = Enumerable.Repeat(Width, yDim).ToList();
 
             for (int y = 0; y < yDim; y++)
             {
@@ -131,7 +131,7 @@ namespace CLIForms_FIGFonts
             int xDim = Width;
             int yDim = Height;
 
-            List<int> mask = Enumerable.Repeat(0, yDim).ToList();
+            List<int> mask = Enumerable.Repeat(Width, yDim).ToList();
 
             for (int y = 0; y < yDim; y++)
             {
@@ -191,6 +191,10 @@ namespace CLIForms_FIGFonts
 
             if (smushPoints == null)
                 return true;
+
+            if (Width == 0 || secondaryBuffer.Width == 0)
+                return false;
+
 
             foreach (Tuple<int, int> smushPoint in smushPoints)
             {
@@ -305,7 +309,8 @@ namespace CLIForms_FIGFonts
 
                     if (smushPoints == null || !smushPoints.Any(item => item.Item1 == mainX && item.Item2 == mainY))
                     {
-                        data[mainX, mainY].Char = secondaryBuffer.data[x, y].Char;
+                        if(secondaryBuffer.data[x, y].Char != ' ')
+                            data[mainX, mainY].Char = secondaryBuffer.data[x, y].Char;
                         continue;
 
                     }

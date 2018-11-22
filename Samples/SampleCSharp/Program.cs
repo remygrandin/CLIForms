@@ -61,7 +61,7 @@ namespace SampleCSharp
             };
             tabs.AddChild(multiLinesLabel, "Texts");
 
-            FIG fig = new FIG(null, "Simple Label")
+            FIG fig = new FIG(null, "FIGLet", "smslant")
             {
                 X = 1,
                 Y = 10

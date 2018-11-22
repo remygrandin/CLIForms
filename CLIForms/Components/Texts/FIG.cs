@@ -11,6 +11,20 @@ namespace CLIForms.Components.Texts
         public ConsoleColor? BackgroundColor = null;
         public ConsoleColor ForegroundColor = ConsoleColor.Black;
 
+        private char? _transparentChar;
+        public char? TransparentChar
+        {
+            get { return _transparentChar; }
+            set
+            {
+                if (_transparentChar != value)
+                {
+                    _transparentChar = value;
+                    Dirty = true;
+                }
+            }
+        }
+
         private string _text;
         public string Text
         {
@@ -25,25 +39,24 @@ namespace CLIForms.Components.Texts
             }
         }
 
-
-        private int? _maxLength;
-        public int? MaxLength
+        private string _fontName;
+        public string FontName
         {
-            get { return _maxLength; }
+            get { return _fontName; }
             set
             {
-                if (_maxLength != value)
+                if (_fontName != value)
                 {
-                    _maxLength = value;
+                    _fontName = value;
                     Dirty = true;
                 }
             }
         }
 
-        public FIG(Container parent, string text = "", int? maxLength = null) : base(parent)
+        public FIG(Container parent, string text = "", string fontName = "banner") : base(parent)
         {
             Text = text;
-            MaxLength = maxLength;
+            FontName = fontName;
         }
 
 
@@ -52,12 +65,24 @@ namespace CLIForms.Components.Texts
             if (!_dirty && displayBuffer != null)
                 return displayBuffer;
 
-            ConsoleCharBuffer buffer = new ConsoleCharBuffer(1,1);
+            Font figfont = FontFactory.GetFont(FontName);
 
-            Font figfont = FontFactory.GetFont("banner");
+            FIGBuffer rendered = figfont.Render(Text);
 
-            string aaa = figfont.Render(Text).StringRender;
-            
+            ConsoleCharBuffer buffer = new ConsoleCharBuffer(rendered.Width, rendered.Height);
+
+            buffer.Clear();
+
+            for (int x = 0; x < buffer.Width; x++)
+            {
+                for (int y = 0; y < buffer.Height; y++)
+                {
+                    char ch = rendered.data[x, y].Char;
+                    if(ch != TransparentChar)
+                        buffer.data[x, y] = new ConsoleChar(this, ch, false, BackgroundColor, ForegroundColor);
+                }
+            }
+
             Dirty = false;
 
             return buffer;
