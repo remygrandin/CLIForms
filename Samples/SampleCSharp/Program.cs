@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using CLIForms;
+using CLIForms.Components.Chart;
 using CLIForms.Components.Containers;
 using CLIForms.Components.Drawings;
 using CLIForms.Components.Forms;
@@ -22,7 +24,7 @@ namespace SampleCSharp
             engine.ActiveScreen = screen;
             engine.DebugEnabled = true;
 
-            Tabs tabs = new Tabs(screen, new[] { "Texts", "Forms", "Drawings", "Spinners", "Tables" }, 77, 26)
+            Tabs tabs = new Tabs(screen, new[] { "Texts", "Forms", "Drawings", "Charts" , "Spinners", "Tables" }, 77, 26)
             {
                 X = 1,
                 Y = 2
@@ -61,7 +63,7 @@ namespace SampleCSharp
             };
             tabs.AddChild(multiLinesLabel, "Texts");
 
-            FIG fig = new FIG(null, "FIGLet", "smslant")
+            FIG fig = new FIG(null, "FIGLet", "dosrebel")
             {
                 X = 1,
                 Y = 10
@@ -158,6 +160,17 @@ namespace SampleCSharp
             };
             tabs.AddChild(hline, "Drawings");
 
+            // ==== Charts Tab ====
+
+            HorizontalChart hchart = new HorizontalChart(null, new List<float>(){0,1,2,3,4,5,6,7,8,9,10})
+            {
+                X = 1,
+                Y = 1,
+                Height = 7,
+                DataForegroundColor = new []{ConsoleColor.DarkBlue, ConsoleColor.DarkGreen, ConsoleColor.DarkMagenta}
+            };
+            tabs.AddChild(hchart, "Charts");
+
             // ==== Spinner Tab ====
             TinySpinner tinySpinner = new TinySpinner(null)
             {
@@ -218,7 +231,7 @@ namespace SampleCSharp
 
             tabs.AddChild(table, "Tables");
 
-            //tabs.ActiveTab = 0;
+            tabs.ActiveTab = 3;
             
             engine.Start();
 

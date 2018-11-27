@@ -54,6 +54,8 @@
     <Compile Include="Components\Globals\MenuItem.cs" />
     <Compile Include="Components\Globals\MenuBar.cs" />
     <Compile Include="Components\Globals\StatusBar.cs" />
+    <Compile Include="Components\Chart\ChartType.cs" />
+    <Compile Include="Components\Chart\HorizontalChart.cs" />
     <Compile Include="Components\Spinners\SpinnerBar.cs" />
     <Compile Include="Components\Spinners\Spinner.cs" />
     <Compile Include="Components\Spinners\TinySpinner.cs" />
@@ -89,9 +91,7 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Components\Graphs\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\CLIForms-FIGFonts\CLIForms-FIGFonts.csproj">
       <Project>{f2636f77-e3dd-429e-b866-4ccdb3be006d}</Project>

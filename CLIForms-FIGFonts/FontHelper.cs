@@ -111,7 +111,7 @@ namespace CLIForms_FIGFonts
 
             string[] headerParameters = line0.Split(' ');
 
-            if (headerParameters.Length < 7)
+            if (headerParameters.Length < 6)
                 throw new Exception("Font Header decoding problem : parameter count mismatch");
 
             Font font = new Font();
