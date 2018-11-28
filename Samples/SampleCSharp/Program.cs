@@ -24,12 +24,12 @@ namespace SampleCSharp
             engine.ActiveScreen = screen;
             engine.DebugEnabled = true;
 
-            Tabs tabs = new Tabs(screen, new[] { "Texts", "Forms", "Drawings", "Charts" , "Spinners", "Tables" }, 77, 26)
+            Tabs tabs = new Tabs(screen, new[] { "Texts", "Forms", "Drawings", "Charts", "Spinners", "Tables" }, 77, 26)
             {
                 X = 1,
                 Y = 2
             };
-            
+
             StatusBar statusBar = new StatusBar(screen)
             {
                 TextLeft = "Left Text",
@@ -123,7 +123,7 @@ namespace SampleCSharp
             };
             tabs.AddChild(toggle, "Forms");
 
-            SingleLineListBox singleLineTextbox = new SingleLineListBox(null,new []
+            SingleLineListBox singleLineTextbox = new SingleLineListBox(null, new[]
             {
                 new {id = 1, Text = "First Element" },
                 new {id = 2, Text = "Second Element" },
@@ -162,12 +162,13 @@ namespace SampleCSharp
 
             // ==== Charts Tab ====
 
-            HorizontalChart hchart = new HorizontalChart(null, new List<float>(){0,1,2,3,4,5,6,7,8,9,10})
+            HorizontalChart hchart = new HorizontalChart(null, new List<float>() { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 })
             {
                 X = 1,
                 Y = 1,
                 Height = 7,
-                DataForegroundColor = new []{ConsoleColor.DarkBlue, ConsoleColor.DarkGreen, ConsoleColor.DarkMagenta}
+                DataForegroundColor = new[] { ConsoleColor.Cyan, ConsoleColor.Green, ConsoleColor.Magenta },
+                ChartType = ChartType.Point
             };
             tabs.AddChild(hchart, "Charts");
 
@@ -232,10 +233,10 @@ namespace SampleCSharp
             tabs.AddChild(table, "Tables");
 
             tabs.ActiveTab = 3;
-            
+
             engine.Start();
 
-           // Console.ReadLine();
+            // Console.ReadLine();
         }
     }
 }

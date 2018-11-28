@@ -2,6 +2,7 @@
 {
     public enum ChartType
     {
+        Line,
         Bar,
         Point
     }

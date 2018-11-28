@@ -12,7 +12,20 @@ namespace CLIForms.Components.Chart
         public ConsoleColor AxesForegroundColor = ConsoleColor.Black;
         public ConsoleColor[] DataForegroundColor = new[] { ConsoleColor.White };
 
-        public ChartType ChartType = ChartType.Bar;
+        private ChartType _chartType = ChartType.Line;
+        public ChartType ChartType
+        {
+            get { return _chartType; }
+            set
+            {
+                if (_chartType != value)
+                {
+                    _chartType = value;
+                    Dirty = true;
+                }
+            }
+        }
+
 
         private int? _height;
         public int? Height
@@ -90,6 +103,7 @@ namespace CLIForms.Components.Chart
                 }
             }
         }
+
 
         public HorizontalChart(Container parent, IList<float> data, int? maxData = null) : base(parent)
         {
@@ -174,12 +188,11 @@ namespace CLIForms.Components.Chart
 
 
 
-
-
                 int pointRange = (int)Math.Ceiling(trueMax - trueMin);
                 int pointOffset = (int)Math.Round(trueMin);
 
                 int displayRange = (height - 1) * 2;
+                int origin = (int)Math.Round(pointOffset / pointRange * displayRange * 1.0);
 
                 for (var pointIdx = 0; pointIdx < Data.Count; pointIdx++)
                 {
@@ -187,23 +200,68 @@ namespace CLIForms.Components.Chart
 
                     int rounded = (int)Math.Round((point - pointOffset) / pointRange * displayRange);
 
-                    if (rounded == (int)Math.Round(pointOffset / pointRange * displayRange * 1.0))
+                    if (ChartType == ChartType.Line)
                     {
-                        buffer.data[pointIdx + labelLength + 1, height - 1] = new ConsoleChar(this, DrawingHelper.GetHorizontalBorder(BorderStyle.Thin)[0], false, null, DataForegroundColor[pointIdx % DataForegroundColor.Length]);
+                        if (rounded == origin)
+                        {
+                            buffer.data[pointIdx + labelLength + 1, height - 1] = new ConsoleChar(this,
+                                DrawingHelper.GetHorizontalBorder(BorderStyle.Thin)[0], false, null,
+                                DataForegroundColor[pointIdx % DataForegroundColor.Length]);
+                        }
+                        else
+                        {
+                            buffer.data[pointIdx + labelLength + 1, height - 1] = new ConsoleChar(this,
+                                DrawingHelper.GetTopTJunctionBorder(BorderStyle.Thin)[0], false, null,
+                                DataForegroundColor[pointIdx % DataForegroundColor.Length]);
+
+                            for (int i = 0; i < rounded - 1; i += 2)
+                            {
+                                buffer.data[pointIdx + labelLength + 1, height - 2 - (i / 2)] = new ConsoleChar(this,
+                                    DrawingHelper.GetVerticalBorder(BorderStyle.Thin)[0], false, null,
+                                    DataForegroundColor[pointIdx % DataForegroundColor.Length]);
+                            }
+
+                            if (rounded % 2 == 0)
+                            {
+                                buffer.data[pointIdx + labelLength + 1, height - 1 - (rounded / 2)] = new ConsoleChar(
+                                    this, DrawingHelper.GetTopRightCornerBorder(BorderStyle.Thin)[0], false, null,
+                                    DataForegroundColor[pointIdx % DataForegroundColor.Length]);
+                            }
+                        }
                     }
-                    else
+                    else if (ChartType == ChartType.Bar)
                     {
-                        buffer.data[pointIdx + labelLength + 1, height - 1] = new ConsoleChar(this, DrawingHelper.GetTopTJunctionBorder(BorderStyle.Thin)[0], false, null, DataForegroundColor[pointIdx % DataForegroundColor.Length]);
-
-                        for (int i = 0; i < rounded - 1; i += 2)
+                        if (rounded == origin)
                         {
-                            buffer.data[pointIdx + labelLength + 1, height - 2 - (i / 2)] = new ConsoleChar(this, DrawingHelper.GetVerticalBorder(BorderStyle.Thin)[0], false, null, DataForegroundColor[pointIdx % DataForegroundColor.Length]);
+                            buffer.data[pointIdx + labelLength + 1, height - 1] = new ConsoleChar(this,
+                                DrawingHelper.GetHorizontalBorder(BorderStyle.Thin)[0], false, null,
+                                DataForegroundColor[pointIdx % DataForegroundColor.Length]);
                         }
-
-                        if (rounded % 2 == 0)
+                        else
                         {
-                            buffer.data[pointIdx + labelLength + 1, height - 1 - (rounded / 2)] = new ConsoleChar(this, DrawingHelper.GetTopRightCornerBorder(BorderStyle.Thin)[0], false, null, DataForegroundColor[pointIdx % DataForegroundColor.Length]);
+                            buffer.data[pointIdx + labelLength + 1, height - 1] = new ConsoleChar(this,
+                                DrawingHelper.GetBottomLeftCornerBorder(BorderStyle.Block)[0], false, null,
+                                DataForegroundColor[pointIdx % DataForegroundColor.Length]);
+
+                            for (int i = 0; i < rounded - 1; i += 2)
+                            {
+                                buffer.data[pointIdx + labelLength + 1, height - 2 - (i / 2)] = new ConsoleChar(this,
+                                    DrawingHelper.GetVerticalBorder(BorderStyle.Block)[0], false, null,
+                                    DataForegroundColor[pointIdx % DataForegroundColor.Length]);
+                            }
+
+                            if (rounded % 2 == 0)
+                            {
+                                buffer.data[pointIdx + labelLength + 1, height - 1 - (rounded / 2)] = new ConsoleChar(
+                                    this, DrawingHelper.GetTopRightCornerBorder(BorderStyle.Block)[0], false, null,
+                                    DataForegroundColor[pointIdx % DataForegroundColor.Length]);
+                            }
                         }
+                    }
+                    else if (ChartType == ChartType.Point)
+                    {
+                        buffer.data[pointIdx + labelLength + 1, height - 1 - rounded / 2] = new ConsoleChar(this,
+                            '*', false, null, DataForegroundColor[pointIdx % DataForegroundColor.Length]);
                     }
                 }
 
