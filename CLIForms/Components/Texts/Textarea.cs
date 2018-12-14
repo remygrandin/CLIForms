@@ -6,7 +6,7 @@ using CLIForms.Interfaces;
 
 namespace CLIForms.Components.Texts
 {
-    public class SingleLineTextbox : DisplayObject, IInterractive
+    public class Textarea : DisplayObject, IInterractive
     {
 
         public ConsoleColor? BackgroundColor = ConsoleColor.DarkGray;
@@ -28,23 +28,11 @@ namespace CLIForms.Components.Texts
             {
                 if (_text != value)
                 {
-                    _displayOffset = 0;
-                    _cursorOffset = 0;
+                    _displayXOffset = 0;
+                    _displayYOffset = 0;
+                    _cursorXOffset = 0;
+                    _cursorYOffset = 0;
                     _text = value;
-                    Dirty = true;
-                }
-            }
-        }
-
-        private string _placeHolderText;
-        public string PlaceHolderText
-        {
-            get { return _placeHolderText; }
-            set
-            {
-                if (_placeHolderText != value)
-                {
-                    _placeHolderText = value;
                     Dirty = true;
                 }
             }
@@ -70,89 +58,75 @@ namespace CLIForms.Components.Texts
             get => _width;
             set
             {
-                _displayOffset = 0;
-                _cursorOffset = 0;
+                _displayXOffset = 0;
+                _displayYOffset = 0;
+                _cursorXOffset = 0;
+                _cursorYOffset = 0;
                 _width = value;
                 Dirty = true;
             }
         }
 
-        private bool _isPassword;
-        public bool IsPassword
+        private int _height;
+        public int Height
         {
-            get => _isPassword;
+            get => _height;
             set
             {
-                if (_isPassword != value)
-                {
-                    _isPassword = value;
-                    Dirty = true;
-                }
+                _displayXOffset = 0;
+                _displayYOffset = 0;
+                _cursorXOffset = 0;
+                _cursorYOffset = 0;
+                _height = value;
+                Dirty = true;
             }
         }
 
-        private char _passwordChar = '*';
-        public char PasswordChar
+        private bool _autoLineBreak = true;
+        public bool AutoLineBreak
         {
-            get => _passwordChar;
+            get => _autoLineBreak;
             set
             {
-                if (_passwordChar != value)
-                {
-                    _passwordChar = value;
-                    Dirty = true;
-                }
+                _displayXOffset = 0;
+                _displayYOffset = 0;
+                _cursorXOffset = 0;
+                _cursorYOffset = 0;
+                _autoLineBreak = value;
+                Dirty = true;
             }
         }
 
-        public SingleLineTextbox(Container parent, string text = "", string placeHolderText = "", int? maxLength = null, int width = 10) : base(parent)
+
+        public Textarea(Container parent, string text = "", int? maxLength = null, int width = 20, int height = 10) : base(parent)
         {
             _text = text;
             _maxLength = maxLength;
-            _placeHolderText = placeHolderText;
             _width = width;
+            _height = height;
         }
 
-        private int _displayOffset = 0;
-        private int _cursorOffset = 0;
+        private int _displayXOffset = 0;
+        private int _displayYOffset = 0;
+        private int _cursorXOffset = 0;
+        private int _cursorYOffset = 0;
 
         public override ConsoleCharBuffer Render()
         {
             if (!_dirty && displayBuffer != null)
                 return displayBuffer;
 
-            ConsoleCharBuffer buffer = new ConsoleCharBuffer(Width, 1);
+            ConsoleCharBuffer buffer = new ConsoleCharBuffer(Width, Height);
+            buffer.Clear(new ConsoleChar(this, ' ', true, Focused ? FocusedBackgroundColor : BackgroundColor, Focused ? FocusedForegroundColor : ForegroundColor));
 
-
-
-            if (string.IsNullOrEmpty(_text))
+            if (Text != null)
             {
-                buffer.Clear(new ConsoleChar(this, ' ', true, Focused ? FocusedBackgroundColor : BackgroundColor, PlaceHolderForegroundColor));
+                string[] lines = Text.Split('\n');
 
-                buffer.DrawString(this, _placeHolderText.Truncate(Width), true, 0, 0, Focused ? FocusedBackgroundColor : BackgroundColor, PlaceHolderForegroundColor);
-            }
-            else
-            {
-                buffer.Clear(new ConsoleChar(this, ' ', true, Focused ? FocusedBackgroundColor : BackgroundColor, Focused ? FocusedForegroundColor : ForegroundColor));
-
-                string displayStr = "";
-
-                if (_isPassword)
+                for (int y = 0; y < lines.Length; y++)
                 {
-                    displayStr = (new string(PasswordChar, _text.Length) + new string(' ', _width)).Substring(_displayOffset, _width);
+                    buffer.DrawString(this, lines[y], true, 0, y, Focused ? FocusedBackgroundColor : BackgroundColor, Focused ? FocusedForegroundColor : ForegroundColor);
                 }
-                else
-                {
-                    displayStr = (_text + new string(' ', _width)).Substring(_displayOffset, _width);
-                }
-
-                buffer.DrawString(this, displayStr, true, 0, 0, Focused ? FocusedBackgroundColor : BackgroundColor,
-                    Focused ? FocusedForegroundColor : ForegroundColor);
-
-                ConsoleChar cursor = buffer.data[_cursorOffset - _displayOffset, 0];
-                cursor.Background = CursorBackGroundColor;
-                cursor.Foreground = CursorForegroundColor;
-                buffer.data[_cursorOffset - _displayOffset, 0] = cursor;
             }
 
             Dirty = false;

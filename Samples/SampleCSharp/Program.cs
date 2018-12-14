@@ -80,14 +80,14 @@ namespace SampleCSharp
             };
             tabs.AddChild(button, "Forms");
 
-            SingleLineTextbox simpleTextbox = new SingleLineTextbox(null, "", "PlaceHolder", width: 20)
+            Textbox simpleTextbox = new Textbox(null, "", "PlaceHolder", width: 20)
             {
                 X = 1,
                 Y = 5
             };
             tabs.AddChild(simpleTextbox, "Forms");
 
-            SingleLineTextbox simpleTextboxPwd = new SingleLineTextbox(null, "", "Password", width: 20)
+            Textbox simpleTextboxPwd = new Textbox(null, "", "Password", width: 20)
             {
                 X = 1,
                 Y = 7,
