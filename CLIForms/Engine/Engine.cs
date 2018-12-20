@@ -9,7 +9,7 @@ using CLIForms.Console;
 using CLIForms.Extentions;
 using CLIForms.Interfaces;
 
-namespace CLIForms
+namespace CLIForms.Engine
 {
     public sealed class Engine
     {

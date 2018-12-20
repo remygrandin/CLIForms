@@ -64,6 +64,10 @@
     <Compile Include="Console\IConsole.cs" />
     <Compile Include="Console\KeyEvent.cs" />
     <Compile Include="Console\WindowsConsole.cs" />
+    <Compile Include="Engine\DisplayObject.cs" />
+    <Compile Include="Engine\Engine.cs" />
+    <Compile Include="Engine\Event.cs" />
+    <Compile Include="Engine\InteractiveObject.cs" />
     <Compile Include="Styles\AlignmentStyle.cs" />
     <Compile Include="Components\Tables\SimpleTable.cs" />
     <Compile Include="Styles\TableStyle.cs" />
@@ -82,7 +86,6 @@
     <Compile Include="Buffer\ConsoleChar.cs" />
     <Compile Include="Buffer\ConsoleCharBuffer.cs" />
     <Compile Include="Components\Containers\Container.cs" />
-    <Compile Include="Components\DisplayObject.cs" />
     <Compile Include="Engine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Interfaces\IInterractive.cs" />

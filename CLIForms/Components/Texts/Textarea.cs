@@ -136,6 +136,12 @@ namespace CLIForms.Components.Texts
 
         public bool KeyPressed(ConsoleKeyInfo key)
         {
+            return false;
+        }
+
+        /*
+        public bool KeyPressed(ConsoleKeyInfo key)
+        {
             if (key.IsPrintable())
             {
                 if (MaxLength != null && _text.Length >= MaxLength)
@@ -229,7 +235,7 @@ namespace CLIForms.Components.Texts
 
             return false;
         }
-
+        */
         private bool _focused = false;
         public bool Focused
         {
