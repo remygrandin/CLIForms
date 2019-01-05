@@ -18,6 +18,6 @@ namespace CLIForms.Console
 
         event KeyEventHandler KeyPressed;
 
-        void StartCaptureKeyboard();
+        void StartCapture();
     }
 }

@@ -7,15 +7,28 @@ namespace CLIForms.Engine
     {
         Capture,
         Target,
-        Bubble
+        Bubbling
     }
 
     public class Event
     {
-        public EventPhase Phase;
-        public bool Cancellable;
-        public DisplayObject CurrentTarget;
-        public DisplayObject Target;
+        public EventPhase EventPhase { get; protected set; }
+        public bool Cancellable { get; protected set; }
+        public DisplayObject CurrentTarget { get; protected set; }
+        public DisplayObject Target { get; protected set; }
 
+        internal bool _stopPropagation = false;
+        internal bool _stopImmediatePropagation = false;
+
+        public void StopPropagation()
+        {
+            _stopPropagation = true;
+        }
+
+        public void StopImmediatePropagation()
+        {
+            _stopPropagation = true;
+            _stopImmediatePropagation = true;
+        }
     }
 }
