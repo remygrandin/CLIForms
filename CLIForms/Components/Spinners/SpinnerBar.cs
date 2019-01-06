@@ -3,6 +3,7 @@ using System.Linq;
 using System.Timers;
 using CLIForms.Buffer;
 using CLIForms.Components.Containers;
+using CLIForms.Engine;
 
 namespace CLIForms.Components.Spinners
 {

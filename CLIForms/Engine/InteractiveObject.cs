@@ -1,25 +1,20 @@
-﻿using System;
-using CLIForms.Components.Containers;
-using CLIForms.Interfaces;
+﻿using CLIForms.Components.Containers;
 
-namespace CLIForms.Components
+namespace CLIForms.Engine
 {
     public abstract class InteractiveObject : DisplayObject
     {
         public InteractiveObject(Container parent) : base(parent)
         {
-
         }
 
-        public virtual bool KeyPressed(ConsoleKeyInfo key);
+        public virtual event KeyboardEvent KeyDown;
+        public virtual event KeyboardEvent KeyUp;
 
-        public virtual bool Focused { get; set; }
+        public virtual bool Focused { get; internal set; }
 
-        public virtual event FocusEventHandler FocusIn;
-        public virtual event FocusEventHandler FocusOut;
-
-        public virtual void FocusedIn(ConsoleKeyInfo? key);
-        public virtual void FocusedOut(ConsoleKeyInfo? key);
+        public virtual event FocusEvent FocusIn;
+        public virtual event FocusEvent FocusOut;
 
     }
 }

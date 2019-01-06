@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using CLIForms.Buffer;
+using CLIForms.Engine;
 using CLIForms.Extentions;
 using CLIForms.Styles;
 

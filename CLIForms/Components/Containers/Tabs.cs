@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using CLIForms.Buffer;
+using CLIForms.Engine;
 using CLIForms.Interfaces;
 using CLIForms.Styles;
 

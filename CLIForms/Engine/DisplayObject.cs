@@ -1,7 +1,7 @@
 ﻿using CLIForms.Buffer;
 using CLIForms.Components.Containers;
 
-namespace CLIForms.Components
+namespace CLIForms.Engine
 {
     public abstract class DisplayObject
     {

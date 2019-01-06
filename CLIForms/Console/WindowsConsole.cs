@@ -134,6 +134,8 @@ namespace CLIForms.Console
         private Encoding _initOutputEncoding;
         private bool _initCursorVisible;
 
+        private int _initMode;
+
         public void Init()
         {
 
@@ -156,12 +158,13 @@ namespace CLIForms.Console
 
             var handle = NativeMethods.GetStdHandle(NativeMethods.STD_INPUT_HANDLE);
 
-            int mode = 0;
-            if (!(NativeMethods.GetConsoleMode(handle, ref mode))) { throw new Win32Exception(); }
+            if (!NativeMethods.GetConsoleMode(handle, ref _initMode)) { throw new Win32Exception(); }
 
-            mode |= NativeMethods.ENABLE_MOUSE_INPUT;
-            mode &= ~NativeMethods.ENABLE_QUICK_EDIT_MODE;
-            mode |= NativeMethods.ENABLE_EXTENDED_FLAGS;
+            _initMode |= NativeMethods.ENABLE_MOUSE_INPUT;
+            _initMode &= ~NativeMethods.ENABLE_QUICK_EDIT_MODE;
+            _initMode |= NativeMethods.ENABLE_EXTENDED_FLAGS;
+
+            if (!NativeMethods.SetConsoleMode(handle, _initMode)) { throw new Win32Exception(); }
         }
 
 
@@ -179,14 +182,33 @@ namespace CLIForms.Console
             System.Console.CursorVisible = _initCursorVisible;
         }
 
-        private Task _captureKeyboardTask;
-
-
         public void StartCapture()
         {
+            NativeMethods.ConsoleHandle handle = NativeMethods.GetStdHandle(NativeMethods.STD_INPUT_HANDLE);
+
+            NativeMethods.INPUT_RECORD record = new NativeMethods.INPUT_RECORD();
+            uint recordLen = 0;
+
             while (true)
             {
-                ConsoleKeyInfo key = System.Console.ReadKey(true);
+                if (!(NativeMethods.ReadConsoleInput(handle, ref record, 1, ref recordLen))) { throw new Win32Exception(); }
+
+
+                switch (record.EventType)
+                {
+                    case NativeMethods.MOUSE_EVENT:
+                    {
+
+
+                    }
+                        break;
+                    case NativeMethods.KEY_EVENT:
+                    {
+
+                    }
+                        break;
+                }
+
 
                 KeyPressed?.Invoke(key);
             }

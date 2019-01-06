@@ -3,6 +3,7 @@ using System.Linq;
 using System.Text;
 using CLIForms.Buffer;
 using CLIForms.Components.Containers;
+using CLIForms.Engine;
 using CLIForms.Extentions;
 
 namespace CLIForms.Components.Globals
