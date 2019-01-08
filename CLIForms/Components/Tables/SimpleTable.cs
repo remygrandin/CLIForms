@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using CLIForms.Buffer;
 using CLIForms.Components.Containers;
@@ -78,10 +79,10 @@ namespace CLIForms.Components.Tables
             string[,] newData = new string[_columnCount, _lineCount];
 
             for (int i = 0; i < _columnCount; i++)
-                for (int j = 0; j < _lineCount; j++)
-                {
-                    newData[i, j] = "";
-                }
+            for (int j = 0; j < _lineCount; j++)
+            {
+                newData[i, j] = "";
+            }
 
             for (int i = 0; i < _columnCount; i++)
             {
@@ -126,7 +127,8 @@ namespace CLIForms.Components.Tables
         private string[,] data = new string[2, 2];
 
         // TODO : column width validation
-        private int[] _columnsWidth = new[] { 5, 5 };
+        private int[] _columnsWidth = new[] {5, 5};
+
         public int[] ColumnsWidth
         {
             get { return _columnsWidth; }
@@ -137,7 +139,8 @@ namespace CLIForms.Components.Tables
             }
         }
 
-        private AlignmentStyle[] _columnsAlignments = new[] { AlignmentStyle.Left, AlignmentStyle.Left };
+        private AlignmentStyle[] _columnsAlignments = new[] {AlignmentStyle.Left, AlignmentStyle.Left};
+
         public AlignmentStyle[] ColumnsAlignments
         {
             get { return _columnsAlignments; }
@@ -152,10 +155,46 @@ namespace CLIForms.Components.Tables
 
         public string this[int column, int line]
         {
-            get { return data[column, line]; }
+            get
+            {
+                if (column < 0 || line < 0 || column > data.GetLength(0) || line > data.GetLength(1))
+                    throw new Exception("column or line out of range");
+
+                return data[column, line];
+            }
             set
             {
                 data[column, line] = value;
+                Dirty = true;
+            }
+        }
+
+        public string[] this[int line]
+        {
+            get
+            {
+                if (line < 0 || line > data.GetLength(1))
+                    throw new Exception("line out of range");
+
+                List<string> lineData = new List<string>(data.GetLength(0));
+
+                for (int i = 0; i < data.GetLength(0); i++)
+                {
+                    lineData.Add(data[i, line]);
+                }
+
+                return lineData.ToArray();
+            }
+            set
+            {
+                if (line < 0 || line > data.GetLength(1))
+                    throw new Exception("line out of range");
+
+                for (int i = 0; i < data.GetLength(0); i++)
+                {
+                    data[i, line] = value[i];
+                }
+
                 Dirty = true;
             }
         }

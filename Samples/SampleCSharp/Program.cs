@@ -29,7 +29,7 @@ namespace SampleCSharp
                 X = 1,
                 Y = 2
             };
-            
+
             StatusBar statusBar = new StatusBar(screen)
             {
                 TextLeft = "Left Text",
@@ -39,13 +39,13 @@ namespace SampleCSharp
 
             MenuBar menuBar = new MenuBar(screen, new MenuItem(" ==CLIForms== ", null, true,
                 new MenuItem("Menu 1", new MenuItem("Item 1"
-                                        , new MenuItem("Sub-Item 1")
-                                        , new MenuItem("Sub-Item 2"))
-                                     , new MenuItem("Item 2")
-                                     , new MenuItem("Item looong")),
+                        , new MenuItem("Sub-Item 1")
+                        , new MenuItem("Sub-Item 2"))
+                    , new MenuItem("Item 2")
+                    , new MenuItem("Item looong")),
                 new MenuItem("Menu 2"),
                 new MenuItem("Menu 3")));
-                
+
 
             // ==== Texts Tab ====
 
@@ -62,7 +62,7 @@ namespace SampleCSharp
                 Y = 3
             };
             tabs.AddChild(multiLinesLabel, "Texts");
-            
+
             FIG fig = new FIG(null, "FIGLet", "dosrebel")
             {
                 X = 1,
@@ -125,9 +125,9 @@ namespace SampleCSharp
 
             SingleLineListBox singleLineTextbox = new SingleLineListBox(null, new[]
             {
-                new {id = 1, Text = "First Element" },
-                new {id = 2, Text = "Second Element" },
-                new {id = 3, Text = "Third Element" }
+                new {id = 1, Text = "First Element"},
+                new {id = 2, Text = "Second Element"},
+                new {id = 3, Text = "Third Element"}
             }, "List Box")
             {
                 X = 25,
@@ -135,7 +135,7 @@ namespace SampleCSharp
                 DisplayProperty = "Text"
             };
             tabs.AddChild(singleLineTextbox, "Forms");
-            
+
             // ==== Drawings Tab ====
             Box box = new Box(null, 20, 10)
             {
@@ -159,7 +159,7 @@ namespace SampleCSharp
                 End2 = LineEndingStyle.Plus
             };
             tabs.AddChild(hline, "Drawings");
-            
+
             // ==== Charts Tab ====
 
             HorizontalChart hchart = new HorizontalChart(null, new List<float>() { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 })
@@ -171,7 +171,7 @@ namespace SampleCSharp
                 ChartType = ChartType.Point
             };
             tabs.AddChild(hchart, "Charts");
-            
+
             // ==== Spinner Tab ====
             TinySpinner tinySpinner = new TinySpinner(null)
             {
@@ -193,7 +193,7 @@ namespace SampleCSharp
                 Y = 1
             };
             tabs.AddChild(spinnerBar, "Spinners");
-            
+
             // ==== Tables Tab ====
             SimpleTable table = new SimpleTable(null)
             {
@@ -202,15 +202,16 @@ namespace SampleCSharp
                 ColumnCount = 5,
                 LineCount = 4,
                 ColumnsWidth = new[] { 4, 15, 15, 5, 15 },
-                ColumnsAlignments = new[] { AlignmentStyle.Right, AlignmentStyle.Left, AlignmentStyle.Left, AlignmentStyle.Right, AlignmentStyle.Left },
+                ColumnsAlignments = new[]
+                {
+                    AlignmentStyle.Right, AlignmentStyle.Left, AlignmentStyle.Left, AlignmentStyle.Right,
+                    AlignmentStyle.Left
+                },
                 TableStyle = TableStyle.CompactWithHeaderNoExtBorder
             };
 
-            table[0, 0] = "ID";
-            table[1, 0] = "Name";
-            table[2, 0] = "Surname";
-            table[3, 0] = "Age";
-            table[4, 0] = "Town";
+
+            table[0] = new [] { "ID", "Name", "Surname", "Age", "Town" };
 
             table[0, 1] = "1";
             table[1, 1] = "John";
@@ -231,7 +232,7 @@ namespace SampleCSharp
             table[4, 3] = "JacksonVille";
 
             tabs.AddChild(table, "Tables");
-            
+
             //tabs.ActiveTab = 3;
 
             engine.Start();
