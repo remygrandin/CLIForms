@@ -1,5 +1,7 @@
-﻿using CLIForms.Buffer;
+﻿using System.Collections.Generic;
+using CLIForms.Buffer;
 using CLIForms.Components.Containers;
+using CLIForms.Extentions;
 
 namespace CLIForms.Engine
 {
@@ -77,6 +79,10 @@ namespace CLIForms.Engine
                     Dirty = true;
                 }
             }
+        }
+
+        public IEnumerable<DisplayObject> Parents{
+            get { return this.Parents(item => item.Parent); }
         }
 
         private bool _disabled = false;

@@ -2,12 +2,12 @@
 using CLIForms.Buffer;
 using CLIForms.Components.Containers;
 using CLIForms.Engine;
+using CLIForms.Engine.Events;
 using CLIForms.Extentions;
-using CLIForms.Interfaces;
 
 namespace CLIForms.Components.Texts
 {
-    public class Textbox : DisplayObject, IInterractive
+    public class Textbox : InteractiveObject
     {
 
         public ConsoleColor? BackgroundColor = ConsoleColor.DarkGray;
@@ -112,6 +112,8 @@ namespace CLIForms.Components.Texts
             _maxLength = maxLength;
             _placeHolderText = placeHolderText;
             _width = width;
+
+            KeyDown += Textbox_KeyDown;
         }
 
         private int _displayOffset = 0;
@@ -161,14 +163,18 @@ namespace CLIForms.Components.Texts
             return buffer;
         }
 
-        public bool KeyPressed(ConsoleKeyInfo key)
+        private void Textbox_KeyDown(Engine.Events.KeyboardEvent evt)
         {
-            if (key.IsPrintable())
+
+            if (evt.CharCode.IsPrintable())
             {
                 if (MaxLength != null && _text.Length >= MaxLength)
-                    return true;
+                {
+                    evt.PreventDefault();
+                    return;
+                }
 
-                _text = _text.Insert(_cursorOffset, key.KeyChar.ToString());
+                _text = _text.Insert(_cursorOffset, evt.CharCode.ToString());
 
                 _cursorOffset++;
 
@@ -179,12 +185,13 @@ namespace CLIForms.Components.Texts
 
                 Dirty = true;
 
-                return true;
+                evt.PreventDefault();
+                return;
             }
 
-            switch (key.Key)
+            switch (evt.VirtualKeyCode)
             {
-                case ConsoleKey.LeftArrow:
+                case VirtualKey.Left:
                     if (_cursorOffset > 0)
                     {
                         _cursorOffset--;
@@ -194,11 +201,12 @@ namespace CLIForms.Components.Texts
 
                         Dirty = true;
 
-                        return true;
+                        evt.PreventDefault();
+                        return;
                     }
 
                     break;
-                case ConsoleKey.RightArrow:
+                case VirtualKey.Right:
                     if (_cursorOffset < _text.Length)
                     {
                         _cursorOffset++;
@@ -208,17 +216,19 @@ namespace CLIForms.Components.Texts
 
                         Dirty = true;
 
-                        return true;
+                        evt.PreventDefault();
+                        return;
                     }
                     break;
-                case ConsoleKey.Home:
+                case VirtualKey.Home:
                     _cursorOffset = 0;
                     _displayOffset = 0;
 
                     Dirty = true;
 
-                    return true;
-                case ConsoleKey.End:
+                    evt.PreventDefault();
+                    return;
+                case VirtualKey.End:
                     _cursorOffset = _text.Length;
                     _displayOffset = 0;
 
@@ -226,8 +236,9 @@ namespace CLIForms.Components.Texts
                         _displayOffset = _text.Length - Width + 1;
 
                     Dirty = true;
-                    return true;
-                case ConsoleKey.Backspace:
+                    evt.PreventDefault();
+                    return;
+                case VirtualKey.Back:
                     if (_cursorOffset > 0)
                     {
                         _text = _text.Remove(_cursorOffset - 1, 1);
@@ -240,8 +251,9 @@ namespace CLIForms.Components.Texts
                         Dirty = true;
                     }
 
-                    return true;
-                case ConsoleKey.Delete:
+                    evt.PreventDefault();
+                    return;
+                case VirtualKey.Delete:
                     if (_cursorOffset < _text.Length)
                     {
                         _text = _text.Remove(_cursorOffset, 1);
@@ -251,46 +263,9 @@ namespace CLIForms.Components.Texts
 
                         Dirty = true;
                     }
-                    return true;
+                    evt.PreventDefault();
+                    return;
             }
-
-            return false;
-        }
-
-        private bool _focused = false;
-        public bool Focused
-        {
-            get { return _focused; }
-            set
-            {
-                if (_focused != value)
-                {
-                    _focused = value;
-                    Dirty = true;
-                }
-            }
-        }
-
-        public event FocusEventHandler FocusIn;
-        public event FocusEventHandler FocusOut;
-        public void FocusedIn(ConsoleKeyInfo? key)
-        {
-            if (FocusIn != null)
-                foreach (FocusEventHandler handler in FocusIn.GetInvocationList())
-                {
-                    if (handler?.Invoke(this) == true)
-                        return;
-                }
-        }
-
-        public void FocusedOut(ConsoleKeyInfo? key)
-        {
-            if (FocusOut != null)
-                foreach (FocusEventHandler handler in FocusOut.GetInvocationList())
-                {
-                    if (handler?.Invoke(this) == true)
-                        return;
-                }
         }
     }
 }

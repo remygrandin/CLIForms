@@ -4,13 +4,13 @@ using System.Linq;
 using CLIForms.Buffer;
 using CLIForms.Components.Containers;
 using CLIForms.Engine;
+using CLIForms.Engine.Events;
 using CLIForms.Extentions;
-using CLIForms.Interfaces;
 using CLIForms.Styles;
 
 namespace CLIForms.Components.Forms
 {
-    public class SingleLineListBox : DisplayObject, IInterractive
+    public class SingleLineListBox : InteractiveObject
     {
 
         public ConsoleColor? BackgroundColor = ConsoleColor.DarkGray;
@@ -148,6 +148,7 @@ namespace CLIForms.Components.Forms
             _multiSelectEnabled = multiSelectEnabled;
             Items = items;
 
+            KeyDown += SingleLineListBox_KeyDown;
         }
 
         public override ConsoleCharBuffer Render()
@@ -253,27 +254,23 @@ namespace CLIForms.Components.Forms
             buffer.data[Width - 1, 0].Foreground = ArrowForegroundColor;
 
 
-
-
-
-
-
             Dirty = false;
 
             return buffer;
         }
 
-        public bool KeyPressed(ConsoleKeyInfo key)
+        private void SingleLineListBox_KeyDown(Engine.Events.KeyboardEvent evt)
         {
-            switch (key.Key)
+            switch (evt.VirtualKeyCode)
             {
-                case ConsoleKey.Enter:
-                case ConsoleKey.Spacebar:
+                case VirtualKey.Enter:
+                case VirtualKey.Space:
                     if (!_isOpen)
                     {
                         FocusedItem = _items.FirstOrDefault();
                         IsOpen = true;
-                        return true;
+                        evt.PreventDefault();
+                        return;
                     }
                     else
                     {
@@ -320,9 +317,10 @@ namespace CLIForms.Components.Forms
                             }
                         }
 
-                        return true;
+                        evt.PreventDefault();
+                        return;
                     }
-                case ConsoleKey.DownArrow:
+                case VirtualKey.Down:
                     if (_isOpen)
                     {
                         int focusIndex = _items.ToList().IndexOf(FocusedItem);
@@ -333,15 +331,16 @@ namespace CLIForms.Components.Forms
                         {
                             IsOpen = false;
                             FocusedItem = null;
-                            return false;
+                            return;
                         }
 
                         FocusedItem = _items[focusIndex];
 
-                        return true;
+                        evt.PreventDefault();
+                        return;
                     }
                     break;
-                case ConsoleKey.UpArrow:
+                case VirtualKey.Up:
                     if (_isOpen)
                     {
                         int focusIndex = _items.ToList().IndexOf(FocusedItem);
@@ -353,54 +352,17 @@ namespace CLIForms.Components.Forms
                             IsOpen = false;
 
                             FocusedItem = null;
-                            return true;
+                            evt.PreventDefault();
+                            return;
                         }
 
                         FocusedItem = _items[focusIndex];
 
-                        return true;
+                        evt.PreventDefault();
+                        return;
                     }
                     break;
             }
-
-            return false;
-        }
-
-        private bool _focused = false;
-        public bool Focused
-        {
-            get { return _focused; }
-            set
-            {
-                if (_focused != value)
-                {
-                    _focused = value;
-                    Dirty = true;
-                }
-            }
-        }
-
-        
-        public event FocusEventHandler FocusIn;
-        public event FocusEventHandler FocusOut;
-        public void FocusedIn(ConsoleKeyInfo? key)
-        {
-            if (FocusIn != null)
-                foreach (FocusEventHandler handler in FocusIn.GetInvocationList())
-                {
-                    if (handler?.Invoke(this) == true)
-                        return;
-                }
-        }
-
-        public void FocusedOut(ConsoleKeyInfo? key)
-        {
-            if (FocusOut != null)
-                foreach (FocusEventHandler handler in FocusOut.GetInvocationList())
-                {
-                    if (handler?.Invoke(this) == true)
-                        return;
-                }
         }
     }
 }

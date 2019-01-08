@@ -2,12 +2,12 @@
 using CLIForms.Buffer;
 using CLIForms.Components.Containers;
 using CLIForms.Engine;
-using CLIForms.Interfaces;
+using CLIForms.Engine.Events;
 using CLIForms.Styles;
 
 namespace CLIForms.Components.Forms
 {
-    public class Button : DisplayObject, IInterractive
+    public class Button : InteractiveObject
     {
         public ConsoleColor? BackgroundColor = ConsoleColor.DarkGray;
         public ConsoleColor ForegroundColor = ConsoleColor.Black;
@@ -35,6 +35,8 @@ namespace CLIForms.Components.Forms
         public Button(Container parent, string text) : base(parent)
         {
             _text = text;
+
+            KeyDown += Button_KeyDown;
         }
 
         private int _width = 0;
@@ -99,8 +101,8 @@ namespace CLIForms.Components.Forms
             DrawingHelper.DrawBlockFull(buffer, this, true, 0, 0, _width, _height,
                 _focused ? BackgroundColorFocused : BackgroundColor, _focused ? ForegroundColorFocused : ForegroundColor,
                 BorderStyle.None, _focused ? ShadowFocused : Shadow);
-            
-            int yOffset = (int) Math.Floor((Height - 1) / 2.0);
+
+            int yOffset = (int)Math.Floor((Height - 1) / 2.0);
 
             int xOffset = (int)Math.Floor(((double)Width - _text.Length) / 2);
 
@@ -112,57 +114,18 @@ namespace CLIForms.Components.Forms
             return buffer;
         }
 
-        private bool _focused = false;
-        public bool Focused {
-            get => _focused;
-            set
+        private void Button_KeyDown(Engine.Events.KeyboardEvent evt)
+        {
+            switch (evt.VirtualKeyCode)
             {
-                _focused = value;
-                Dirty = true;
+                case VirtualKey.Space:
+                case VirtualKey.Enter:
+                    {
+                        Engine.Engine.Instance.TriggerActivated(this);
+                    }
+                    break;
             }
         }
-        public event FocusEventHandler FocusIn;
-        public event FocusEventHandler FocusOut;
-        public void FocusedIn(ConsoleKeyInfo? key)
-        {
-            if (FocusIn != null)
-                foreach (FocusEventHandler handler in FocusIn.GetInvocationList())
-                {
-                    if (handler?.Invoke(this) == true)
-                        return;
-                }
-        }
 
-        public void FocusedOut(ConsoleKeyInfo? key)
-        {
-            if (FocusOut != null)
-                foreach (FocusEventHandler handler in FocusOut.GetInvocationList())
-                {
-                    if (handler?.Invoke(this) == true)
-                        return;
-                }
-        }
-
-        public bool KeyPressed(ConsoleKeyInfo key)
-        {
-
-            switch (key.Key)
-            {
-                case ConsoleKey.Spacebar:
-                case ConsoleKey.Enter:
-                {
-                    if (Activated != null)
-                        foreach (ActivatedEventHandler handler in Activated.GetInvocationList())
-                        {
-                            handler?.Invoke(this);
-                        }
-
-                        return true;
-                }
-            }
-            return false;
-        }
-
-        public event ActivatedEventHandler Activated;
     }
 }

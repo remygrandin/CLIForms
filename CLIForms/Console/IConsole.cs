@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using CLIForms.Buffer;
+using CLIForms.Engine;
 
 namespace CLIForms.Console
 {
@@ -16,7 +17,7 @@ namespace CLIForms.Console
         void Display(ConsoleCharBuffer buffer);
         void Display(IEnumerable<PositionedConsoleChar> chars);
 
-        event KeyEventHandler KeyPressed;
+        event KeyboardEvent KeyboardEvent;
 
         void StartCapture();
     }

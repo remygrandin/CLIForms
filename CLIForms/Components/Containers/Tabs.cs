@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using CLIForms.Buffer;
 using CLIForms.Engine;
-using CLIForms.Interfaces;
+using CLIForms.Engine.Events;
 using CLIForms.Styles;
 
 namespace CLIForms.Components.Containers
 {
-    public class Tabs : Container, IInterractive
+    public class Tabs : Container
     {
         public ConsoleColor? BackgroundColor = ConsoleColor.Gray;
         public ConsoleColor ForegroundColor = ConsoleColor.Black;
@@ -78,20 +78,6 @@ namespace CLIForms.Components.Containers
             }
         }
 
-        private bool _focused = false;
-        public bool Focused
-        {
-            get => _focused;
-            set
-            {
-                if (_focused != value)
-                {
-                    _focused = value;
-                    Dirty = true;
-                }
-            }
-        }
-
         private int _focusedTab;
         public int FocusedTab
         {
@@ -108,15 +94,9 @@ namespace CLIForms.Components.Containers
 
         private List<List<DisplayObject>> TabsChildren = new List<List<DisplayObject>>();
 
-
-        public event FocusEventHandler FocusIn;
-        public event FocusEventHandler FocusOut;
-
-        public event KeyPressEventHandler Keypress;
-
         public Tabs(Container parent, IEnumerable<string> tabs, int width = 30, int height = 12) : base(parent, width, height)
         {
-            if (tabs.Count() == 0)
+            if (!tabs.Any())
                 throw new Exception("Tabs list can't be empty");
 
             foreach (string tab in tabs)
@@ -126,6 +106,9 @@ namespace CLIForms.Components.Containers
 
             FocusedTab = 0;
             ActiveTab = 0;
+
+            FocusIn += Tabs_FocusIn;
+            KeyDown += Tabs_KeyDown;
         }
 
         public void AddTab(string name, int? pos = null)
@@ -188,7 +171,7 @@ namespace CLIForms.Components.Containers
 
             }
 
-            
+
 
             baseBuffer.Merge(componentsBuffer, 1, subPools.Count * 2 + 1);
 
@@ -341,42 +324,38 @@ namespace CLIForms.Components.Containers
             Dirty = true;
         }
 
-        public void FocusedIn(ConsoleKeyInfo? key)
+        public void Tabs_FocusIn(Engine.Events.FocusEvent evt, Direction vector)
         {
             List<List<Tuple<int, string>>> subPools = OrderTabForDisplay();
 
-            if (key == null)
+            if (vector == Direction.Unknown || vector == Direction.None)
             {
                 FocusedTab = subPools.First().First().Item1;
                 return;
             }
 
-            switch (key.Value.Key)
+            switch (vector)
             {
-                case ConsoleKey.DownArrow:
+                case Direction.Down:
                     FocusedTab = subPools.First().First().Item1;
                     break;
-                case ConsoleKey.UpArrow:
+                case Direction.Up:
                     FocusedTab = subPools.Last().First().Item1;
                     break;
-                case ConsoleKey.LeftArrow:
+                case Direction.Left:
                     FocusedTab = subPools.First().Last().Item1;
                     break;
-                case ConsoleKey.RightArrow:
+                case Direction.Right:
                     FocusedTab = subPools.First().First().Item1;
                     break;
             }
-
-            FocusIn?.Invoke(this);
         }
 
-        public void FocusedOut(ConsoleKeyInfo? key)
+        public void Tabs_KeyDown(Engine.Events.KeyboardEvent evt)
         {
-            return;
-        }
+            if(!Focused || evt.Target != this)
+                return;
 
-        public bool KeyPressed(ConsoleKeyInfo key)
-        {
             List<List<Tuple<int, string>>> subPools = OrderTabForDisplay();
 
             List<Tuple<int, string>> focusedPool = subPools.FirstOrDefault(item => item.Any(sitem => sitem.Item1 == FocusedTab));
@@ -385,22 +364,28 @@ namespace CLIForms.Components.Containers
             Tuple<int, string> focusedTpl = focusedPool.FirstOrDefault(item => item.Item1 == FocusedTab);
             int focusedIndex = focusedPool.IndexOf(focusedTpl);
 
-            switch (key.Key)
+            switch (evt.VirtualKeyCode)
             {
-                case ConsoleKey.LeftArrow:
+                case VirtualKey.Left:
                     if (focusedIndex == 0)
-                        return false;
+                        return;
                     FocusedTab = focusedPool[focusedIndex - 1].Item1;
-                    return true;
-                case ConsoleKey.RightArrow:
+
+                    evt.StopPropagation();
+                    evt.PreventDefault();
+                    return;
+                case VirtualKey.Right:
                     if (focusedIndex == focusedPool.Count - 1)
-                        return false;
+                        return;
                     FocusedTab = focusedPool[focusedIndex + 1].Item1;
-                    return true;
-                case ConsoleKey.UpArrow:
+
+                    evt.StopPropagation();
+                    evt.PreventDefault();
+                    return;
+                case VirtualKey.Up:
                     {
                         if (focusedPoolIndex == 0)
-                            return false;
+                            return;
 
                         List<Tuple<int, string>> newPool = subPools[focusedPoolIndex - 1];
 
@@ -408,12 +393,15 @@ namespace CLIForms.Components.Containers
                             focusedIndex = newPool.Count - 1;
 
                         FocusedTab = newPool[focusedIndex].Item1;
-                        return true;
+
+                        evt.StopPropagation();
+                        evt.PreventDefault();
+                        return;
                     }
-                case ConsoleKey.DownArrow:
+                case VirtualKey.Down:
                     {
                         if (focusedPoolIndex == subPools.Count - 1)
-                            return false;
+                            return;
 
                         List<Tuple<int, string>> newPool = subPools[focusedPoolIndex + 1];
 
@@ -421,17 +409,23 @@ namespace CLIForms.Components.Containers
                             focusedIndex = newPool.Count - 1;
 
                         FocusedTab = newPool[focusedIndex].Item1;
-                        return true;
+
+                        evt.StopPropagation();
+                        evt.PreventDefault();
+                        return;
                     }
-                case ConsoleKey.Spacebar:
-                case ConsoleKey.Enter: {
+                case VirtualKey.Space:
+                case VirtualKey.Enter:
+                    {
                         ActiveTab = FocusedTab;
 
-                        return true;
+                        evt.StopPropagation();
+                        evt.PreventDefault();
+                        return;
                     }
             }
 
-            return false;
+            return;
         }
     }
 }

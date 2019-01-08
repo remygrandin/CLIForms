@@ -1,7 +1,6 @@
-﻿using CLIForms.Engine.Events;
-
-namespace CLIForms.Engine
+﻿namespace CLIForms.Engine
 {
-    public delegate void KeyboardEvent(KeyboardEvent evt);
-    public delegate bool FocusEvent(Event evt);
+    public delegate void ActivateEvent(Events.Event evt);
+    public delegate void KeyboardEvent(Events.KeyboardEvent evt);
+    public delegate void FocusEvent(Events.FocusEvent evt, Direction vector);
 }

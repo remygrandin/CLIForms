@@ -1,15 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using CLIForms.Buffer;
 using CLIForms.Components.Containers;
 using CLIForms.Engine;
+using CLIForms.Engine.Events;
 using CLIForms.Extentions;
 using CLIForms.Interfaces;
 
 namespace CLIForms.Components.Globals
 {
-    public class MenuBar : DisplayObject, IInterractive, IAcceptGlobalInput
+    public class MenuBar : InteractiveObject, IAcceptGlobalInput
     {
         public ConsoleColor? BackgroundColor = ConsoleColor.Gray;
         public ConsoleColor ForegroundColor = ConsoleColor.Black;
@@ -41,25 +41,21 @@ namespace CLIForms.Components.Globals
             }
         }
 
-        private bool _focused = false;
-        public bool Focused
-        {
-            get => _focused;
-            set
-            {
-                if (_focused != value)
-                {
-                    _focused = value;
-                    Dirty = true;
-                }
-            }
-        }
-
-
 
         public MenuBar(Container parent, MenuItem rootNode) : base(parent)
         {
             RootNode = rootNode;
+
+            KeyDown += MenuBar_KeyDown;
+            FocusIn += MenuBar_FocusIn;
+        }
+
+        private void MenuBar_FocusIn(Engine.Events.FocusEvent evt, Direction vector)
+        {
+            if (FocusedNode == null)
+            {
+                FocusedNode = RootNode.Children.First();
+            }
         }
 
         public override ConsoleCharBuffer Render()
@@ -113,7 +109,7 @@ namespace CLIForms.Components.Globals
                     Forgrnd = item.ActiveForegroundColor;
                 }
 
-                if (Focused && FocusedNode.Parents(node => node.Parent).Contains(item))
+                if (Focused && FocusedNode.Parents.Contains(item))
                 {
                     Backgrnd = item.FocusedBackgroundColor;
                     Forgrnd = item.FocusedForegroundColor;
@@ -146,9 +142,6 @@ namespace CLIForms.Components.Globals
 
                 xOffset += displayText.Length + 1;
             }
-
-
-
 
 
 
@@ -233,91 +226,64 @@ namespace CLIForms.Components.Globals
 
         }
 
-        public event FocusEventHandler FocusIn;
-        public event FocusEventHandler FocusOut;
-
-
-        public void FocusedIn(ConsoleKeyInfo? key)
-        {
-            FocusedNode = RootNode.Children.FirstOrDefault();
-            Dirty = true;
-            if (FocusIn != null)
-                foreach (FocusEventHandler handler in FocusIn.GetInvocationList())
-                {
-                    if (handler?.Invoke(this) == true)
-                        return;
-                }
-        }
-
-        public void FocusedOut(ConsoleKeyInfo? key)
-        {
-            if (FocusOut != null)
-                foreach (FocusEventHandler handler in FocusOut.GetInvocationList())
-                {
-                    if (handler?.Invoke(this) == true)
-                        return;
-                }
-        }
-
-        public bool FireGlobalKeypress(ConsoleKeyInfo key)
-        {
-            return false;
-        }
-
-        public bool KeyPressed(ConsoleKeyInfo key)
+        public void MenuBar_KeyDown(Engine.Events.KeyboardEvent evt)
         {
             // Main bar
             if (RootNode.Children.Contains(FocusedNode))
             {
 
-                switch (key.Key)
+                switch (evt.VirtualKeyCode)
                 {
-                    case ConsoleKey.LeftArrow:
+                    case VirtualKey.Left:
                         {
                             int index = RootNode.Children.IndexOf(FocusedNode);
 
                             if (index == 0)
-                                return false;
+                                return;
 
                             FocusedNode = RootNode.Children[index - 1];
-                            return true;
+                            evt.PreventDefault();
+                            return;
                         }
 
-                    case ConsoleKey.RightArrow:
+                    case VirtualKey.Right:
                         {
                             int index = RootNode.Children.IndexOf(FocusedNode);
 
                             if (index == RootNode.Children.Count - 1)
-                                return false;
+                                return;
 
                             FocusedNode = RootNode.Children[index + 1];
-                            return true;
+                            evt.PreventDefault();
+                            return;
                         }
-                    case ConsoleKey.DownArrow:
+                    case VirtualKey.Down:
                         {
                             if (FocusedNode.Children == null || FocusedNode.Children.Count == 0)
-                                return false;
+                                return;
 
                             FocusedNode = FocusedNode.Children.First();
-                            return true;
+                            evt.PreventDefault();
+                            return;
                         }
                 }
             }
             else
             {
-                switch (key.Key)
+                switch (evt.VirtualKeyCode)
                 {
-                    case ConsoleKey.DownArrow:
+                    case VirtualKey.Down:
                         {
                             int index = FocusedNode.Parent.Children.IndexOf(FocusedNode);
 
                             if (index == FocusedNode.Parent.Children.Count - 1)
-                                return false;
+                                return;
 
                             FocusedNode = FocusedNode.Parent.Children[index + 1];
-                            return true;
+                            evt.PreventDefault();
+                            return;
                         }
-                    case ConsoleKey.UpArrow:
+                    case VirtualKey.Up:
                         {
                             int index = FocusedNode.Parent.Children.IndexOf(FocusedNode);
 
@@ -326,27 +292,30 @@ namespace CLIForms.Components.Globals
                                 if (RootNode.Children.Contains(FocusedNode.Parent))
                                 {
                                     FocusedNode = FocusedNode.Parent;
-                                    return true;
+                                    evt.PreventDefault();
+                                    return;
                                 }
-                                return false;
+                                return;
                             }
 
 
                             FocusedNode = FocusedNode.Parent.Children[index - 1];
-                            return true;
+                            evt.PreventDefault();
+                            return;
                         }
 
-                    case ConsoleKey.LeftArrow:
+                    case VirtualKey.Left:
                         {
                             if (FocusedNode.Children == null || FocusedNode.Children.Count == 0)
                             {
                                 if (RootNode.Children.Contains(FocusedNode.Parent))
                                 {
-                                    return false;
+                                    return;
                                 }
 
                                 FocusedNode = FocusedNode.Parent;
-                                return true;
+                                evt.PreventDefault();
+                                return;
                             }
                             else
                             {
@@ -354,52 +323,59 @@ namespace CLIForms.Components.Globals
                                 {
                                     if (RootNode.Children.Contains(FocusedNode.Parent))
                                     {
-                                        return false;
+                                        return;
                                     }
 
                                     FocusedNode = FocusedNode.Parent;
-                                    return true;
+                                    evt.PreventDefault();
+                                    return;
                                 }
 
                                 FocusedNode = FocusedNode.Children.First();
-                                return true;
+                                evt.PreventDefault();
+                                return;
                             }
                             
                         }
-                    case ConsoleKey.RightArrow:
+                    case VirtualKey.Right:
                     {
                         if (FocusedNode.Children == null || FocusedNode.Children.Count == 0)
                         {
                             if (RootNode.Children.Contains(FocusedNode.Parent))
                             {
-                                return false;
+                                return;
                             }
 
                             FocusedNode = FocusedNode.Parent;
-                            return true;
-                        }
+                            evt.PreventDefault();
+                            return;
+                            }
                         else
                         {
                             if (!FocusedNode.RightSubMenu)
                             {
                                 if (RootNode.Children.Contains(FocusedNode.Parent))
                                 {
-                                    return false;
+                                    return;
                                 }
 
                                 FocusedNode = FocusedNode.Parent;
-                                return true;
-                            }
+                                evt.PreventDefault();
+                                return;
+                                }
 
                             FocusedNode = FocusedNode.Children.First();
-                            return true;
-                        }
+                            evt.PreventDefault();
+                            return;
+                            }
 
                     }
                 }
             }
+        }
 
-
+        public bool FireGlobalKeypress(Engine.Events.KeyboardEvent evt)
+        {
             return false;
         }
     }

@@ -2,12 +2,10 @@
 using CLIForms.Buffer;
 using CLIForms.Components.Containers;
 using CLIForms.Engine;
-using CLIForms.Extentions;
-using CLIForms.Interfaces;
 
 namespace CLIForms.Components.Texts
 {
-    public class Textarea : DisplayObject, IInterractive
+    public class Textarea : InteractiveObject
     {
 
         public ConsoleColor? BackgroundColor = ConsoleColor.DarkGray;
@@ -237,40 +235,6 @@ namespace CLIForms.Components.Texts
             return false;
         }
         */
-        private bool _focused = false;
-        public bool Focused
-        {
-            get { return _focused; }
-            set
-            {
-                if (_focused != value)
-                {
-                    _focused = value;
-                    Dirty = true;
-                }
-            }
-        }
-
-        public event FocusEventHandler FocusIn;
-        public event FocusEventHandler FocusOut;
-        public void FocusedIn(ConsoleKeyInfo? key)
-        {
-            if (FocusIn != null)
-                foreach (FocusEventHandler handler in FocusIn.GetInvocationList())
-                {
-                    if (handler?.Invoke(this) == true)
-                        return;
-                }
-        }
-
-        public void FocusedOut(ConsoleKeyInfo? key)
-        {
-            if (FocusOut != null)
-                foreach (FocusEventHandler handler in FocusOut.GetInvocationList())
-                {
-                    if (handler?.Invoke(this) == true)
-                        return;
-                }
-        }
+        
     }
 }

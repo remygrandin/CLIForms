@@ -1,6 +1,4 @@
 ﻿
-using System;
-
 namespace CLIForms.Extentions
 {
     public static class StringExtentions
@@ -39,9 +37,5 @@ namespace CLIForms.Extentions
             return printableChar.Contains(chr.ToString());
         }
 
-        public static bool IsPrintable(this ConsoleKeyInfo key)
-        {
-            return key.KeyChar.IsPrintable();
-        }
     }
 }

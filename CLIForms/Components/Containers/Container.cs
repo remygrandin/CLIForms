@@ -5,7 +5,7 @@ using CLIForms.Engine;
 
 namespace CLIForms.Components.Containers
 {
-    public class Container : DisplayObject
+    public class Container : InteractiveObject
     {
         internal List<DisplayObject> Children = new List<DisplayObject>();
 

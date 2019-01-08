@@ -5,8 +5,8 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading.Tasks;
 using CLIForms.Buffer;
+using CLIForms.Engine.Events;
 using CLIForms.Extentions;
 using Microsoft.Win32.SafeHandles;
 
@@ -119,11 +119,11 @@ namespace CLIForms.Console
                     //ReApplySizing();
                 }
 
-                
+
             }
         }
 
-        public event KeyEventHandler KeyPressed;
+        public event Engine.KeyboardEvent KeyboardEvent;
 
         private ConsoleColor _initBackgroundColor;
         private ConsoleColor _initForegroundColor;
@@ -197,20 +197,30 @@ namespace CLIForms.Console
                 switch (record.EventType)
                 {
                     case NativeMethods.MOUSE_EVENT:
-                    {
+                        {
 
 
-                    }
+                        }
                         break;
                     case NativeMethods.KEY_EVENT:
-                    {
+                        {
+                            NativeMethods.ControlKeyState states = (NativeMethods.ControlKeyState)record.KeyEvent.dwControlKeyState;
 
-                    }
+                            KeyboardEvent evt = new KeyboardEvent(EventPhase.Root,
+                            null,
+                            null,
+                            record.KeyEvent.UnicodeChar,
+                            record.KeyEvent.AsciiChar,
+                            (VirtualKey)record.KeyEvent.wVirtualKeyCode,
+                            record.KeyEvent.bKeyDown,
+                            altKey: states.HasFlag(NativeMethods.ControlKeyState.LEFT_ALT_PRESSED) || states.HasFlag(NativeMethods.ControlKeyState.RIGHT_ALT_PRESSED),
+                            controlKey: states.HasFlag(NativeMethods.ControlKeyState.LEFT_CTRL_PRESSED) || states.HasFlag(NativeMethods.ControlKeyState.RIGHT_CTRL_PRESSED),
+                            shiftKey: states.HasFlag(NativeMethods.ControlKeyState.SHIFT_PRESSED));
+
+                            KeyboardEvent?.Invoke(evt);
+                        }
                         break;
                 }
-
-
-                KeyPressed?.Invoke(key);
             }
         }
 
@@ -276,6 +286,19 @@ namespace CLIForms.Console
                 public Int32 dwControlKeyState;
             };
 
+            [Flags]
+            public enum ControlKeyState : Int32
+            {
+                RIGHT_ALT_PRESSED = 0x0001,
+                LEFT_ALT_PRESSED = 0x0002,
+                RIGHT_CTRL_PRESSED = 0x0004,
+                LEFT_CTRL_PRESSED = 0x0008,
+                SHIFT_PRESSED = 0x0010,
+                NUMLOCK_ON = 0x0020,
+                SCROLLLOCK_ON = 0x0040,
+                CAPSLOCK_ON = 0x0080,
+                ENHANCED_KEY = 0x0100
+            }
 
             public class ConsoleHandle : SafeHandleMinusOneIsInvalid
             {

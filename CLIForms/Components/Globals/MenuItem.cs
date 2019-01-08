@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CLIForms.Extentions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -56,6 +57,11 @@ namespace CLIForms.Components.Globals
                 }
 
             }
+        }
+
+        public IEnumerable<MenuItem> Parents
+        {
+            get { return this.Parents(item => item.Parent); }
         }
 
         public MenuItem(string text, char? hotChar, bool inheritStyle = true, params MenuItem[] children)

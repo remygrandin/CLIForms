@@ -9,8 +9,8 @@ namespace CLIForms.Components.Spinners
 {
     public class SpinnerBar : DisplayObject
     {
-        public ConsoleColor? BackgroundColor = null;
-        public ConsoleColor ForegroundColor = ConsoleColor.Black;
+        public ConsoleColor? BackgroundColor = ConsoleColor.DarkGray;
+        public ConsoleColor ForegroundColor = ConsoleColor.White;
 
         private Timer timer = new Timer();
 
@@ -127,6 +127,9 @@ namespace CLIForms.Components.Spinners
                 return displayBuffer;
 
             ConsoleCharBuffer baseBuffer = new ConsoleCharBuffer(Width, 1);
+
+            if (BackgroundColor != null)
+                baseBuffer.Clear(new ConsoleChar(this, ' ', false, BackgroundColor, ForegroundColor));
 
             baseBuffer.DrawString(this, LtoRDirection ? pattern : new string(pattern.Reverse().ToArray()), false,
                 offset, 0, BackgroundColor, ForegroundColor);

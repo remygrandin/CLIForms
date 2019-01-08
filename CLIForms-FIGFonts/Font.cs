@@ -75,11 +75,19 @@ namespace CLIForms_FIGFonts
         {
             FIGSubChar[,] charTable = new FIGSubChar[charData.Max(item => item.Length), charData.Count];
 
+            for (int y = 0; y < charTable.GetLength(1); y++)
+            {
+                for (int x = 0; x < charTable.GetLength(0); x++)
+                {
+                    charTable[x, y] = new FIGSubChar(' ', x, y);
+                }
+            }
+
             for (int y = 0; y < charData.Count; y++)
             {
                 for (int x = 0; x < charData[y].Length; x++)
                 {
-                    charTable[x, y] = new FIGSubChar(charData[y][x], x, y);
+                    charTable[x, y].Char = charData[y][x];
                 }
             }
 

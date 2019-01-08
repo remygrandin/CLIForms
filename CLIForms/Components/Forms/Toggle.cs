@@ -2,11 +2,11 @@
 using CLIForms.Buffer;
 using CLIForms.Components.Containers;
 using CLIForms.Engine;
-using CLIForms.Interfaces;
+using CLIForms.Engine.Events;
 
 namespace CLIForms.Components.Forms
 {
-    public class Toggle : DisplayObject, IInterractive
+    public class Toggle : InteractiveObject
     {
         public ConsoleColor? LabelBackgroundColor = null;
         public ConsoleColor LabelForegroundColor = ConsoleColor.White;
@@ -52,6 +52,8 @@ namespace CLIForms.Components.Forms
         {
             _label = label;
             _isChecked = isChecked;
+
+            KeyDown += Toggle_KeyDown;
         }
 
 
@@ -83,62 +85,21 @@ namespace CLIForms.Components.Forms
             return buffer;
         }
 
-        private bool _focused = false;
-        public bool Focused
+        private void Toggle_KeyDown(Engine.Events.KeyboardEvent evt)
         {
-            get => _focused;
-            set
+            switch (evt.VirtualKeyCode)
             {
-                _focused = value;
-                Dirty = true;
-            }
-        }
-
-        public event FocusEventHandler FocusIn;
-        public event FocusEventHandler FocusOut;
-        public void FocusedIn(ConsoleKeyInfo? key)
-        {
-            if (FocusIn != null)
-                foreach (FocusEventHandler handler in FocusIn.GetInvocationList())
-                {
-                    if (handler?.Invoke(this) == true)
-                        return;
-                }
-        }
-
-        public void FocusedOut(ConsoleKeyInfo? key)
-        {
-            if (FocusOut != null)
-                foreach (FocusEventHandler handler in FocusOut.GetInvocationList())
-                {
-                    if (handler?.Invoke(this) == true)
-                        return;
-                }
-        }
-
-        public bool KeyPressed(ConsoleKeyInfo key)
-        {
-
-            switch (key.Key)
-            {
-                case ConsoleKey.Spacebar:
-                case ConsoleKey.Enter:
+                case VirtualKey.Space:
+                case VirtualKey.Enter:
                     {
                         IsChecked = !IsChecked;
 
-                        if (Activated != null)
-                            foreach (ActivatedEventHandler handler in Activated.GetInvocationList())
-                            {
-                                handler?.Invoke(this);
-                            }
+                        Engine.Engine.Instance.TriggerActivated(this);
 
-                        Dirty = true;
-                        return true;
+                        evt.PreventDefault();
+                        return;
                     }
             }
-            return false;
         }
-
-        public event ActivatedEventHandler Activated;
     }
 }

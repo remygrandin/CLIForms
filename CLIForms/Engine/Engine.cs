@@ -1,11 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Timers;
 using CLIForms.Buffer;
-using CLIForms.Components;
 using CLIForms.Components.Globals;
 using CLIForms.Console;
+using CLIForms.Engine.Events;
 using CLIForms.Extentions;
 using CLIForms.Interfaces;
 
@@ -68,7 +69,7 @@ namespace CLIForms.Engine
             }
         }
 
-        public List<IInterractive> VisibleFocusableObjects = new List<IInterractive>();
+        public List<InteractiveObject> VisibleFocusableObjects = new List<InteractiveObject>();
         public List<PositionedConsoleChar> VisibleFocusableChars = new List<PositionedConsoleChar>();
         public List<DisplayObject> AllObjects = new List<DisplayObject>();
 
@@ -103,7 +104,7 @@ namespace CLIForms.Engine
             VisibleFocusableChars = _engineBuffer.dataPositioned.Where(item => item.Focussable).ToList();
             VisibleFocusableObjects = VisibleFocusableChars.Select(item => item.Owner).Distinct()
                 .Where(item => item.Parents(itm => itm.Parent).All(itm => item.Disabled == false))
-                .Select(item => (IInterractive)item).ToList();
+                .Select(item => (InteractiveObject)item).ToList();
 
             AllObjects = new List<DisplayObject>(ActiveScreen.GetAllChildren());
             AllObjects.Add(ActiveScreen);
@@ -111,7 +112,7 @@ namespace CLIForms.Engine
             if (FocusedObject != null && !VisibleFocusableObjects.Contains(FocusedObject))
             {
                 TransferFocus(FocusedObject,
-                    (IInterractive)VisibleFocusableChars.OrderBy(item => Math.Pow(item.Y, 2) + Math.Pow(item.X, 2)).FirstOrDefault()?.Owner, null);
+                    (InteractiveObject)VisibleFocusableChars.OrderBy(item => Math.Pow(item.Y, 2) + Math.Pow(item.X, 2)).FirstOrDefault()?.Owner, Direction.None);
             }
 
         }
@@ -130,7 +131,7 @@ namespace CLIForms.Engine
             VisibleFocusableChars = _engineBuffer.dataPositioned.Where(item => item.Focussable).ToList();
             VisibleFocusableObjects = VisibleFocusableChars.Select(item => item.Owner).Distinct()
                 .Where(item => item.Parents(itm => itm.Parent).All(itm => item.Disabled == false))
-                .Select(item => (IInterractive)item).ToList();
+                .Select(item => (InteractiveObject)item).ToList();
 
             AllObjects = new List<DisplayObject>(ActiveScreen.GetAllChildren());
             AllObjects.Add(ActiveScreen);
@@ -138,11 +139,11 @@ namespace CLIForms.Engine
             if (FocusedObject != null && !VisibleFocusableObjects.Contains(FocusedObject))
             {
                 TransferFocus(FocusedObject,
-                    (IInterractive)VisibleFocusableChars.OrderBy(item => Math.Pow(item.Y, 2) + Math.Pow(item.X, 2)).FirstOrDefault()?.Owner, null);
+                    (InteractiveObject)VisibleFocusableChars.OrderBy(item => Math.Pow(item.Y, 2) + Math.Pow(item.X, 2)).FirstOrDefault()?.Owner, Direction.None);
             }
         }
 
-        public IInterractive FocusedObject;
+        public InteractiveObject FocusedObject;
 
         public bool DebugEnabled = false;
 
@@ -154,23 +155,25 @@ namespace CLIForms.Engine
             {
                 ForceDraw();
 
-                TransferFocus(FocusedObject, (IInterractive)VisibleFocusableChars.OrderBy(item => Math.Pow(item.Y, 2) + Math.Pow(item.X, 2)).FirstOrDefault()?.Owner, null);
+                TransferFocus(FocusedObject, (InteractiveObject)VisibleFocusableChars.OrderBy(item => Math.Pow(item.Y, 2) + Math.Pow(item.X, 2)).FirstOrDefault()?.Owner, Direction.None);
 
             }
 
             ForceDraw();
 
-            _currentConsole.KeyPressed += CurrentConsole_KeyPressed;
-            _currentConsole.StartCaptureKeyboard();
+            _currentConsole.KeyboardEvent += CurrentConsole_KeyEvent;
+            _currentConsole.StartCapture();
         }
 
-        private void CurrentConsole_KeyPressed(ConsoleKeyInfo key)
+        private void CurrentConsole_KeyEvent(Events.KeyboardEvent evt)
         {
             if (DebugEnabled)
             {
-                switch (key.Key)
+                Debug.WriteLine(evt.ToString());
+
+                switch (evt.VirtualKeyCode)
                 {
-                    case ConsoleKey.F12:
+                    case VirtualKey.F12:
                         {
                             var oldBuffer = _engineBuffer;
                             _engineBuffer = new ConsoleCharBuffer(oldBuffer.Width, oldBuffer.Height);
@@ -195,47 +198,65 @@ namespace CLIForms.Engine
             bool breakAndContinue = false;
 
             // First we give a chance to the global listeners to intercept the key (true to break)
-            foreach (IAcceptGlobalInput dp in AllObjects.Where(item => item is IAcceptGlobalInput))
+            Events.KeyboardEvent globalEvt = new Events.KeyboardEvent(evt, EventPhase.Target, null, null);
+            foreach (IAcceptGlobalInput dp in AllObjects.OfType<IAcceptGlobalInput>())
             {
-                if (dp.FireGlobalKeypress(key))
+                globalEvt = new Events.KeyboardEvent(evt, EventPhase.Target, (DisplayObject)dp, (DisplayObject)dp);
+                globalEvt.Cancelable = true;
+
+                dp.FireGlobalKeypress(globalEvt);
+
+                if (globalEvt._stopImmediatePropagation)
                 {
                     breakAndContinue = true;
                     break;
+                }
+
+                if (globalEvt._stopPropagation)
+                {
+                    breakAndContinue = true;
                 }
             }
 
             if (breakAndContinue)
                 return;
 
-            // Then we give a chance to focused object to intercept the key
-            if (FocusedObject != null && FocusedObject is IInterractive)
-            {
-                if (((IInterractive)FocusedObject).KeyPressed(key))
-                {
-                    return;
-                }
-            }
+            if (globalEvt != null && globalEvt._canceled)
+                return;
 
+            // Then we give a chance to focused object to intercept the key
+            if (globalEvt.KeyDown)
+                globalEvt = TriggerEvent(evt, FocusedObject, (lEvt, obj) => obj.FireKeyDownCapture(lEvt), (lEvt, obj) => obj.FireKeyDown(lEvt), FocusedObject.Parents.Cast<InteractiveObject>());
+            else
+                globalEvt = TriggerEvent(evt, FocusedObject, (lEvt, obj) => obj.FireKeyUpCapture(lEvt), (lEvt, obj) => obj.FireKeyUp(lEvt), FocusedObject.Parents.Cast<InteractiveObject>());
+
+
+
+            if (globalEvt._canceled)
+                return;
 
             // Finally we try to use it as a moving mechanism
 
-            switch (key.Key)
+            if (evt.KeyDown)
             {
-                case ConsoleKey.Tab:
-                    CycleFocus(key.Modifiers.HasFlag(ConsoleModifiers.Shift) ? -1 : 1, key);
-                    break;
-                case ConsoleKey.UpArrow:
-                    MoveUp(key);
-                    break;
-                case ConsoleKey.DownArrow:
-                    MoveDown(key);
-                    break;
-                case ConsoleKey.LeftArrow:
-                    MoveLeft(key);
-                    break;
-                case ConsoleKey.RightArrow:
-                    MoveRight(key);
-                    break;
+                switch (evt.VirtualKeyCode)
+                {
+                    case VirtualKey.Tab:
+                        CycleFocus(evt.ShiftKey ? -1 : 1);
+                        break;
+                    case VirtualKey.Up:
+                        MoveUp();
+                        break;
+                    case VirtualKey.Down:
+                        MoveDown();
+                        break;
+                    case VirtualKey.Left:
+                        MoveLeft();
+                        break;
+                    case VirtualKey.Right:
+                        MoveRight();
+                        break;
+                }
             }
 
         }
@@ -267,7 +288,103 @@ namespace CLIForms.Engine
             return candidates;
         }
 
-        private void MoveUp(ConsoleKeyInfo responsibleKey)
+
+        public Event TriggerActivated(InteractiveObject masterIo)
+        {
+            Event evt = new Event(EventPhase.Capture, masterIo, null, true, false);
+
+            return TriggerEvent(evt, masterIo, (lEvt, obj) => obj.FireActivatedCapture(lEvt), (lEvt, obj) => obj.FireActivated(lEvt), masterIo.Parents.Cast<InteractiveObject>());
+        }
+
+
+        public T1 TriggerEvent<T1, T2>(T1 evt, T2 target, Func<T1, T2, T1> captureMethod, Func<T1, T2, T1> bubbleMethod, IEnumerable<T2> parentList)
+        {
+            if (evt == null)
+                return evt;
+
+
+            bool breakAndContinue = false;
+
+            // == capture phase ==
+            IEnumerable<T2> objectParentList = parentList.Skip(1).Reverse();
+
+            Event evtCasted = evt as Event;
+            evtCasted.EventPhase = EventPhase.Capture;
+            evtCasted.Target = target as DisplayObject;
+
+            foreach (T2 io in objectParentList)
+            {
+                evtCasted.CurrentTarget = io as DisplayObject;
+
+                captureMethod.Invoke(evt, io);
+
+                if (evtCasted._stopImmediatePropagation)
+                {
+                    breakAndContinue = true;
+                    break;
+                }
+
+                if (evtCasted._stopPropagation)
+                {
+                    breakAndContinue = true;
+                }
+            }
+
+            if (breakAndContinue)
+                return evt;
+
+            evtCasted.CurrentTarget = target as DisplayObject;
+            evtCasted.EventPhase = EventPhase.Target;
+
+            captureMethod.Invoke(evt, target);
+
+            if (evtCasted._stopImmediatePropagation)
+                return evt;
+
+            if (evtCasted._stopPropagation)
+                return evt;
+
+
+            // == bubble phase ==
+
+            evtCasted.CurrentTarget = target as DisplayObject;
+            evtCasted.EventPhase = EventPhase.Target;
+
+            bubbleMethod.Invoke(evt, target);
+
+            if (evtCasted._stopImmediatePropagation)
+                return evt;
+
+            if (evtCasted._stopPropagation)
+                return evt;
+
+            objectParentList = objectParentList.Reverse();
+
+            foreach (T2 io in objectParentList)
+            {
+                evtCasted.CurrentTarget = io as DisplayObject;
+
+                bubbleMethod.Invoke(evt, io);
+
+                if (evtCasted._stopImmediatePropagation)
+                {
+                    breakAndContinue = true;
+                    break;
+                }
+
+                if (evtCasted._stopPropagation)
+                {
+                    breakAndContinue = true;
+                }
+            }
+
+            if (breakAndContinue)
+                return evt;
+
+            return evt;
+        }
+
+        private void MoveUp()
         {
             IEnumerable<PositionedConsoleChar> positionedChars = _engineBuffer.dataPositioned.Where(item => item.Focussable);
 
@@ -299,7 +416,7 @@ namespace CLIForms.Engine
 
             if (candidatesShortList.Count() == 1)
             {
-                TransferFocus(FocusedObject, (IInterractive)candidatesShortList.First().Key, responsibleKey);
+                TransferFocus(FocusedObject, (InteractiveObject)candidatesShortList.First().Key, Direction.Up);
             }
             else
             {
@@ -310,17 +427,17 @@ namespace CLIForms.Engine
 
                 if (candidatesShortList.Count() == 1)
                 {
-                    TransferFocus(FocusedObject, (IInterractive)candidatesShortList.First().Key, responsibleKey);
+                    TransferFocus(FocusedObject, (InteractiveObject)candidatesShortList.First().Key, Direction.Up);
                 }
                 else// If multiple candidate are at a tie, select the lefter one
                 {
-                    TransferFocus(FocusedObject, (IInterractive)candidatesShortList.OrderBy(item => item.Key.DisplayX).First().Key, responsibleKey);
+                    TransferFocus(FocusedObject, (InteractiveObject)candidatesShortList.OrderBy(item => item.Key.DisplayX).First().Key, Direction.Up);
                 }
             }
 
         }
 
-        private void MoveDown(ConsoleKeyInfo responsibleKey)
+        private void MoveDown()
         {
             IEnumerable<PositionedConsoleChar> positionedChars = _engineBuffer.dataPositioned.Where(item => item.Focussable);
 
@@ -353,7 +470,7 @@ namespace CLIForms.Engine
 
             if (candidatesShortList.Count() == 1)
             {
-                TransferFocus(FocusedObject, (IInterractive)candidatesShortList.First().Key, responsibleKey);
+                TransferFocus(FocusedObject, (InteractiveObject)candidatesShortList.First().Key, Direction.Down);
             }
             else
             {
@@ -364,17 +481,17 @@ namespace CLIForms.Engine
 
                 if (candidatesShortList.Count() == 1)
                 {
-                    TransferFocus(FocusedObject, (IInterractive)candidatesShortList.First().Key, responsibleKey);
+                    TransferFocus(FocusedObject, (InteractiveObject)candidatesShortList.First().Key, Direction.Down);
                 }
                 else// If multiple candidate are at a tie, select the lefter one
                 {
-                    TransferFocus(FocusedObject, (IInterractive)candidatesShortList.OrderBy(item => item.Key.DisplayX).First().Key, responsibleKey);
+                    TransferFocus(FocusedObject, (InteractiveObject)candidatesShortList.OrderBy(item => item.Key.DisplayX).First().Key, Direction.Down);
                 }
             }
 
         }
 
-        private void MoveLeft(ConsoleKeyInfo responsibleKey)
+        private void MoveLeft()
         {
             IEnumerable<PositionedConsoleChar> positionedChars = _engineBuffer.dataPositioned.Where(item => item.Focussable);
 
@@ -407,7 +524,7 @@ namespace CLIForms.Engine
 
             if (candidatesShortList.Count() == 1)
             {
-                TransferFocus(FocusedObject, (IInterractive)candidatesShortList.First().Key, responsibleKey);
+                TransferFocus(FocusedObject, (InteractiveObject)candidatesShortList.First().Key, Direction.Left);
             }
             else
             {
@@ -418,17 +535,17 @@ namespace CLIForms.Engine
 
                 if (candidatesShortList.Count() == 1)
                 {
-                    TransferFocus(FocusedObject, (IInterractive)candidatesShortList.First().Key, responsibleKey);
+                    TransferFocus(FocusedObject, (InteractiveObject)candidatesShortList.First().Key, Direction.Left);
                 }
                 else// If multiple candidate are at a tie, select the upper one
                 {
-                    TransferFocus(FocusedObject, (IInterractive)candidatesShortList.OrderBy(item => item.Key.DisplayY).First().Key, responsibleKey);
+                    TransferFocus(FocusedObject, (InteractiveObject)candidatesShortList.OrderBy(item => item.Key.DisplayY).First().Key, Direction.Left);
                 }
             }
 
         }
 
-        private void MoveRight(ConsoleKeyInfo responsibleKey)
+        private void MoveRight()
         {
             IEnumerable<PositionedConsoleChar> positionedChars = _engineBuffer.dataPositioned.Where(item => item.Focussable);
 
@@ -460,7 +577,7 @@ namespace CLIForms.Engine
 
             if (candidatesShortList.Count() == 1)
             {
-                TransferFocus(FocusedObject, (IInterractive)candidatesShortList.First().Key, responsibleKey);
+                TransferFocus(FocusedObject, (InteractiveObject)candidatesShortList.First().Key, Direction.Right);
             }
             else
             {
@@ -471,17 +588,17 @@ namespace CLIForms.Engine
 
                 if (candidatesShortList.Count() == 1)
                 {
-                    TransferFocus(FocusedObject, (IInterractive)candidatesShortList.First().Key, responsibleKey);
+                    TransferFocus(FocusedObject, (InteractiveObject)candidatesShortList.First().Key, Direction.Right);
                 }
                 else// If multiple candidate are at a tie, select the upper one
                 {
-                    TransferFocus(FocusedObject, (IInterractive)candidatesShortList.OrderBy(item => item.Key.DisplayY).First().Key, responsibleKey);
+                    TransferFocus(FocusedObject, (InteractiveObject)candidatesShortList.OrderBy(item => item.Key.DisplayY).First().Key, Direction.Right);
                 }
             }
 
         }
 
-        private void CycleFocus(int direction, ConsoleKeyInfo responsibleKey)
+        private void CycleFocus(int direction)
         {
             int focusedIndex = VisibleFocusableObjects.IndexOf(FocusedObject);
 
@@ -493,20 +610,22 @@ namespace CLIForms.Engine
                 nextFocusedIndex = VisibleFocusableObjects.Count - 1;
 
 
-            TransferFocus(FocusedObject, VisibleFocusableObjects[nextFocusedIndex], responsibleKey);
+            TransferFocus(FocusedObject, VisibleFocusableObjects[nextFocusedIndex], Direction.None);
         }
 
-        private void TransferFocus(IInterractive oldDP, IInterractive newDP, ConsoleKeyInfo? responsibleKey)
+        private void TransferFocus(InteractiveObject oldDP, InteractiveObject newDP, Direction vector)
         {
             if (oldDP != null)
             {
-                oldDP.FocusedOut(responsibleKey);
+                Events.FocusEvent evt = new Events.FocusEvent(FocusEventType.Out, EventPhase.Target, oldDP, oldDP, false, false);
+                oldDP.FireFocusOut(evt, vector);
                 oldDP.Focused = false;
             }
 
             if (newDP != null)
             {
-                newDP.FocusedIn(responsibleKey);
+                Events.FocusEvent evt = new Events.FocusEvent(FocusEventType.In, EventPhase.Target, oldDP, oldDP, false, false);
+                newDP.FireFocusIn(evt, vector);
                 newDP.Focused = true;
             }
 

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using CLIForms;
 using CLIForms.Components.Chart;
 using CLIForms.Components.Containers;
 using CLIForms.Components.Drawings;
@@ -9,6 +8,7 @@ using CLIForms.Components.Globals;
 using CLIForms.Components.Spinners;
 using CLIForms.Components.Tables;
 using CLIForms.Components.Texts;
+using CLIForms.Engine;
 using CLIForms.Styles;
 
 namespace SampleCSharp
@@ -29,7 +29,7 @@ namespace SampleCSharp
                 X = 1,
                 Y = 2
             };
-
+            
             StatusBar statusBar = new StatusBar(screen)
             {
                 TextLeft = "Left Text",
@@ -45,7 +45,7 @@ namespace SampleCSharp
                                      , new MenuItem("Item looong")),
                 new MenuItem("Menu 2"),
                 new MenuItem("Menu 3")));
-
+                
 
             // ==== Texts Tab ====
 
@@ -62,7 +62,7 @@ namespace SampleCSharp
                 Y = 3
             };
             tabs.AddChild(multiLinesLabel, "Texts");
-
+            
             FIG fig = new FIG(null, "FIGLet", "dosrebel")
             {
                 X = 1,
@@ -135,7 +135,7 @@ namespace SampleCSharp
                 DisplayProperty = "Text"
             };
             tabs.AddChild(singleLineTextbox, "Forms");
-
+            
             // ==== Drawings Tab ====
             Box box = new Box(null, 20, 10)
             {
@@ -159,7 +159,7 @@ namespace SampleCSharp
                 End2 = LineEndingStyle.Plus
             };
             tabs.AddChild(hline, "Drawings");
-
+            
             // ==== Charts Tab ====
 
             HorizontalChart hchart = new HorizontalChart(null, new List<float>() { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 })
@@ -171,7 +171,7 @@ namespace SampleCSharp
                 ChartType = ChartType.Point
             };
             tabs.AddChild(hchart, "Charts");
-
+            
             // ==== Spinner Tab ====
             TinySpinner tinySpinner = new TinySpinner(null)
             {
@@ -193,7 +193,7 @@ namespace SampleCSharp
                 Y = 1
             };
             tabs.AddChild(spinnerBar, "Spinners");
-
+            
             // ==== Tables Tab ====
             SimpleTable table = new SimpleTable(null)
             {
@@ -231,8 +231,8 @@ namespace SampleCSharp
             table[4, 3] = "JacksonVille";
 
             tabs.AddChild(table, "Tables");
-
-            tabs.ActiveTab = 3;
+            
+            //tabs.ActiveTab = 3;
 
             engine.Start();
 

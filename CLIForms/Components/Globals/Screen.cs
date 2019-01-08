@@ -12,11 +12,11 @@ namespace CLIForms.Components.Globals
         {
         }
 
-        public Screen(Engine engine) : base(null, engine.Width, engine.Height)
+        public Screen(Engine.Engine engine) : base(null, engine.Width, engine.Height)
         {
         }
 
-        public Screen() : base(null, Engine.Instance.Width, Engine.Instance.Height)
+        public Screen() : base(null, Engine.Engine.Instance.Width, Engine.Engine.Instance.Height)
         {
         }
 
@@ -27,7 +27,7 @@ namespace CLIForms.Components.Globals
             set
             {
                 base.Dirty = value;
-                Engine.Instance.SignalDirty(this);
+                Engine.Engine.Instance.SignalDirty(this);
                 
 
             }
