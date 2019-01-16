@@ -69,6 +69,7 @@
     <Compile Include="Engine\DisplayObject.cs" />
     <Compile Include="Engine\Engine.cs" />
     <Compile Include="Engine\Events\FocusEvent.cs" />
+    <Compile Include="Engine\Events\MouseEvent.cs" />
     <Compile Include="Engine\Events\KeyboardEvent.cs" />
     <Compile Include="Engine\Events\Event.cs" />
     <Compile Include="Engine\Events\VirtualKey.cs" />
