@@ -49,8 +49,13 @@ namespace CLIForms.Engine
                 if (Parent == null)
                     return X;
                 else
-                    return Parent.DisplayX + X;
+                    return Parent.DisplayX + GetXOffset(this) + X;
             }
+        }
+
+        internal virtual int GetXOffset(DisplayObject child) // used in case of scrolling
+        {
+            return 0;
         }
 
         public int DisplayY
@@ -60,8 +65,13 @@ namespace CLIForms.Engine
                 if (Parent == null)
                     return Y;
                 else
-                    return Parent.DisplayY + Y;
+                    return Parent.DisplayY + GetYOffset(this) + Y;
             }
+        }
+
+        internal virtual int GetYOffset(DisplayObject child) // used in case of scrolling
+        {
+            return 0;
         }
 
         private Container _parent;

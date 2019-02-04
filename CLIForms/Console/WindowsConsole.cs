@@ -124,6 +124,7 @@ namespace CLIForms.Console
         }
 
         public event Engine.KeyboardEvent KeyboardEvent;
+        public event Engine.MouseEvent MouseEvent;
 
         private ConsoleColor _initBackgroundColor;
         private ConsoleColor _initForegroundColor;

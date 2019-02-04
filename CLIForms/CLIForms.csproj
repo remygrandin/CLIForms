@@ -58,6 +58,7 @@
     <Compile Include="Components\Globals\StatusBar.cs" />
     <Compile Include="Components\Chart\ChartType.cs" />
     <Compile Include="Components\Chart\HorizontalChart.cs" />
+    <Compile Include="Components\Misc\TreeView.cs" />
     <Compile Include="Components\Spinners\SpinnerBar.cs" />
     <Compile Include="Components\Spinners\Spinner.cs" />
     <Compile Include="Components\Spinners\TinySpinner.cs" />

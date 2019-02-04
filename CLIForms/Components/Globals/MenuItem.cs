@@ -24,10 +24,20 @@ namespace CLIForms.Components.Globals
 
         internal bool RightSubMenu = true;
 
-        public List<MenuItem> Children = new List<MenuItem>();
+        protected List<MenuItem> _children = new List<MenuItem>();
+        public virtual List<MenuItem> Children
+        {
+            get { return _children; }
+            set { _children = value; }
+        }
 
         public bool isActive = false;
         internal bool IsOpen;
+
+        public int Depth
+        {
+            get { return this.Parents.Count() - 1; }
+        }
         internal int XPos = 0;
         internal int YPos = 0;
 
@@ -48,11 +58,11 @@ namespace CLIForms.Components.Globals
             {
                 if (parent != value)
                 {
-                    parent?.Children.Remove(this);
+                    parent.Children.Remove(this);
 
                     parent = value;
 
-                    parent?.Children.Add(this);
+                    parent.Children.Add(this);
 
                 }
 
@@ -63,6 +73,8 @@ namespace CLIForms.Components.Globals
         {
             get { return this.Parents(item => item.Parent); }
         }
+
+        
 
         public MenuItem(string text, char? hotChar, bool inheritStyle = true, params MenuItem[] children)
         {

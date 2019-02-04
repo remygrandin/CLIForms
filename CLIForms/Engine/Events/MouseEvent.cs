@@ -1,7 +1,4 @@
-﻿using System;
-using CLIForms.Extentions;
-
-namespace CLIForms.Engine.Events
+﻿namespace CLIForms.Engine.Events
 {
     public class MouseEvent : Event
     {

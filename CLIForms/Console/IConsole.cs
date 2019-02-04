@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using CLIForms.Buffer;
-using CLIForms.Engine;
+using KeyboardEvent = CLIForms.Engine.KeyboardEvent;
+using MouseEvent = CLIForms.Engine.MouseEvent;
 
 namespace CLIForms.Console
 {
@@ -18,6 +19,7 @@ namespace CLIForms.Console
         void Display(IEnumerable<PositionedConsoleChar> chars);
 
         event KeyboardEvent KeyboardEvent;
+        event MouseEvent MouseEvent;
 
         void StartCapture();
     }

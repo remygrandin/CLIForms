@@ -4,7 +4,6 @@ namespace CLIForms.Engine.Events
 {
     public enum VirtualKey : UInt16
     {
-
         /// <summary>No virtual key value. </summary>
         None = 0,
         /// <summary>The left mouse button. </summary>
