@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using CLIForms.Components.Globals;
 
@@ -16,12 +17,19 @@ namespace FileBrowser
         public FSType FSType;
 
         public string Path;
+        
 
         public static bool ShowChildrenFiles = true;
 
         public FSItem(string path) : base("")
         {
             InitItem(path);
+        }
+
+        public FSItem(FSItem parent, string path) : base(parent, "")
+        {
+            InitItem(path);
+            
         }
 
         public FSItem(string path, char? hotChar, bool inheritStyle = true, params MenuItem[] children) : base("", hotChar, inheritStyle, children)
@@ -54,10 +62,15 @@ namespace FileBrowser
             }
         }
 
+        private List<MenuItem> _children;
+
         public override List<MenuItem> Children
         {
             get
             {
+                if (_children != null)
+                    return _children;
+
                 if (FSType == FSType.File)
                     return null;
                 else if (FSType == FSType.Folder)
@@ -65,26 +78,61 @@ namespace FileBrowser
                     List<MenuItem> childrenItems = new List<MenuItem>();
                     if (ShowChildrenFiles)
                     {
-                        foreach (FileSystemInfo fsInfo in new DirectoryInfo(Path).EnumerateFileSystemInfos())
+                        try
                         {
-                            childrenItems.Add(new FSItem(fsInfo.FullName));
+                            foreach (FileSystemInfo fsInfo in new DirectoryInfo(Path).EnumerateFileSystemInfos())
+                            {
+                                childrenItems.Add(new FSItem(this, fsInfo.FullName));
+                            }
+                        }
+                        catch (UnauthorizedAccessException e)
+                        {
+
                         }
                     }
                     else
                     {
-                        foreach (DirectoryInfo fsInfo in new DirectoryInfo(Path).EnumerateDirectories())
+                        try
                         {
-                            childrenItems.Add(new FSItem(fsInfo.FullName));
+                            foreach (DirectoryInfo fsInfo in new DirectoryInfo(Path).EnumerateDirectories())
+                            {
+                                childrenItems.Add(new FSItem(fsInfo.FullName, this));
+                            }
+                        }
+                        catch (UnauthorizedAccessException e)
+                        {
+
                         }
                     }
 
+                    _children = childrenItems;
                     return childrenItems;
                 }
                 return null;
             }
             set => _children = value;
         }
+        private bool? _hasChildren;
 
-        
+        public override bool HasChildren
+        {
+            get
+            {
+                if (FSType == FSType.File)
+                    return false;
+
+                if (_hasChildren == null)
+                {
+                    _hasChildren = Children.Any();
+                }
+
+                return _hasChildren.Value;
+            }
+        }
+
+        public override string ToString()
+        {
+            return Path;
+        }
     }
 }

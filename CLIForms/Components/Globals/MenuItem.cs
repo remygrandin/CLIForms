@@ -10,7 +10,7 @@ namespace CLIForms.Components.Globals
         public ConsoleColor? BackgroundColor = ConsoleColor.DarkGray;
         public ConsoleColor ForegroundColor = ConsoleColor.Black;
 
-        
+
         public ConsoleColor? ActiveBackgroundColor = ConsoleColor.White;
         public ConsoleColor ActiveForegroundColor = ConsoleColor.Black;
 
@@ -31,13 +31,12 @@ namespace CLIForms.Components.Globals
             set { _children = value; }
         }
 
+        public virtual bool HasChildren => Children != null && Children.Count != 0;
+
         public bool isActive = false;
         internal bool IsOpen;
 
-        public int Depth
-        {
-            get { return this.Parents.Count() - 1; }
-        }
+        public int Depth => this.Parents.Count() - 1;
         internal int XPos = 0;
         internal int YPos = 0;
 
@@ -50,22 +49,48 @@ namespace CLIForms.Components.Globals
             Text = text;
         }
 
-        private MenuItem parent;
+        public MenuItem(MenuItem parent, string text)
+        {
+            Text = text;
+            _parent = parent;
+        }
+
+        private MenuItem _parent;
         public MenuItem Parent
         {
-            get => parent;
+            get => _parent;
             set
             {
-                if (parent != value)
+                if (_parent != value)
                 {
-                    parent.Children.Remove(this);
+                    _parent?.Children.Remove(this);
 
-                    parent = value;
+                    _parent = value;
 
-                    parent.Children.Add(this);
+                    _parent.Children.Add(this);
+
+                }
+            }
+        }
+
+        public List<MenuItem> FlattOpenChildren
+        {
+            get
+            {
+                List<MenuItem> items = new List<MenuItem>();
+
+                items.Add(this);
+
+                if (HasChildren && IsOpen)
+                {
+                    foreach (MenuItem menuItem in Children)
+                    {
+                        items.AddRange(menuItem.FlattOpenChildren);
+                    }
 
                 }
 
+                return items;
             }
         }
 
@@ -74,9 +99,9 @@ namespace CLIForms.Components.Globals
             get { return this.Parents(item => item.Parent); }
         }
 
-        
 
-        public MenuItem(string text, char? hotChar, bool inheritStyle = true, params MenuItem[] children)
+
+        public MenuItem(string text, char? hotChar, bool inheritStyle, params MenuItem[] children)
         {
             Text = text;
 
@@ -88,7 +113,7 @@ namespace CLIForms.Components.Globals
             {
                 item.Parent = this;
             }
-            
+
 
             if (inheritStyle && Children != null)
             {
@@ -99,7 +124,7 @@ namespace CLIForms.Components.Globals
 
                     menuItem.ActiveBackgroundColor = this.ActiveBackgroundColor;
                     menuItem.ActiveForegroundColor = this.ActiveForegroundColor;
-                    
+
                     menuItem.FocusedBackgroundColor = this.FocusedBackgroundColor;
                     menuItem.FocusedForegroundColor = this.FocusedForegroundColor;
                 }

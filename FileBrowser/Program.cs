@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using CLIForms.Components.Globals;
 using CLIForms.Components.Misc;
 using CLIForms.Engine;
@@ -17,10 +18,14 @@ namespace FileBrowser
 
             TreeView tree = new TreeView(screen);
 
-            tree.RootNodes = new List<MenuItem>()
+            List<MenuItem> drives = new List<MenuItem>();
+
+            foreach (DriveInfo drive in DriveInfo.GetDrives())
             {
-                new FSItem("c:\\")
-            };
+                drives.Add(new FSItem(drive.Name));
+            }
+
+            tree.RootNodes = drives;
 
             engine.Start();
         }

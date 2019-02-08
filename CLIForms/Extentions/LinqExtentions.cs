@@ -6,8 +6,7 @@ namespace CLIForms.Extentions
 {
     public static class LinqExtensions
     {
-        public static IEnumerable<IEnumerable<T>> GroupAdjacentBy<T>(
-            this IEnumerable<T> source, Func<T, T, bool> predicate)
+        public static IEnumerable<IEnumerable<T>> GroupAdjacentBy<T>(this IEnumerable<T> source, Func<T, T, bool> predicate)
         {
             using (var e = source.GetEnumerator())
             {
@@ -61,6 +60,36 @@ namespace CLIForms.Extentions
                 list.AddRange(parent.Parents(predicate));
 
             return list;
+        }
+
+        public static bool IsLast<T>(this IEnumerable<T> items, T item)
+        {
+            T last = items.LastOrDefault();
+            if (last == null)
+                return false;
+            return item.Equals(last); // OR Object.ReferenceEquals(last, item)
+        }
+
+        public static bool IsFirst<T>(this IEnumerable<T> items, T item)
+        {
+            T first = items.FirstOrDefault();
+            if (first == null)
+                return false;
+            return item.Equals(first);
+        }
+
+        public static T Next<T>(this IList<T> items, T item)
+        {
+            int pos = items.IndexOf(item);
+
+            return items[pos + 1];
+        }
+
+        public static T Prev<T>(this IList<T> items, T item)
+        {
+            int pos = items.IndexOf(item);
+
+            return items[pos - 1];
         }
     }
 }

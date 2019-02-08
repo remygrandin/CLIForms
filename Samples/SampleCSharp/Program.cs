@@ -38,13 +38,14 @@ namespace SampleCSharp
             };
 
             MenuBar menuBar = new MenuBar(screen, new MenuItem(" ==CLIForms== ", null, true,
-                new MenuItem("Menu 1", new MenuItem("Item 1"
-                        , new MenuItem("Sub-Item 1")
-                        , new MenuItem("Sub-Item 2"))
-                    , new MenuItem("Item 2")
-                    , new MenuItem("Item looong")),
-                new MenuItem("Menu 2"),
-                new MenuItem("Menu 3")));
+                                                    new MenuItem("Menu 1", 
+                                                        new MenuItem("Item 1",
+                                                            new MenuItem("Sub-Item 1"),
+                                                            new MenuItem("Sub-Item 2"))
+                                    , new MenuItem("Item 2")
+                                    , new MenuItem("Item looong")),
+                                new MenuItem("Menu 2"),
+                                new MenuItem("Menu 3")));
 
 
             // ==== Texts Tab ====

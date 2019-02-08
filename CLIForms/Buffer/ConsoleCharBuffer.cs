@@ -117,13 +117,18 @@ namespace CLIForms.Buffer
             return this;
         }
 
-        public ConsoleCharBuffer Merge(ConsoleCharBuffer slaveBuffer, int xOffset = 0, int yOffset = 0)
+        public ConsoleCharBuffer Merge(ConsoleCharBuffer slaveBuffer, int xOffset = 0, int yOffset = 0, bool autoExpand = false)
         {
             int xDimMaster = this.Width;
             int yDimMaster = this.Height;
 
             int xDimSlave = slaveBuffer.Width;
             int yDimSlave = slaveBuffer.Height;
+
+            if ((xDimMaster < xDimSlave + xOffset || yDimMaster < yDimSlave + yOffset) && autoExpand)
+            {
+                Expand(xDimSlave + xOffset, yDimSlave + yOffset);
+            }
 
             for (int x = 0; x < xDimSlave; x++)
             {
@@ -147,6 +152,15 @@ namespace CLIForms.Buffer
             return this;
         }
 
+        public void Expand(int newWidth, int newHeight)
+        {
+            if(newWidth < Width || newHeight < Height)
+                throw new Exception("Can't shrink");
+
+            data = ResizeArray(data, newWidth, newHeight);
+        }
+
+
         public List<PositionedConsoleChar> Diff(ConsoleCharBuffer secondBuffer)
         {
             int xDimB1 = this.Width;
@@ -169,6 +183,18 @@ namespace CLIForms.Buffer
             }
 
             return outList;
+        }
+
+        private T[,] ResizeArray<T>(T[,] original, int x, int y)
+        {
+            T[,] newArray = new T[x, y];
+            int minX = Math.Min(original.GetLength(0), newArray.GetLength(0));
+            int minY = Math.Min(original.GetLength(1), newArray.GetLength(1));
+
+            for (int i = 0; i < minY; ++i)
+                Array.Copy(original, i * original.GetLength(0), newArray, i * newArray.GetLength(0), minX);
+
+            return newArray;
         }
     }
 }
