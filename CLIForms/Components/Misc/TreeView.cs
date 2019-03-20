@@ -7,6 +7,7 @@ using CLIForms.Components.Globals;
 using CLIForms.Engine;
 using CLIForms.Engine.Events;
 using CLIForms.Extentions;
+using CLIForms.Styles;
 
 namespace CLIForms.Components.Misc
 {
@@ -15,8 +16,8 @@ namespace CLIForms.Components.Misc
         public ConsoleColor? BackgroundColor = ConsoleColor.DarkGray;
         public ConsoleColor ForegroundColor = ConsoleColor.Black;
 
-        public ConsoleColor? FocusedBackgroundColor = ConsoleColor.DarkMagenta;
-        public ConsoleColor FocusedForegroundColor = ConsoleColor.Black;
+        public ConsoleColor? ActiveBackgroundColor = ConsoleColor.DarkMagenta;
+        public ConsoleColor ActiveForegroundColor = ConsoleColor.Black;
 
         public ConsoleColor? CursorBackGroundColor = ConsoleColor.White;
         public ConsoleColor CursorForegroundColor = ConsoleColor.Black;
@@ -57,9 +58,7 @@ namespace CLIForms.Components.Misc
             }
         }
 
-
-
-        public TreeView(Container parent, int width = 50, int height = 20) : base(parent)
+        public TreeView(Container parent, int width = 30, int height = 50) : base(parent)
         {
             _width = width;
             _height = height;
@@ -158,43 +157,96 @@ namespace CLIForms.Components.Misc
             if (!_dirty && displayBuffer != null)
                 return displayBuffer;
 
-            ConsoleCharBuffer buffer = new ConsoleCharBuffer(Width, Height);
+
+            ConsoleCharBuffer frameBuffer = new ConsoleCharBuffer(Width, Height);
+            frameBuffer.Clear(new ConsoleChar(this, ' ', true, BackgroundColor, ForegroundColor));
+
+            ConsoleCharBuffer treeBuffer = new ConsoleCharBuffer(Width, 0);
 
             int yOffset = 0;
             foreach (MenuItem item in RootNodes)
             {
-                yOffset = ItemRender(buffer, yOffset, item);
+                yOffset = ItemRender(treeBuffer, yOffset, item);
             }
+
+            frameBuffer.Merge(treeBuffer, 0, 0);
+
+            displayBuffer = frameBuffer;
 
             Dirty = false;
 
-            return buffer;
+            return frameBuffer;
         }
 
         private int ItemRender(ConsoleCharBuffer buffer, int yOffset, MenuItem item)
         {
+            string prefix = "";
 
-            string prefix = "  ";
+
+            foreach (MenuItem itemParent in item.Parents.Reverse())
+            {
+                if (itemParent.Parent != null)
+                {
+                    if (itemParent == item)
+                    {
+
+                        if (itemParent.Parent.Children.IsLast(itemParent))
+                        {
+                            // └─
+                            prefix += " " + DrawingHelper.GetBottomLeftCornerBorder(BorderStyle.Thin) +
+                                      DrawingHelper.GetHorizontalBorder(BorderStyle.Thin);
+                        }
+                        else
+                        {
+                            // ├─
+                            prefix += " " + DrawingHelper.GetRightTJunctionBorder(BorderStyle.Thin) +
+                                      DrawingHelper.GetHorizontalBorder(BorderStyle.Thin);
+                        }
+                    }
+                    else
+                    {
+
+                        if (itemParent.Parent.Children.IsLast(itemParent))
+                        {
+                            //  
+                            prefix += "   ";
+                        }
+                        else
+                        {
+                            // │
+                            prefix += " " + DrawingHelper.GetVerticalBorder(BorderStyle.Thin) +
+                                      " ";
+                        }
+                    }
+                }
+            }
+
+
+
             if (!item.HasChildren)
-                prefix = "   ";
+            {
+                prefix += DrawingHelper.GetHorizontalBorder(BorderStyle.Thin) +
+                          DrawingHelper.GetHorizontalBorder(BorderStyle.Thin) +
+                          DrawingHelper.GetHorizontalBorder(BorderStyle.Thin) +
+                          " ";
+            }
             else
             {
                 if (item.IsOpen)
-                    prefix = "[-]";
+                    prefix += "[-] ";
                 else
-                    prefix = "[+]";
+                    prefix += "[+] ";
             }
 
-            prefix = new string(' ', item.Depth) + prefix;
 
             ConsoleCharBuffer subBuff = new ConsoleCharBuffer(Width, 1);
 
             if (Focused && item == FocusedItem)
-                subBuff.DrawString(this, (prefix + " " + item.Text).PadRight(Width, ' '), true, 0, 0, FocusedBackgroundColor, FocusedForegroundColor);
+                subBuff.DrawString(this, (prefix + item.Text).PadRight(Width, ' '), true, 0, 0, ActiveBackgroundColor, ActiveForegroundColor);
             else
-                subBuff.DrawString(this, (prefix + " " + item.Text).PadRight(Width, ' '), true, 0, 0, BackgroundColor, ForegroundColor);
+                subBuff.DrawString(this, (prefix + item.Text).PadRight(Width, ' '), true, 0, 0, BackgroundColor, ForegroundColor);
 
-            buffer.Merge(subBuff, 0, yOffset);
+            buffer.Merge(subBuff, 0, yOffset, true);
 
             yOffset++;
             if (item.IsOpen)

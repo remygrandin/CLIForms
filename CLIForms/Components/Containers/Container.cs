@@ -15,7 +15,7 @@ namespace CLIForms.Components.Containers
             _height = height;
         }
 
-        private int _width;
+        protected int _width;
         public int Width
         {
             get => _width;
@@ -29,7 +29,7 @@ namespace CLIForms.Components.Containers
             }
         }
 
-        private int _height;
+        protected int _height;
         public int Height
         {
             get => _height;

@@ -19,7 +19,7 @@ namespace CLIForms.Engine
         private IConsole _currentConsole = null;
 
         private ConsoleCharBuffer _engineBuffer;
-        public Engine(int width = 80, int height = 30)
+        public Engine(int width = 120, int height = 30)
         {
             _currentConsole = new WindowsConsole();
 
@@ -93,53 +93,64 @@ namespace CLIForms.Engine
             }
         }
 
+        private object lockDraw = new object();
+
         public void ForceDraw()
         {
-            ConsoleCharBuffer screenbuffer = ActiveScreen.Render();
-
-            _currentConsole.Display(screenbuffer);
-
-            _engineBuffer = screenbuffer;
-
-            VisibleFocusableChars = _engineBuffer.dataPositioned.Where(item => item.Focussable).ToList();
-            VisibleFocusableObjects = VisibleFocusableChars.Select(item => item.Owner).Distinct()
-                .Where(item => item.Parents(itm => itm.Parent).All(itm => item.Disabled == false))
-                .Select(item => (InteractiveObject)item).ToList();
-
-            AllObjects = new List<DisplayObject>(ActiveScreen.GetAllChildren());
-            AllObjects.Add(ActiveScreen);
-
-            if (FocusedObject != null && !VisibleFocusableObjects.Contains(FocusedObject))
+            lock (lockDraw)
             {
-                TransferFocus(FocusedObject,
-                    (InteractiveObject)VisibleFocusableChars.OrderBy(item => Math.Pow(item.Y, 2) + Math.Pow(item.X, 2)).FirstOrDefault()?.Owner, Direction.None);
+                ConsoleCharBuffer screenbuffer = ActiveScreen.Render();
+
+                _currentConsole.Display(screenbuffer);
+
+                _engineBuffer = screenbuffer;
+
+                VisibleFocusableChars = _engineBuffer.dataPositioned.Where(item => item.Focussable).ToList();
+                VisibleFocusableObjects = VisibleFocusableChars.Select(item => item.Owner).Distinct()
+                    .Where(item => item.Parents(itm => itm.Parent).All(itm => item.Disabled == false))
+                    .Select(item => (InteractiveObject)item).ToList();
+
+                AllObjects = new List<DisplayObject>(ActiveScreen.GetAllChildren());
+                AllObjects.Add(ActiveScreen);
+
+                if (FocusedObject != null && !VisibleFocusableObjects.Contains(FocusedObject))
+                {
+                    TransferFocus(FocusedObject,
+                        (InteractiveObject)VisibleFocusableChars
+                            .OrderBy(item => Math.Pow(item.Y, 2) + Math.Pow(item.X, 2)).FirstOrDefault()?.Owner,
+                        Direction.None);
+                }
             }
 
         }
 
         public void StandardDraw()
         {
-
-            ConsoleCharBuffer screenbuffer = ActiveScreen.Render();
-
-            List<PositionedConsoleChar> diff = _engineBuffer.Diff(screenbuffer);
-
-            _currentConsole.Display(diff);
-
-            _engineBuffer = screenbuffer;
-
-            VisibleFocusableChars = _engineBuffer.dataPositioned.Where(item => item.Focussable).ToList();
-            VisibleFocusableObjects = VisibleFocusableChars.Select(item => item.Owner).Distinct()
-                .Where(item => item.Parents(itm => itm.Parent).All(itm => item.Disabled == false))
-                .Select(item => (InteractiveObject)item).ToList();
-
-            AllObjects = new List<DisplayObject>(ActiveScreen.GetAllChildren());
-            AllObjects.Add(ActiveScreen);
-
-            if (FocusedObject != null && !VisibleFocusableObjects.Contains(FocusedObject))
+            lock (lockDraw)
             {
-                TransferFocus(FocusedObject,
-                    (InteractiveObject)VisibleFocusableChars.OrderBy(item => Math.Pow(item.Y, 2) + Math.Pow(item.X, 2)).FirstOrDefault()?.Owner, Direction.None);
+                ConsoleCharBuffer screenbuffer = ActiveScreen.Render();
+
+                List<PositionedConsoleChar> diff = _engineBuffer.Diff(screenbuffer);
+
+                _currentConsole.Display(diff);
+
+                _engineBuffer = screenbuffer;
+
+                VisibleFocusableChars = _engineBuffer.dataPositioned.Where(item => item.Focussable).ToList();
+                VisibleFocusableObjects = VisibleFocusableChars.Select(item => item.Owner).Distinct()
+                    .Where(item => item.Parents(itm => itm.Parent).All(itm => item.Disabled == false))
+                    .Select(item => (InteractiveObject)item).ToList();
+
+                AllObjects = new List<DisplayObject>(ActiveScreen.GetAllChildren());
+                AllObjects.Add(ActiveScreen);
+
+                if (FocusedObject != null && !VisibleFocusableObjects.Contains(FocusedObject))
+                {
+                    TransferFocus(FocusedObject,
+                        (InteractiveObject)VisibleFocusableChars
+                            .OrderBy(item => Math.Pow(item.Y, 2) + Math.Pow(item.X, 2)).FirstOrDefault()?.Owner,
+                        Direction.None);
+                }
             }
         }
 

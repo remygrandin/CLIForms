@@ -128,6 +128,9 @@ namespace CLIForms.Buffer
             if ((xDimMaster < xDimSlave + xOffset || yDimMaster < yDimSlave + yOffset) && autoExpand)
             {
                 Expand(xDimSlave + xOffset, yDimSlave + yOffset);
+
+                xDimMaster = this.Width;
+                yDimMaster = this.Height;
             }
 
             for (int x = 0; x < xDimSlave; x++)
@@ -157,7 +160,7 @@ namespace CLIForms.Buffer
             if(newWidth < Width || newHeight < Height)
                 throw new Exception("Can't shrink");
 
-            data = ResizeArray(data, newWidth, newHeight);
+            data = ResizeArray(data, newHeight, newWidth);
         }
 
 
@@ -185,15 +188,14 @@ namespace CLIForms.Buffer
             return outList;
         }
 
-        private T[,] ResizeArray<T>(T[,] original, int x, int y)
+        private T[,] ResizeArray<T>(T[,] original, int rows, int cols)
         {
-            T[,] newArray = new T[x, y];
-            int minX = Math.Min(original.GetLength(0), newArray.GetLength(0));
-            int minY = Math.Min(original.GetLength(1), newArray.GetLength(1));
-
-            for (int i = 0; i < minY; ++i)
-                Array.Copy(original, i * original.GetLength(0), newArray, i * newArray.GetLength(0), minX);
-
+            var newArray = new T[cols, rows];
+            int minCols = Math.Min(cols, original.GetLength(0));
+            int minRows = Math.Min(rows, original.GetLength(1));
+            for (int i = 0; i < minRows; i++)
+                for (int j = 0; j < minCols; j++)
+                    newArray[j,i] = original[j,i];
             return newArray;
         }
     }

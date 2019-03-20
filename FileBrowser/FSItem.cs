@@ -9,8 +9,8 @@ namespace FileBrowser
 {
     public enum FSType
     {
-        File,
-        Folder
+        Folder,
+        File
     }
     public class FSItem : MenuItem
     {
@@ -75,7 +75,7 @@ namespace FileBrowser
                     return null;
                 else if (FSType == FSType.Folder)
                 {
-                    List<MenuItem> childrenItems = new List<MenuItem>();
+                    List<FSItem> childrenItems = new List<FSItem>();
                     if (ShowChildrenFiles)
                     {
                         try
@@ -105,12 +105,18 @@ namespace FileBrowser
                         }
                     }
 
-                    _children = childrenItems;
-                    return childrenItems;
+                    childrenItems = childrenItems.OrderBy(item => item.FSType).ThenBy(item => item.Text).ToList();
+
+                    _children = childrenItems.Cast<MenuItem>().ToList();
+                    return _children;
                 }
                 return null;
             }
-            set => _children = value;
+            set
+            {
+                throw new Exception("Cannot set FS Item children, please use native File system manipulation function");
+                return;
+            }
         }
         private bool? _hasChildren;
 
