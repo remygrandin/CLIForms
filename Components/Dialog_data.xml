@@ -1,5 +1,5 @@
 <ClassData>
-	<Name>Container</Name>
+	<Name>Dialog</Name>
 	<Inherit>DisplayObject</Inherit>
 	<Properties>
 		<Property>

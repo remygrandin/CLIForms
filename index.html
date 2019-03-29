@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1.0, shrink-to-fit=no">
-    <meta name="description" content="docsify-tabs - A docsify.js plugin for rendering tabbed content from markdown.">
+    <meta name="description" content="CLIForms - Event driven CLI UI made simple">
     <title>CLIForms</title>
 
     <!-- <link rel="stylesheet" href="//unpkg.com/docsify/themes/vue.css"> -->
@@ -32,6 +32,13 @@
         table.autoDocsTable th:last-child {
             width: 25%;
         }
+		
+		table.autoDocsTable td>p,
+        table.autoDocsTable th>p {
+            margin-top:0;
+			margin-bottom:0;
+        }
+		
     </style>
 </head>
 
@@ -43,7 +50,7 @@
         window.$docsify = {
             // GENERAL
             // -----------------------------------------------------------------
-            name: 'docsify-tabs',
+            name: 'CLIForms',
             homepage: 'index.md',
             loadSidebar: '_sidebar.md',
 
@@ -58,7 +65,7 @@
             // -----------------------------------------------------------------
             executeScript: true,
             search: {
-                depth: 3,
+                depth: 1,
                 noData: 'No results!',
                 placeholder: 'Search...'
             },
@@ -69,6 +76,7 @@
                 // tabComments: false,
                 // tabHeadings: false
             }
+		
         };
     </script>
     <script>
@@ -188,30 +196,40 @@
                     content += "<tr>";
 
                     content += "<td>" + (element.DefinedBy != flattenObject.Name ? "<span title='Inherited'>▲</span>" : "") + "</td>";
-                    content += "<td>" + element.Name + " : _" + element.ReturnType + "_<br/>" +
+                    content += "<td>";
+					content += "<a href='" + classes[obj.Name].BaseURL + "?id=" + element.Name.toLowerCase() + "-property" + (element.DefinedBy != flattenObject.Name ? "-▲" : "") + "'>" + doubleNewLine;
+					content += element.Name + "</a> : _" + element.ReturnType.replace(">", "&gt;").replace("<", "&lt;") + "_<br/>" +
                         (element.ReadOnly ? "[read-only] " : "") +
                         element.ShortDesc + "</td>";
-                    content += "<td>" + element.DefinedBy + "</td>";
+                    content += "<td>" + doubleNewLine;
+					content += "<a href='" + classes[element.DefinedBy].BaseURL + "?id=" + element.Name.toLowerCase() + "-property'>";
+					content += element.DefinedBy;
+					content += "</a>";
+					content += "</td>";
 
                     content += "</tr>";
                 });
 
                 content += "</tbody>";
-                content += "</table>" + newLine;
+                content += "</table>" + doubleNewLine;
 
-                content += "### Public Methods" + newLine;
+                content += "### Public Methods" + doubleNewLine;
 
                 content += "<table class='autoDocsTable'>";
                 content += "<thead>";
-                content += "<tr><th colspan='2'>Method</th><th>Defined By</th></tr>";
+                content += "<tr>";
+				content += "<th colspan='2'>Method</th>";
+				content += "<th>Defined By</th></tr>";
                 content += "</thead>";
                 content += "<tbody>";
 
                 flattenObject.Methods.forEach(function (element) {
                     content += "<tr>";
 
-                    content += "<td>" + (element.DefinedBy != flattenObject.Name ? "<span title='Inherited'>▲</span>" : "") + "</td>";
-                    content += "<td>" + element.Name;
+                    content += "<td>" + doubleNewLine;
+					content += (element.DefinedBy != flattenObject.Name ? "<span title='Inherited'>▲</span>" : "") + "</td>";
+                    content += "<td>" + doubleNewLine;
+					content += element.Name;
                     content += "(";
 
 
@@ -221,7 +239,7 @@
 
 
                     content += ")";
-                    content += ":_" + element.ReturnType + "_<br/>" +
+                    content += ":_" + element.ReturnType.replace(">", "&gt;").replace("<", "&lt;") + "_<br/>" +
                         element.ShortDesc;
 
                     content += "</td>";
@@ -231,7 +249,7 @@
                 });
 
                 content += "</tbody>";
-                content += "</table>" + newLine;
+                content += "</table>" + doubleNewLine;
 
 
 
@@ -239,7 +257,7 @@
 
                 flattenObject.Properties.forEach(function (element) {
 
-                    content += "### **" + element.Name + "** property" + doubleNewLine;
+                    content += "### **" + element.Name + "** <small>property</small> "  + (element.DefinedBy != flattenObject.Name ? "<span title='Inherited'>▲</span>" : "") + doubleNewLine;
 
                     content += element.Name + " : _" + element.ReturnType + "_" + doubleNewLine;
 
@@ -252,7 +270,7 @@
 
                 flattenObject.Methods.forEach(function (element) {
 
-                    content += "### **" + element.Name + "** method" + doubleNewLine;
+                    content += "### **" + element.Name + "** <small>method</small> " + (element.DefinedBy != flattenObject.Name ? "<span title='Inherited'>▲</span>" : "") + doubleNewLine;
 
                     content += element.Name;
                     content += "(";
@@ -300,7 +318,7 @@
                     }
 
                     loadedCallback(tempContent);
-                    return
+                    return tempContent
                 }
 
                 var currentClass = classesToLoad[classesToLoadPos];
@@ -316,6 +334,7 @@
 
                         classDef.Name = getTagText(xmlDoc.firstChild, "Name");
                         classDef.Inherit = getTagText(xmlDoc.firstChild, "Inherit");
+						classDef.BaseURL = window.Docsify.util.getParentPath(document.location.href) + classDef.Name
 
                         if (classDef.Inherit != null) {
                             var dataUrl = window.Docsify.util.getParentPath(document.location.href).replace(/#\//g, "") + classDef.Inherit + "_data.xml";
@@ -374,6 +393,39 @@
                             }
 
                             classDef.Methods.push(methodObj);
+                        }
+						
+						var events = getByTagName(getByTagName(xmlDoc.firstChild, "Events")[0], "Event");
+
+                        classDef.Events = [];
+
+                        for (var i = 0; i < events.length; i++) {
+                            var event = events[i];
+                            var eventObj = {};
+
+                            eventObj.Name = getTagText(event, "Name");
+                            eventObj.ReturnType = getTagText(event, "Type");
+                            eventObj.ShortDesc = getTagText(event, "ShortDesc");
+                            eventObj.LongDesc = getTagText(event, "LongDesc");
+
+							var eventProperty = getByTagName(getByTagName(event, "Properties")[0], "Property");
+							
+							eventObj.Properties = [];
+
+                            for (var j = 0; j < eventProperty.length; j++) {
+                                var eventProperty = eventProperty[j];
+                                var eventPropertyObj = {};
+
+                                eventPropertyObj.Name = getTagText(eventProperty, "Name");
+                                eventPropertyObj.Type = getTagText(eventProperty, "Type");
+                                eventPropertyObj.ReadOnly = getTagText(eventProperty, "ReadOnly") == "true";
+                                eventPropertyObj.Default = getTagText(eventProperty, "Default");
+								eventPropertyObj.ShortDesc = getTagText(eventProperty, "ShortDesc");
+
+                                eventObj.Properties.push(eventPropertyObj);
+                            }
+
+                            classDef.Events.push(eventObj);
                         }
 
                         classesToLoadPos++;
@@ -435,7 +487,7 @@
         })();
 
     </script>
-    <script src="https://unpkg.com/docsify/lib/docsify.js"></script>
+    <script src="https://unpkg.com/docsify@4.8.0/lib/docsify.js"></script>
     <script src="https://unpkg.com/docsify-themeable"></script>
     <script src="https://unpkg.com/docsify-copy-code"></script>
 

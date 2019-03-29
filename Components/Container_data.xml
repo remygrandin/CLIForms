@@ -141,4 +141,5 @@ In it's base implementation, the **Container** return a transparent (i.e. empty)
 			<Parameters/>
 		</Method>
 	</Methods>
+	<Events></Events>
 </ClassData>

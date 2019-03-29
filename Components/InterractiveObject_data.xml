@@ -1,0 +1,76 @@
+<ClassData>
+	<Name>InteractiveObject</Name>
+	<Inherit/>
+	<Properties>
+		<Property>
+			<Name>Focused</Name>
+			<ReturnType>Boolean</ReturnType>
+			<ShortDesc>Indicates if the curent **InteractiveObject** is focussed.</ShortDesc>
+			<LongDesc>Indicates if the curent **InteractiveObject** is focussed. It should not be set by any other than the engine</LongDesc>
+			<ReadOnly>false</ReadOnly>
+			<Default>false</Default>
+		</Property>
+	</Properties>
+	<Methods>	
+		<Method>
+			<Name>Show</Name>
+			<ReturnType>void</ReturnType>
+			<ShortDesc>Show the DisplayObject</ShortDesc>
+			<LongDesc>
+				<![CDATA[Show the DisplayObject.
+				
+Short for displayObject.Visible = true
+]]>
+			</LongDesc>
+			<Parameters/>
+		</Method>
+		<Method>
+			<Name>Hide</Name>
+			<ReturnType>void</ReturnType>
+			<ShortDesc>Hide the DisplayObject</ShortDesc>
+			<LongDesc>
+				<![CDATA[Hide the DisplayObject.
+				
+Short for displayObject.Visible = false
+]]>
+			</LongDesc>
+			<Parameters/>
+		</Method>
+		<Method>
+			<Name>Render</Name>
+			<ReturnType>ConsoleCharBuffer</ReturnType>
+			<ShortDesc>Abstract method to handle the render of the DisplayObject.</ShortDesc>
+			<LongDesc>
+				<![CDATA[Abstract method to handle the render of the DisplayObject.
+				
+Called by the parent Container when rendering the children.
+]]>
+			</LongDesc>
+			<Parameters/>
+		</Method>
+	</Methods>
+	<Events>
+		<Event>
+			<Name>KeyDown</Name>
+			<Type>KeyboardEvent</Type>
+			<ShortDesc>Indicates if the curent **InteractiveObject** is focussed.</ShortDesc>
+			<LongDesc>Indicates if the curent **InteractiveObject** is focussed. It should not be set by any other than the engine</LongDesc>
+			<Properties>
+				<Property>
+					<Name>Bubbles</Name>
+					<Type>Boolean</Name>
+					<ReadOnly>true</ReadOnly>
+					<Default></Default>
+					<ShortDesc>Indicate if the event has a bubble phase</ShortDesc>
+				</Property>
+				<Property>
+					<Name>Cancelable</Name>
+					<Type>Boolean</Name>
+					<ReadOnly>false</ReadOnly>
+					<Default></Default>
+					<ShortDesc>Indicate if the event file system action can be cancelled</ShortDesc>
+				</Property>
+			</Properties>
+		</Event>
+	</Events>
+</ClassData>

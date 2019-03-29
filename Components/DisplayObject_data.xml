@@ -136,4 +136,5 @@ Called by the parent Container when rendering the children.
 			<Parameters/>
 		</Method>
 	</Methods>
+	<Events></Events>
 </ClassData>

@@ -1,5 +1,4 @@
 * [Home](/)
-* [Home](/)
 * Components
 	* [DisplayObject](Components/DisplayObject.md)
 	* Containers
