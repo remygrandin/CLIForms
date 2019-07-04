@@ -694,6 +694,6 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PreBuildEvent>powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File $(ProjectDir)BuildFontZip.ps1 $(ProjectDir) '$(OutDir)</PreBuildEvent>
+    <PreBuildEvent>rem powershell.exe -ExecutionPolicy Bypass -NoProfile -NonInteractive -File $(ProjectDir)BuildFontZip.ps1 $(ProjectDir) '$(OutDir)</PreBuildEvent>
   </PropertyGroup>
 </Project>

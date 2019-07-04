@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using CLIForms.Buffer;
 using CLIForms.Components.Containers;
@@ -91,7 +92,18 @@ namespace CLIForms.Components.Misc
                         List<MenuItem> flatNodes = FlatNodes;
 
                         if (!flatNodes.IsFirst(FocusedItem))
+                        {
                             FocusedItem = flatNodes.Prev(FocusedItem);
+                            Render();
+                            Debug.WriteLine($"==========");
+                            Debug.WriteLine($"Cursor Offset : {_cursorOffset}");
+                            Debug.WriteLine($"Display Offset : {_displayOffset}");
+                            if (_cursorOffset < _displayOffset)
+                            {
+                                _displayOffset--;
+                                Dirty = true;
+                            }
+                        }
                     }
                     break;
                 case VirtualKey.Down:
@@ -99,7 +111,18 @@ namespace CLIForms.Components.Misc
                         List<MenuItem> flatNodes = FlatNodes;
 
                         if (!flatNodes.IsLast(FocusedItem))
+                        {
                             FocusedItem = flatNodes.Next(FocusedItem);
+                            Render();
+                            Debug.WriteLine($"==========");
+                            Debug.WriteLine($"Cursor Offset : {_cursorOffset}");
+                            Debug.WriteLine($"Display Offset : {_displayOffset}");
+                            if (_cursorOffset >= _displayOffset + _height)
+                            {
+                                _displayOffset++;
+                                Dirty = true;
+                            }
+                        }
                     }
                     break;
                 case VirtualKey.Right:
@@ -169,7 +192,7 @@ namespace CLIForms.Components.Misc
                 yOffset = ItemRender(treeBuffer, yOffset, item);
             }
 
-            frameBuffer.Merge(treeBuffer, 0, 0);
+            frameBuffer.Merge(treeBuffer, 0, _displayOffset * -1);
 
             displayBuffer = frameBuffer;
 
@@ -242,9 +265,14 @@ namespace CLIForms.Components.Misc
             ConsoleCharBuffer subBuff = new ConsoleCharBuffer(Width, 1);
 
             if (Focused && item == FocusedItem)
+            {
                 subBuff.DrawString(this, (prefix + item.Text).PadRight(Width, ' '), true, 0, 0, ActiveBackgroundColor, ActiveForegroundColor);
+                _cursorOffset = yOffset;
+            }
             else
+            {
                 subBuff.DrawString(this, (prefix + item.Text).PadRight(Width, ' '), true, 0, 0, BackgroundColor, ForegroundColor);
+            }
 
             buffer.Merge(subBuff, 0, yOffset, true);
 
